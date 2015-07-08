@@ -16,7 +16,7 @@ import * as TemplatedUrls from "./relayer/TemplatedUrl.js";
 import {AsModule, Provider} from "a1atscript";
 import Inflector from "xing-inflector";
 
-@AsModule('resourceLayer', [
+@AsModule('relayer', [
   Endpoints,
   Serializers,
   Mappers,
@@ -36,7 +36,7 @@ import Inflector from "xing-inflector";
   PrimaryResourceBuilder,
   Inflector
 ])
-@Provider('resourceLayer', ['$provide'])
+@Provider('relayer', ['$provide'])
 export default class ResourceLayer {
 
   static get Resource() { return Resource; }

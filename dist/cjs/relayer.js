@@ -125,8 +125,8 @@ var ResourceLayer = (function () {
     }
   }]);
 
-  ResourceLayer = (0, _a1atscript.Provider)("resourceLayer", ["$provide"])(ResourceLayer) || ResourceLayer;
-  ResourceLayer = (0, _a1atscript.AsModule)("resourceLayer", [Endpoints, Serializers, Mappers, Transformers, Initializers, Decorators, RelationshipDescriptions, _relayerListResourceJs2["default"], _relayerPrimaryResourceBuilderJs2["default"], _relayerResourceBuilderJs2["default"], _relayerTransportJs2["default"], _relayerUrlHelperJs2["default"], TemplatedUrls, _relayerResourceDescriptionJs.ResourceDescription, _relayerResourceDescriptionJs.InitializedResourceClasses, _relayerResourceBuilderJs2["default"], _relayerPrimaryResourceBuilderJs2["default"], _xingInflector2["default"]])(ResourceLayer) || ResourceLayer;
+  ResourceLayer = (0, _a1atscript.Provider)("relayer", ["$provide"])(ResourceLayer) || ResourceLayer;
+  ResourceLayer = (0, _a1atscript.AsModule)("relayer", [Endpoints, Serializers, Mappers, Transformers, Initializers, Decorators, RelationshipDescriptions, _relayerListResourceJs2["default"], _relayerPrimaryResourceBuilderJs2["default"], _relayerResourceBuilderJs2["default"], _relayerTransportJs2["default"], _relayerUrlHelperJs2["default"], TemplatedUrls, _relayerResourceDescriptionJs.ResourceDescription, _relayerResourceDescriptionJs.InitializedResourceClasses, _relayerResourceBuilderJs2["default"], _relayerPrimaryResourceBuilderJs2["default"], _xingInflector2["default"]])(ResourceLayer) || ResourceLayer;
   return ResourceLayer;
 })();
 

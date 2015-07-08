@@ -4606,7 +4606,7 @@ define('relayer',["./relayer/ResourceDescription", "./relayer/Resource", "./rela
   });
   var $__default = ResourceLayer;
   Object.defineProperty(ResourceLayer, "annotations", {get: function() {
-      return [new AsModule('resourceLayer', [Endpoints, Serializers, Mappers, Transformers, Initializers, Decorators, RelationshipDescriptions, ListResource, PrimaryResourceBuilder, ResourceBuilder, Transport, UrlHelper, TemplatedUrls, ResourceDescription, InitializedResourceClasses, ResourceBuilder, PrimaryResourceBuilder, Inflector]), new Provider('resourceLayer', ['$provide'])];
+      return [new AsModule('relayer', [Endpoints, Serializers, Mappers, Transformers, Initializers, Decorators, RelationshipDescriptions, ListResource, PrimaryResourceBuilder, ResourceBuilder, Transport, UrlHelper, TemplatedUrls, ResourceDescription, InitializedResourceClasses, ResourceBuilder, PrimaryResourceBuilder, Inflector]), new Provider('relayer', ['$provide'])];
     }});
   return {
     get default() {
