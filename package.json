@@ -1,0 +1,68 @@
+{
+  "name": "relayer",
+  "private": false,
+  "version": "0.0.1",
+  "description": "Smart client library for talking to hypermedia APIs",
+  "homepage": "https://github.com/LRDesign/relayer",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/LRDesign/relayer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LRDesign/relayer/issues"
+  },
+  "main": "dist/relayer.js",
+  "dependencies": {
+    "a1atscript": "^0.4.3",
+    "uri-templates": "^0.1.7",
+    "xing-inflector": "^0.0.2"
+  },
+  "devDependencies": {
+    "angular": "^1.3.15",
+    "angular-mocks": "^1.3.15",
+    "angular-new-router": "^0.5.3",
+    "assert": "angular/assert#dist",
+    "babel": "^5.4.4",
+    "babelify": "^6.0.2",
+    "gulp": "^3.8.9",
+    "gulp-bump": "^0.2.2",
+    "gulp-connect": "^2.0.6",
+    "gulp-rename": "^1.2.0",
+    "gulp-traceur": "vojtajina/gulp-traceur#fix-sourcemaps",
+    "karma": "^0.12.24",
+    "karma-babel-preprocessor": "^5.1.0",
+    "karma-browserify": "^4.1.2",
+    "karma-chrome-launcher": "^0.1.5",
+    "karma-cli": "0.0.4",
+    "karma-commonjs": "0.0.13",
+    "karma-firefox-launcher": "^0.1.4",
+    "karma-jasmine": "^0.2.2",
+    "karma-requirejs": "^0.2.2",
+    "karma-traceur-preprocessor": "^0.4.0",
+    "requirejs": "^2.1.15",
+    "xing-traceur": "^0.0.6"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/gulp test:firefox; ./node_modules/.bin/karma start karma.conf.babel.js --browsers Firefox --single-run",
+    "xing-traceur-amd": "./node_modules/.bin/xing-traceur --annotations --types --modules='amd' --dir src build/amd --maps moduleMaps.json; ./node_modules/.bin/xing-traceur --annotations --types --modules='amd' --dir ./node_modules/a1atscript/src build/amd --maps moduleMaps.json; ./node_modules/.bin/xing-traceur --annotations --types --modules='amd' --dir ./node_modules/xing-inflector/src build/amd --maps moduleMaps.json;",
+    "babel-cjs": "./node_modules/.bin/babel src/relayer.js src --stage 0 --out-dir dist/cjs",
+    "rjs": "./node_modules/.bin/r.js -o out=./dist/relayer.es5.js baseUrl=./build/amd name=relayer optimize=none",
+    "amd": "npm run-script xing-traceur-amd; npm run-script rjs",
+    "dist": "./node_modules/.bin/gulp dist; npm run-script amd; npm run-script babel-cjs;"
+  },
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        {
+          "stage": 0
+        }
+      ]
+    ]
+  },
+  "jspm": {
+    "main": "dist/cjs/relayer.js"
+  },
+  "author": "Hannah Howard <hannah@lrdesign.com>",
+  "license": "Apache-2.0"
+}

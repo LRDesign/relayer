@@ -1,0 +1,14 @@
+{
+  "traceur": {
+    "modules": "register",
+    "script": false,
+    "types": true,
+    "annotations": true,
+    "memberVariables": true,
+    "sourceMaps": "file"
+  },
+  "babel": {
+    "sourceMaps": true,
+    "stage": 0
+  }
+}

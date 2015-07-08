@@ -1,0 +1,4 @@
+{
+  "a1atscript": "../node_modules/a1atscript/dist/a1atscript.js",
+  "xing-inflector": "../node_modules/xing-inflector/dist/xing-inflector.js"
+}
