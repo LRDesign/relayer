@@ -56,7 +56,7 @@ gulp.task('test:firefox', ['testPrep'], function (done) {
 /**
  * Watch for file changes and re-run tests on each change
  */
-gulp.task('tdd', function (done) {
+gulp.task('tdd', ['testPrep'], function (done) {
   karma.start({
     configFile: __dirname + '/karma.conf.js',
   }, done);

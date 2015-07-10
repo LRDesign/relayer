@@ -13,7 +13,8 @@ describe("RelatedResourceDecorator", function() {
   resource,
   mockEndpoint,
   relatedResourceDecorator,
-  returnedEndpoint;
+  returnedEndpoint,
+  result;
 
   beforeEach(function() {
 
@@ -119,11 +120,63 @@ describe("RelatedResourceDecorator", function() {
           })
         });
 
-        it("the endpoint should be embedded", function() {
+        it("the endpoint should be linked", function() {
           resource.awesome("cheese");
           expect(linkedEndpointSpy).toHaveBeenCalled();
         })
 
+      });
+      describe("missing", function() {
+        describe("first call", function() {
+          beforeEach(function() {
+
+            resource.relationships["awesome"] = null;
+            relatedResourceDecorator.resourceApply(resource);
+            result = resource.awesome("cheese");
+          });
+
+          it("should record the relationship", function() {
+            expect(OtherResourceClass.relationships["awesome"]).toEqual(relationship)
+          });
+
+
+          it("should setup the right endpoint", function() {
+            expect(result).toEqual({endpointPromise: jasmine.any(Promise),
+              applied: true
+            });
+          });
+
+          describe("second call resolves", function() {
+            beforeEach(function(done) {
+              resource.relationships["awesome"] = { value: "is here"};
+              result.endpointPromise.then((resolvedValue) => {
+                result = resolvedValue;
+                done();
+              });
+            });
+
+            it("should return the resolved value at the endpoint after canonical is fetched", function() {
+              expect(result).toEqual({
+                thisResource: resource,
+                uriParams: "cheese",
+                applied: true
+              });
+            });
+          });
+
+          describe("second call still missing", function() {
+            beforeEach(function(done) {
+              result.endpointPromise.catch((error) => {
+                result = error;
+                done();
+              });
+            });
+
+            it("throw an error that the relationship is missing", function() {
+              expect(result).toEqual("Error: Unable to find relationship, even on canonical resource");
+            });
+          });
+        });
       });
     });
 

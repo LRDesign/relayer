@@ -17,13 +17,17 @@ export default class RelatedResourceDecorator extends ResourceDecorator {
       var name = this.name;
       var relationship = this.relationship;
       var promiseEndpointFactory = this.promiseEndpointFactory;
-      this._resourceFn = function(uriParams) {
+      this._resourceFn = function(uriParams, recursiveCall = false) {
         if (relationship.async && this.isPersisted) {
           var endpoint;
           if (!this.relationships[name]) {
-            endpoint = promiseEndpointFactory(this.self().load().then((resource) => {
-              return resource[name](uriParams);
-            }));
+            if (recursiveCall == false) {
+              endpoint = promiseEndpointFactory(this.self().load().then((resource) => {
+                return resource[name](uriParams, true);
+              }));
+            } else {
+              throw "Error: Unable to find relationship, even on canonical resource";
+            }
           } else if (this.relationships[name] instanceof TemplatedUrl) {
             endpoint = relationship.linkedEndpoint(this, uriParams);
           } else {

@@ -3786,12 +3786,17 @@ define('relayer/decorators/RelatedResourceDecorator',["./ResourceDecorator", "..
         var relationship = this.relationship;
         var promiseEndpointFactory = this.promiseEndpointFactory;
         this._resourceFn = function(uriParams) {
+          var recursiveCall = arguments[1] !== (void 0) ? arguments[1] : false;
           if (relationship.async && this.isPersisted) {
             var endpoint;
             if (!this.relationships[name]) {
-              endpoint = promiseEndpointFactory(this.self().load().then((function(resource) {
-                return resource[name](uriParams);
-              })));
+              if (recursiveCall == false) {
+                endpoint = promiseEndpointFactory(this.self().load().then((function(resource) {
+                  return resource[name](uriParams, true);
+                })));
+              } else {
+                throw "Error: Unable to find relationship, even on canonical resource";
+              }
             } else if (this.relationships[name] instanceof TemplatedUrl) {
               endpoint = relationship.linkedEndpoint(this, uriParams);
             } else {
