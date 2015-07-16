@@ -10,9 +10,9 @@ module.exports = function(config) {
 
     files: [
       'node_modules/karma-babel-preprocessor/node_modules/babel-core/browser-polyfill.js',
-      'bower_components/angular/angular.js',
+      'node_modules/angular/angular.js',
       'node_modules/uri-templates/uri-templates.js',
-      'bower_components/angular-mocks/angular-mocks.js',
+      'node_modules/angular-mocks/angular-mocks.js',
       'test/**/*.js'
       // The entry point that dynamically imports all the specs.
       //{pattern: 'test-help/main.js', included: true},

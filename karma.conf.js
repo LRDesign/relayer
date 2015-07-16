@@ -9,9 +9,9 @@ module.exports = function(config) {
     frameworks: ['jasmine'],
 
     files: [
-      'bower_components/angular/angular.js',
+      'node_modules/angular/angular.js',
       'node_modules/uri-templates/uri-templates.js',
-      'bower_components/angular-mocks/angular-mocks.js',
+      'node_modules/angular-mocks/angular-mocks.js',
       'build/test-main.js'
     ],
 
