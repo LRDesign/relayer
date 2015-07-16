@@ -44,7 +44,7 @@ var ListResourceMapper = (function (_ResourceMapper) {
       manyResourceMapper.uriTemplate = this.resource.pathGet("$.links.template");
       this.mapped = manyResourceMapper.map();
       this.mapped.resource = this.resource;
-      ["url", "uriTemplate", "uriParams", "remove", "update", "load"].forEach(function (func) {
+      ["url", "uriTemplate", "uriParams"].forEach(function (func) {
         _this.mapped[func] = function () {
           var _resource;
 
@@ -55,13 +55,24 @@ var ListResourceMapper = (function (_ResourceMapper) {
           return (_resource = this.resource)[func].apply(_resource, args);
         };
       });
+      var mapped = this.mapped;
+      ["remove", "update", "load"].forEach(function (func) {
+        _this.mapped[func] = function () {
+          var _resource$self;
 
+          for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+            args[_key2] = arguments[_key2];
+          }
+
+          return (_resource$self = this.resource.self())[func].apply(_resource$self, [mapped].concat(args));
+        };
+      });
       this.mapped.create = function () {
         var _resource2,
             _this2 = this;
 
-        for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-          args[_key2] = arguments[_key2];
+        for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+          args[_key3] = arguments[_key3];
         }
 
         return (_resource2 = this.resource).create.apply(_resource2, args).then(function (created) {

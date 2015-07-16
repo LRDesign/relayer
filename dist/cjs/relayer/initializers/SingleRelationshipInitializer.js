@@ -37,9 +37,11 @@ var SingleRelationshipInitializer = (function (_RelationshipInitializer) {
       var _this = this;
 
       var relationship = new this.ResourceClass();
-      Object.keys(this.initialValues).forEach(function (property) {
-        relationship[property] = _this.initialValues[property];
-      });
+      if (this.initialValues) {
+        Object.keys(this.initialValues).forEach(function (property) {
+          relationship[property] = _this.initialValues[property];
+        });
+      }
       return relationship;
     }
   }]);

@@ -117,6 +117,12 @@ var Resource = (function (_DataWrapper) {
   }, {
     key: "setInitialValue",
     value: function setInitialValue(path, value) {
+
+      this.initialValues.push({ path: path, value: value });
+    }
+  }, {
+    key: "initialValues",
+    get: function () {
       if (!this.hasOwnProperty("_initialValues")) {
         if (this._initialValues) {
           this._initialValues = this._initialValues.slice(0);
@@ -124,7 +130,7 @@ var Resource = (function (_DataWrapper) {
           this._initialValues = [];
         }
       }
-      this._initialValues.push({ path: path, value: value });
+      return this._initialValues;
     }
   }, {
     key: "emptyData",
@@ -132,13 +138,15 @@ var Resource = (function (_DataWrapper) {
       var _this = this;
 
       this._response = { data: {}, links: {} };
-      this._initialValues.forEach(function (initialValue) {
+      this.initialValues.forEach(function (initialValue) {
         _this.pathBuild(initialValue.path, initialValue.value);
       });
       Object.keys(this.constructor.relationships).forEach(function (relationshipName) {
         var relationshipDescription = _this.constructor.relationships[relationshipName];
-        var relationship = relationshipDescription.initializer.initialize();
-        _this.relationships[relationshipName] = relationship;
+        if (relationshipDescription.initializeOnCreate) {
+          var relationship = relationshipDescription.initializer.initialize();
+          _this.relationships[relationshipName] = relationship;
+        }
       });
     }
   }, {

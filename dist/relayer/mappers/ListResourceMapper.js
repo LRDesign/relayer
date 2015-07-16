@@ -39,12 +39,17 @@ export default class ListResourceMapper extends ResourceMapper {
     manyResourceMapper.uriTemplate = this.resource.pathGet("$.links.template");
     this.mapped = manyResourceMapper.map();
     this.mapped.resource = this.resource;
-    ["url", "uriTemplate", "uriParams", "remove", "update", "load"].forEach((func) => {
+    ["url", "uriTemplate", "uriParams"].forEach((func) => {
       this.mapped[func] = function(...args) {
         return this.resource[func](...args);
       };
     });
-
+    var mapped = this.mapped;
+    ["remove", "update", "load"].forEach((func) => {
+      this.mapped[func] = function(...args) {
+        return this.resource.self()[func](mapped,...args);
+      };
+    });
     this.mapped.create = function(...args) {
       return this.resource.create(...args).then((created) => {
         this.push(created);

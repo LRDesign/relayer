@@ -39,12 +39,14 @@ var MapRelationshipInitializer = (function (_RelationshipInitializer) {
 
       var relationship = {};
       var response = {};
-      Object.keys(this.initialValues).forEach(function (key) {
-        var singleInitializer = _this.singleRelationshipInitializerFactory(_this.ResourceClass, _this.initialValues[key]);
-        var singleRelationship = singleInitializer.initialize();
-        relationship[key] = singleRelationship;
-        response[key] = singleRelationship.response;
-      });
+      if (this.initialValues) {
+        Object.keys(this.initialValues).forEach(function (key) {
+          var singleInitializer = _this.singleRelationshipInitializerFactory(_this.ResourceClass, _this.initialValues[key]);
+          var singleRelationship = singleInitializer.initialize();
+          relationship[key] = singleRelationship;
+          response[key] = singleRelationship.response;
+        });
+      }
       return relationship;
     }
   }]);
