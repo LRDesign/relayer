@@ -2309,6 +2309,12 @@ define('relayer/Resource',["./DataWrapper"], function($__0) {
       this._response = response;
     },
     setInitialValue: function(path, value) {
+      this.initialValues.push({
+        path: path,
+        value: value
+      });
+    },
+    get initialValues() {
       if (!this.hasOwnProperty("_initialValues")) {
         if (this._initialValues) {
           this._initialValues = this._initialValues.slice(0);
@@ -2316,10 +2322,7 @@ define('relayer/Resource',["./DataWrapper"], function($__0) {
           this._initialValues = [];
         }
       }
-      this._initialValues.push({
-        path: path,
-        value: value
-      });
+      return this._initialValues;
     },
     emptyData: function() {
       var $__2 = this;
@@ -2327,13 +2330,15 @@ define('relayer/Resource',["./DataWrapper"], function($__0) {
         data: {},
         links: {}
       };
-      this._initialValues.forEach((function(initialValue) {
+      this.initialValues.forEach((function(initialValue) {
         $__2.pathBuild(initialValue.path, initialValue.value);
       }));
       Object.keys(this.constructor.relationships).forEach((function(relationshipName) {
         var relationshipDescription = $__2.constructor.relationships[relationshipName];
-        var relationship = relationshipDescription.initializer.initialize();
-        $__2.relationships[relationshipName] = relationship;
+        if (relationshipDescription.initializeOnCreate) {
+          var relationship = relationshipDescription.initializer.initialize();
+          $__2.relationships[relationshipName] = relationship;
+        }
       }));
     },
     get relationships() {
@@ -3491,9 +3496,11 @@ define('relayer/initializers/SingleRelationshipInitializer',["./RelationshipInit
   ($traceurRuntime.createClass)(SingleRelationshipInitializer, {initialize: function() {
       var $__4 = this;
       var relationship = new this.ResourceClass();
-      Object.keys(this.initialValues).forEach((function(property) {
-        relationship[property] = $__4.initialValues[property];
-      }));
+      if (this.initialValues) {
+        Object.keys(this.initialValues).forEach((function(property) {
+          relationship[property] = $__4.initialValues[property];
+        }));
+      }
       return relationship;
     }}, {}, RelationshipInitializer);
   var $__default = SingleRelationshipInitializer;
@@ -3525,12 +3532,14 @@ define('relayer/initializers/ManyRelationshipInitializer',["./RelationshipInitia
       var $__4 = this;
       var relationship = [];
       var response = [];
-      this.initialValues.forEach((function(initialValue) {
-        var singleInitializer = $__4.singleRelationshipInitializerFactory($__4.ResourceClass, initialValue);
-        var singleRelationship = singleInitializer.initialize();
-        relationship.push(singleRelationship);
-        response.push(singleRelationship.response);
-      }));
+      if (this.initialValues) {
+        this.initialValues.forEach((function(initialValue) {
+          var singleInitializer = $__4.singleRelationshipInitializerFactory($__4.ResourceClass, initialValue);
+          var singleRelationship = singleInitializer.initialize();
+          relationship.push(singleRelationship);
+          response.push(singleRelationship.response);
+        }));
+      }
       return relationship;
     }}, {}, RelationshipInitializer);
   var $__default = ManyRelationshipInitializer;
@@ -3606,12 +3615,14 @@ define('relayer/initializers/MapRelationshipInitializer',["./RelationshipInitial
       var $__4 = this;
       var relationship = {};
       var response = {};
-      Object.keys(this.initialValues).forEach((function(key) {
-        var singleInitializer = $__4.singleRelationshipInitializerFactory($__4.ResourceClass, $__4.initialValues[key]);
-        var singleRelationship = singleInitializer.initialize();
-        relationship[key] = singleRelationship;
-        response[key] = singleRelationship.response;
-      }));
+      if (this.initialValues) {
+        Object.keys(this.initialValues).forEach((function(key) {
+          var singleInitializer = $__4.singleRelationshipInitializerFactory($__4.ResourceClass, $__4.initialValues[key]);
+          var singleRelationship = singleInitializer.initialize();
+          relationship[key] = singleRelationship;
+          response[key] = singleRelationship.response;
+        }));
+      }
       return relationship;
     }}, {}, RelationshipInitializer);
   var $__default = MapRelationshipInitializer;
@@ -3917,6 +3928,11 @@ define('relayer/relationshipDescriptions/RelationshipDescription',[], function()
     this.ResourceClass = ResourceClass;
     this.initialValues = initialValues;
     this.async = true;
+    if (initialValues == undefined) {
+      this.initializeOnCreate = false;
+    } else {
+      this.initializeOnCreate = true;
+    }
   };
   ($traceurRuntime.createClass)(RelationshipDescription, {
     get linksPath() {

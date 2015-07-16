@@ -13,12 +13,14 @@ export default class ManyRelationshipInitializer extends RelationshipInitializer
   initialize() {
     var relationship = [];
     var response = [];
-    this.initialValues.forEach((initialValue) => {
-      var singleInitializer = this.singleRelationshipInitializerFactory(this.ResourceClass, initialValue);
-      var singleRelationship = singleInitializer.initialize();
-      relationship.push(singleRelationship);
-      response.push(singleRelationship.response);
-    });
+    if (this.initialValues) {
+      this.initialValues.forEach((initialValue) => {
+        var singleInitializer = this.singleRelationshipInitializerFactory(this.ResourceClass, initialValue);
+        var singleRelationship = singleInitializer.initialize();
+        relationship.push(singleRelationship);
+        response.push(singleRelationship.response);
+      });
+    }
     return relationship;
   }
 }
