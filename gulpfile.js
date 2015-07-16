@@ -21,7 +21,6 @@ gulp.task('testPrep', function(done) {
   }]
   var options = {
     sourceMaps: true,
-    includeRuntime: true,
     traceurOptions: TRACEUR_OPTIONS,
     moduleMaps: require('./moduleMaps')
   }

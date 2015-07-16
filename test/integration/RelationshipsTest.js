@@ -96,7 +96,7 @@ describe("initialization", function() {
 });
 
 describe("Loading relationships test", function() {
-  var resources, book, act, chapter, section, paragraph, character, $httpBackend;
+  var resources, book, act, chapter, chapters, section, paragraph, character, $httpBackend;
 
   beforeEach(function () {
     var injector = new Injector();
@@ -153,7 +153,7 @@ describe("Loading relationships test", function() {
             }
           }
         });
-      } else if (params.url == "http://www.example.com/acts/2") {
+      } else if (params.method == "GET" && params.url == "http://www.example.com/acts/2") {
         return Promise.resolve({
           status: 200,
           headers() {
@@ -184,6 +184,31 @@ describe("Loading relationships test", function() {
                 ]
               }
             }
+          }
+        });
+      } else if (params.method == "PUT" && params.url == "http://www.example.com/acts/2/chapters") {
+        return Promise.resolve({
+          status: 200,
+          headers() {
+            return {
+              ETag: "1449"
+            }
+          },
+          data: {
+            links: {
+              self: "/acts/2/chapters",  // see ActChapters
+              act:  "/acts/2",
+              template: "/chapters/{id}" // template for a single chapter url
+            },
+
+            // The data themselves are Chapter objects that only contain links.
+            // A chapter is really just a link to its first section.
+            data: [
+              { links: { self: '/chapters/1', section: "/sections/1", act: "/acts/2" }},
+              { links: { self: '/chapters/2', section: "/sections/4", act: "/acts/2" }},
+              { links: { self: '/chapters/3', section: "/sections/7", act: "/acts/2" }},
+              { links: { self: '/chapters/4', act: "/acts/2" }}
+            ]
           }
         });
       } else if (params.url == "http://www.example.com/sections/4") {
@@ -294,6 +319,23 @@ describe("Loading relationships test", function() {
 
     it("should resolve the book", function() {
       expect(book.title).toEqual("Hamlet");
+    });
+
+    describe("update", function() {
+      beforeEach(function(done) {
+        promise = book.acts({id: 2}).chapters().load().then((currentChapters) => {
+          chapter = currentChapters.new();
+          currentChapters.push(chapter);
+          currentChapters.update().then((newChapters) => {
+            chapters = newChapters;
+            done();
+          });
+        });
+      });
+
+      it("should add the new chapter on update", function() {
+        expect(chapters.length).toEqual(4);
+      });
     });
 
     describe("section", function() {

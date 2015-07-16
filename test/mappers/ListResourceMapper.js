@@ -58,8 +58,15 @@ describe("ListResourceMapper", function() {
         }
       };
 
-      ["url", "uriTemplate", "uriParams", "remove", "update", "load"].forEach((func) => {
+      var self = {};
+      this.self = function() { return self; };
+
+      ["url", "uriTemplate", "uriParams"].forEach((func) => {
         this[func] = function() { return func; };
+      });
+
+      ["remove", "update", "load"].forEach((func) => {
+        self[func] = function() { return func; };
       });
 
       this.create = function(param) { return Promise.resolve(param); }
@@ -144,9 +151,16 @@ describe("ListResourceMapper", function() {
     });
 
     it("should setup pass through functions on the array", function() {
-      ["url", "uriTemplate", "uriParams", "remove", "update", "load"].forEach((func) => {
+      var spy = spyOn(results.resource, 'self').and.callThrough();
+
+      ["url", "uriTemplate", "uriParams"].forEach((func) => {
         expect(results[func]()).toEqual(func);
       });
+      ["remove", "update", "load"].forEach((func) => {
+        expect(results[func]()).toEqual(func);
+        expect(spy).toHaveBeenCalled();
+      });
+
     });
 
     it("should setup new", function() {
