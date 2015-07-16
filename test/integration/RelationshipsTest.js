@@ -24,9 +24,12 @@ RL.Describe(Section, (desc) => {
   desc.property("title", "");
   desc.property("kind", "");
   desc.property("resolution", "")
-  desc.hasOne("chapter", Chapter);
-  desc.hasOne("book", Book);
-  desc.hasList("paragraphs", Paragraph)
+  var chapter = desc.hasOne("chapter", Chapter);
+  chapter.initializeOnCreate = false;
+  var book = desc.hasOne("book", Book);
+  book.initializeOnCreate = true;
+  var paragraphs = desc.hasList("paragraphs", Paragraph)
+  paragraphs.initializeOnCreate = false;
 });
 
 class Paragraph extends RL.Resource {
@@ -81,7 +84,18 @@ class AppConfig {
 
 var AppModule = new Module("AppModule", [RL, AppConfig.prototype]);
 
-describe("Yoric test", function() {
+describe("initialization", function() {
+  var section;
+  beforeEach(function() {
+    section = new Section();
+  });
+
+  it("should not initialize relationships when initializeOnCreate is false", function() {
+    expect(section.relationships).toEqual({book: jasmine.any(Book)});
+  });
+});
+
+describe("Loading relationships test", function() {
   var resources, book, act, chapter, section, paragraph, character, $httpBackend;
 
   beforeEach(function () {

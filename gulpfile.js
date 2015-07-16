@@ -61,6 +61,7 @@ gulp.task('tdd', ['testPrep'], function (done) {
     configFile: __dirname + '/karma.conf.js',
   }, done);
   gulp.watch(PATH.TEST, ['testPrep']);
+  gulp.watch(PATH.SRC, ['testPrep']);
 });
 
 // A wrapper around gulp-rename to support `dirnamePrefix`.

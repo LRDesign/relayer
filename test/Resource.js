@@ -42,3 +42,64 @@ describe("Resource", function() {
     });
   });
 });
+
+describe("initialValues", function() {
+  it("should initialize to an empty array", function() {
+    expect(ResourceClass.prototype.initialValues).toEqual([]);
+  });
+
+  it("should chain from parent but be it's own set", function() {
+    ResourceClass.prototype.setInitialValue("$.data.path", "value")
+    expect(SubResourceClass.prototype.initialValues).toEqual([{path: "$.data.path", value: "value"}])
+    SubResourceClass.prototype.setInitialValue("$.data.otherPath", "otherValue");
+    expect(SubResourceClass.prototype.initialValues).toEqual([{path: "$.data.path", value: "value"},
+      {path: "$.data.otherPath", value: "otherValue"}])
+    expect(ResourceClass.prototype.initialValues).toEqual([{path: "$.data.path", value: "value"}])
+  });
+
+  it("should setup initial values for a new object", function() {
+    var subResource = new SubResourceClass();
+    expect(subResource._response).toEqual({data: { path: "value", otherPath: "otherValue"}, links: {}})
+  });
+});
+
+describe("relationships initialization", function() {
+  var relationshipDescription, initializationSpy, resource;
+
+  beforeEach(function() {
+    relationshipDescription = {
+      initializer: {
+        initialize() {
+          return "awesome"
+        }
+      }
+    }
+
+    ResourceClass.relationships["coolRelationship"] = relationshipDescription;
+    initializationSpy = spyOn(relationshipDescription.initializer, 'initialize').and.callThrough();
+  });
+
+  describe("when initializeOnCreate is true", function() {
+    beforeEach(function() {
+      relationshipDescription.initializeOnCreate = true;
+      resource = new ResourceClass();
+    });
+
+    it("should call the initializer and save the relationship", function() {
+      expect(initializationSpy).toHaveBeenCalled();
+      expect(resource.relationships).toEqual({coolRelationship: "awesome"});
+    });
+  });
+
+  describe("when initializeOnCreate is true", function() {
+    beforeEach(function() {
+      relationshipDescription.initializeOnCreate = false;
+      resource = new ResourceClass();
+    });
+
+    it("should call the initializer and save the relationship", function() {
+      expect(initializationSpy).not.toHaveBeenCalled();
+      expect(resource.relationships).toEqual({});
+    });
+  });
+});
