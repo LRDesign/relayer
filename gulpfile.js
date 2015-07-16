@@ -1,5 +1,4 @@
 var gulp = require('gulp');
-var traceur = require('gulp-traceur');
 var connect = require('gulp-connect');
 var rename_ = require('gulp-rename');
 var bump = require('gulp-bump');
