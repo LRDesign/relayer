@@ -76,51 +76,9 @@ function rename(obj) {
 }
 
 gulp.task('dist', function() {
-  gulp.src(PATH.SRC, {base: '.'})
-      // Rename before Traceur, so that Traceur has the knowledge of both input and output paths.
-      .pipe(rename({extname: '.js', dirnamePrefix: PATH.DIST}))
-      .pipe(gulp.dest('.'));
-});
-
-// TRANSPILE AT SCRIPT
-gulp.task('build/src', function() {
-  gulp.src(PATH.SRC, {base: '.'})
-      // Rename before Traceur, so that Traceur has the knowledge of both input and output paths.
-      .pipe(rename({extname: '.js', dirnamePrefix: PATH.BUILD}))
-      .pipe(traceur(TRACEUR_OPTIONS))
-      .pipe(gulp.dest('.'));
-});
-
-gulp.task('build/test', function() {
-  gulp.src(PATH.TEST, {base: '.'})
-      // Rename before Traceur, so that Traceur has the knowledge of both input and output paths.
-      .pipe(rename({extname: '.js', dirnamePrefix: PATH.BUILD}))
-      .pipe(traceur(TRACEUR_OPTIONS))
-      .pipe(gulp.dest('.'));
-});
-
-gulp.task('dist', function() {
   gulp.src(PATH.SRC, {base: './src'})
-      // Rename before Traceur, so that Traceur has the knowledge of both input and output paths.
       .pipe(rename({extname: '.js', dirnamePrefix: PATH.DIST}))
       .pipe(gulp.dest('.'));
-});
-
-gulp.task('build', ['build/src', 'build/test']);
-
-// WATCH FILES FOR CHANGES
-gulp.task('watch', function() {
-  gulp.watch(PATH.SRC, ['build']);
-});
-
-
-// WEB SERVER
-gulp.task('serve', function() {
-  connect.server({
-    root: [__dirname],
-    port: 8000,
-    livereload: false
-  });
 });
 
 // Basic usage:
@@ -147,4 +105,4 @@ gulp.task('bump:major', function(){
   .pipe(gulp.dest('./'));
 });
 
-gulp.task('default', ['serve', 'watch']);
+gulp.task('default', ['tdd']);
