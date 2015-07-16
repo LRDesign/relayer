@@ -188,19 +188,23 @@ All of the traversing of API's is done behind the scenes. Importantly, you don't
 
 ## Contributing
 
-1. Running tests
+1. Initial setup
+
+Fork the project, clone, run 'npm install'.
+
+2. Running tests
 
 While you're working on an issue in relayer, you'll want to have tests running. The proper syntax for this is "gulp tdd" -- this will start up a continuous server that watches for file changes and reruns your tests when they do
 
-2. Babel test doublecheck
+3. Babel test doublecheck
 
 Relayer's tests use Traceur to compile the source by default. However, before you push, you should run 'npm test' which will run the tests once each with both Traceur and Babel.js. That way, you know any changes you make won't break someone's installation of relayer, even if they use Babel.js
 
-3. Distribution
+4. Distribution
 
 To take the source files and compile them down to various distributions, run the command "npm run-script dist". This will take the files in /src and output them in assembled format to /dist. Note however, if you are submitted a pull request on Github, you do not need to recreate the distributions. This will be done before the next point release.
 
-4. Commit guidelines
+5. Commit guidelines
 
 If you are thinking of submitting a pull request, please follow these guidelines:
 a. Do not submit features that do not have tests
