@@ -1,5 +1,5 @@
 define('a1atscript/ToAnnotation',[], function() {
-  
+
   function defineAnnotation(target, AnnotationClass, callParams) {
     var oldAnnotation = Object.getOwnPropertyDescriptor(target, 'annotations');
     if (oldAnnotation) {
@@ -67,7 +67,7 @@ define('a1atscript/ToAnnotation',[], function() {
 });
 
 define('a1atscript/annotations',["./ToAnnotation"], function($__0) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   var ToAnnotation = $__0.ToAnnotation;
@@ -230,7 +230,7 @@ define('a1atscript/annotations',["./ToAnnotation"], function($__0) {
 });
 
 define('a1atscript/AnnotationFinder',[], function() {
-  
+
   var AnnotationFinder = function AnnotationFinder(AnnotatedClass) {
     this.AnnotatedClass = AnnotatedClass;
   };
@@ -265,7 +265,7 @@ define('a1atscript/AnnotationFinder',[], function() {
 });
 
 define('a1atscript/ng2Directives/Ng2Directive',[], function() {
-  
+
   var Ng2Directive = function Ng2Directive(descriptor) {
     this.selector = descriptor.selector;
     this.properties = descriptor.properties || descriptor.bind;
@@ -285,7 +285,7 @@ define('a1atscript/ng2Directives/Ng2Directive',[], function() {
 });
 
 define('a1atscript/ng2Directives/Component',["./Ng2Directive", "../ToAnnotation"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -340,7 +340,7 @@ define('a1atscript/ng2Directives/Component',["./Ng2Directive", "../ToAnnotation"
 });
 
 define('a1atscript/ng2Directives/SelectorMatcher',[], function() {
-  
+
   var SPECIAL_CHARS_REGEXP = /([\:\-\_]+(.))/g;
   var MOZ_HACK_REGEXP = /^moz([A-Z])/;
   var SelectorMatcher = function SelectorMatcher(selector) {
@@ -391,7 +391,7 @@ define('a1atscript/ng2Directives/SelectorMatcher',[], function() {
 });
 
 define('a1atscript/router/ComponentMapper',["../annotations", "../ng2Directives/Component", "../AnnotationFinder", "../ng2Directives/SelectorMatcher"], function($__0,$__2,$__4,$__6) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -569,7 +569,7 @@ define('a1atscript/router/ComponentMapper',["../annotations", "../ng2Directives/
 });
 
 define('a1atscript/router/RouteConfig',["../ToAnnotation"], function($__0) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   var ToAnnotation = $__0.ToAnnotation;
@@ -589,7 +589,7 @@ define('a1atscript/router/RouteConfig',["../ToAnnotation"], function($__0) {
 });
 
 define('a1atscript/router/RouteReader',["./RouteConfig", "../AnnotationFinder"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -642,7 +642,7 @@ define('a1atscript/router/RouteReader',["./RouteConfig", "../AnnotationFinder"],
 });
 
 define('a1atscript/router/RouteInitializer',[], function() {
-  
+
   var RouteInitializer = function RouteInitializer(componentMapper) {
     this.componentMapper = componentMapper;
   };
@@ -717,7 +717,7 @@ define('a1atscript/router/RouteInitializer',[], function() {
 });
 
 define('a1atscript/Router',["./router/ComponentMapper", "./router/RouteReader", "./router/RouteInitializer", "./router/RouteConfig"], function($__0,$__2,$__4,$__6) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -750,7 +750,7 @@ define('a1atscript/Router',["./router/ComponentMapper", "./router/RouteReader", 
 });
 
 define('a1atscript/injectorTypes',["./annotations", "./Router"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -961,7 +961,7 @@ define('a1atscript/injectorTypes',["./annotations", "./Router"], function($__0,$
 });
 
 define('a1atscript/Injector',["./annotations", "./AnnotationFinder", "./injectorTypes"], function($__0,$__2,$__4) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -1158,7 +1158,7 @@ define('a1atscript/Injector',["./annotations", "./AnnotationFinder", "./injector
 });
 
 define('a1atscript/DirectiveObject',["./injectorTypes", "./Injector", "./ToAnnotation"], function($__0,$__2,$__4) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -1236,7 +1236,7 @@ define('a1atscript/DirectiveObject',["./injectorTypes", "./Injector", "./ToAnnot
 });
 
 define('a1atscript/ng2Directives/Ng2DirectiveDefinitionObject',["./SelectorMatcher"], function($__0) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   var SelectorMatcher = $__0.default;
@@ -1318,7 +1318,7 @@ define('a1atscript/ng2Directives/Ng2DirectiveDefinitionObject',["./SelectorMatch
 });
 
 define('a1atscript/ng2Directives/BindBuilder',[], function() {
-  
+
   var BindBuilder = function BindBuilder(bindObj, component) {
     this._bindObj = bindObj;
     this._component = component;
@@ -1341,7 +1341,7 @@ define('a1atscript/ng2Directives/BindBuilder',[], function() {
 });
 
 define('a1atscript/ng2Directives/PropertiesBuilder',["./BindBuilder"], function($__0) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   var BindBuilder = $__0.default;
@@ -1398,7 +1398,7 @@ define('a1atscript/ng2Directives/PropertiesBuilder',["./BindBuilder"], function(
 });
 
 define('a1atscript/ng2Directives/EventsBuilder',["./BindBuilder"], function($__0) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   var BindBuilder = $__0.default;
@@ -1420,7 +1420,7 @@ define('a1atscript/ng2Directives/EventsBuilder',["./BindBuilder"], function($__0
 });
 
 define('a1atscript/ng2Directives/ComponentInjector',["../Injector", "./Component", "../injectorTypes", "./Ng2DirectiveDefinitionObject", "./PropertiesBuilder", "./EventsBuilder", "../Router"], function($__0,$__2,$__4,$__6,$__8,$__10,$__12) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -1497,7 +1497,7 @@ define('a1atscript/ng2Directives/ComponentInjector',["../Injector", "./Component
 });
 
 define('a1atscript/bootstrap',["./Injector", "./Router"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -1519,7 +1519,7 @@ define('a1atscript/bootstrap',["./Injector", "./Router"], function($__0,$__2) {
 });
 
 define('a1atscript',["./a1atscript/Injector", "./a1atscript/annotations", "./a1atscript/DirectiveObject", "./a1atscript/ng2Directives/ComponentInjector", "./a1atscript/ng2Directives/Component", "./a1atscript/ToAnnotation", "./a1atscript/bootstrap", "./a1atscript/Router"], function($__0,$__1,$__2,$__3,$__4,$__5,$__6,$__7) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__1 || !$__1.__esModule)
@@ -1623,4 +1623,3 @@ define('a1atscript',["./a1atscript/Injector", "./a1atscript/annotations", "./a1a
     __esModule: true
   };
 });
-
