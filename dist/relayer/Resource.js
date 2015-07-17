@@ -103,6 +103,11 @@ export default class Resource extends DataWrapper {
   }
 
   setInitialValue(path, value) {
+
+    this.initialValues.push({path, value});
+  }
+
+  get initialValues() {
     if (!this.hasOwnProperty("_initialValues")) {
       if (this._initialValues) {
         this._initialValues = this._initialValues.slice(0);
@@ -110,19 +115,21 @@ export default class Resource extends DataWrapper {
         this._initialValues = [];
       }
     }
-    this._initialValues.push({path, value});
+    return this._initialValues;
   }
 
   emptyData(){
 
     this._response = { data: {}, links: {} }
-    this._initialValues.forEach((initialValue) => {
+    this.initialValues.forEach((initialValue) => {
       this.pathBuild(initialValue.path, initialValue.value);
     });
     Object.keys(this.constructor.relationships).forEach((relationshipName) => {
       var relationshipDescription = this.constructor.relationships[relationshipName]
-      var relationship = relationshipDescription.initializer.initialize();
-      this.relationships[relationshipName] = relationship;
+      if (relationshipDescription.initializeOnCreate) {
+        var relationship = relationshipDescription.initializer.initialize();
+        this.relationships[relationshipName] = relationship;
+      }
     });
   }
 

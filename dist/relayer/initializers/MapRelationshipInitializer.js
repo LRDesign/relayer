@@ -13,12 +13,14 @@ export default class MapRelationshipInitializer extends RelationshipInitializer 
   initialize() {
     var relationship = {};
     var response = {};
-    Object.keys(this.initialValues).forEach((key) => {
-      var singleInitializer = this.singleRelationshipInitializerFactory(this.ResourceClass, this.initialValues[key]);
-      var singleRelationship = singleInitializer.initialize();
-      relationship[key] = singleRelationship;
-      response[key] = singleRelationship.response;
-    });
+    if (this.initialValues) {
+      Object.keys(this.initialValues).forEach((key) => {
+        var singleInitializer = this.singleRelationshipInitializerFactory(this.ResourceClass, this.initialValues[key]);
+        var singleRelationship = singleInitializer.initialize();
+        relationship[key] = singleRelationship;
+        response[key] = singleRelationship.response;
+      });
+    }
     return relationship;
   }
 }

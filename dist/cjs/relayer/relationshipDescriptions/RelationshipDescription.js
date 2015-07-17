@@ -20,6 +20,11 @@ var RelationshipDescription = (function () {
     this.ResourceClass = ResourceClass;
     this.initialValues = initialValues;
     this.async = true;
+    if (initialValues == undefined) {
+      this.initializeOnCreate = false;
+    } else {
+      this.initializeOnCreate = true;
+    }
   }
 
   _createClass(RelationshipDescription, [{
