@@ -96,14 +96,14 @@ describe("initialization", function() {
 });
 
 describe("Loading relationships test", function() {
-  var resources, book, act, chapter, chapters, section, paragraph, character, $httpBackend;
+  var resources, book, act, chapter, chapters, section, paragraph, character, $httpBackend, $rootScope;
 
   beforeEach(function () {
     var injector = new Injector();
     injector.instantiate(AppModule);
     angular.mock.module('AppModule');
 
-    var mockHttp = function(params) {
+    var mockHttp = function(Promise, params) {
       if (params.url == "http://www.example.com/resources") {
         return Promise.resolve({
           status: 200,
@@ -299,10 +299,15 @@ describe("Loading relationships test", function() {
       }
     }
     angular.mock.module(function($provide) {
-      $provide.value("$http", mockHttp);
+      $provide.factory("$http", function(RelayerPromise) {
+        return function(params) {
+          return mockHttp(RelayerPromise, params);
+        };
+      });
     });
-    inject(function($injector, _resources_) {
+    inject(function($injector, _resources_, _$rootScope_) {
       resources = _resources_;
+      $rootScope = _$rootScope_;
     });
   });
 
@@ -315,6 +320,7 @@ describe("Loading relationships test", function() {
         book = _book_;
         done();
       });
+      $rootScope.$apply();
     });
 
     it("should resolve the book", function() {

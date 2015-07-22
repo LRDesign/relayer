@@ -135,7 +135,7 @@ var AppModule = new Module("AppModule", [RL, AppConfig.prototype]);
 
 describe("Page test", function() {
 
-  var mockHttp, resources;
+  var mockHttp, resources, $rootScope;
 
   beforeEach(function() {
     function pageData() {
@@ -186,7 +186,7 @@ describe("Page test", function() {
       }
     }
 
-    mockHttp = function(params) {
+    mockHttp = function(Promise, params) {
       if (params.method == "GET" && params.url == "http://www.example.com/resources") {
         return Promise.resolve({
           status: 200,
@@ -247,10 +247,15 @@ describe("Page test", function() {
     injector.instantiate(AppModule);
     angular.mock.module('AppModule');
     angular.mock.module(function($provide) {
-      $provide.value("$http", mockHttp);
+      $provide.factory("$http", function(RelayerPromise) {
+        return function(params) {
+          return mockHttp(RelayerPromise, params);
+        };
+      });
     });
-    inject(function(_resources_) {
+    inject(function(_resources_, _$rootScope_) {
       resources = _resources_;
+      $rootScope = _$rootScope_;
     });
   })
 
@@ -259,6 +264,7 @@ describe("Page test", function() {
 
     beforeEach(function() {
       page = resources.pages().new();
+
     });
 
     it('should have defined values on all getters', function() {
@@ -327,6 +333,7 @@ describe("Page test", function() {
         page = createdPage;
         done();
       });
+      $rootScope.$apply();
     });
 
     it('should have a title', function() {
