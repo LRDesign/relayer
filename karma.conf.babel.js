@@ -6,6 +6,8 @@ var babelOptions = require('./config').babel;
 module.exports = function(config) {
 
   config.set({
+    browserNoActivityTimeout: 20000,
+
     frameworks: ['jasmine', 'browserify'],
 
     files: [

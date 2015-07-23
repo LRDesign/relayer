@@ -97,8 +97,8 @@ describe("LoadedDataEndpoint", function() {
     resourceTransformerRequestSpy = spyOn(dataResourceTransformer, "transformRequest").and.callThrough();
     resourceTransformerResponseSpy = spyOn(dataResourceTransformer, "transformResponse").and.callThrough();
 
-    resolvedEndpoint = new ResolvedEndpoint(transport, templatedUrl, initialResourceTransformer, createResourceTransformer)
-    loadedDataEndpoint = new LoadedDataEndpoint(resolvedEndpoint, { wrapped: mockData }, dataResourceTransformer)
+    resolvedEndpoint = new ResolvedEndpoint(Promise, transport, templatedUrl, initialResourceTransformer, createResourceTransformer)
+    loadedDataEndpoint = new LoadedDataEndpoint(Promise, resolvedEndpoint, { wrapped: mockData }, dataResourceTransformer)
 
   });
 
