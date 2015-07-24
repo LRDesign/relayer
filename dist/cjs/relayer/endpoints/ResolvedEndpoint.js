@@ -21,9 +21,9 @@ var _EndpointJs2 = _interopRequireDefault(_EndpointJs);
 var _SimpleFactoryInjectorJs = require("../SimpleFactoryInjector.js");
 
 var ResolvedEndpoint = (function (_Endpoint) {
-  function ResolvedEndpoint(transport, templatedUrl) {
-    var resourceTransformers = arguments[2] === undefined ? [] : arguments[2];
-    var createResourceTransformers = arguments[3] === undefined ? [] : arguments[3];
+  function ResolvedEndpoint(Promise, transport, templatedUrl) {
+    var resourceTransformers = arguments[3] === undefined ? [] : arguments[3];
+    var createResourceTransformers = arguments[4] === undefined ? [] : arguments[4];
 
     _classCallCheck(this, _ResolvedEndpoint);
 
@@ -93,7 +93,7 @@ var ResolvedEndpoint = (function (_Endpoint) {
     }
   }]);
 
-  ResolvedEndpoint = (0, _SimpleFactoryInjectorJs.SimpleFactory)("ResolvedEndpointFactory")(ResolvedEndpoint) || ResolvedEndpoint;
+  ResolvedEndpoint = (0, _SimpleFactoryInjectorJs.SimpleFactory)("ResolvedEndpointFactory", ["RelayerPromise"])(ResolvedEndpoint) || ResolvedEndpoint;
   return ResolvedEndpoint;
 })(_EndpointJs2["default"]);
 

@@ -21,14 +21,15 @@ var _ResolvedEndpointJs2 = _interopRequireDefault(_ResolvedEndpointJs);
 var _SimpleFactoryInjectorJs = require("../SimpleFactoryInjector.js");
 
 var LoadedDataEndpoint = (function (_ResolvedEndpoint) {
-  function LoadedDataEndpoint(resolvedEndpoint, resource) {
-    var resourceTransformers = arguments[2] === undefined ? [] : arguments[2];
-    var createResourceTransformers = arguments[3] === undefined ? [] : arguments[3];
+  function LoadedDataEndpoint(Promise, resolvedEndpoint, resource) {
+    var resourceTransformers = arguments[3] === undefined ? [] : arguments[3];
+    var createResourceTransformers = arguments[4] === undefined ? [] : arguments[4];
 
     _classCallCheck(this, _LoadedDataEndpoint);
 
-    _get(Object.getPrototypeOf(_LoadedDataEndpoint.prototype), "constructor", this).call(this, resolvedEndpoint.transport, resolvedEndpoint.templatedUrl, resolvedEndpoint.resourceTransformers.concat(resourceTransformers), resolvedEndpoint.createResourceTransformers.concat(createResourceTransformers));
+    _get(Object.getPrototypeOf(_LoadedDataEndpoint.prototype), "constructor", this).call(this, Promise, resolvedEndpoint.transport, resolvedEndpoint.templatedUrl, resolvedEndpoint.resourceTransformers.concat(resourceTransformers), resolvedEndpoint.createResourceTransformers.concat(createResourceTransformers));
     this.resource = resource;
+    this.Promise = Promise;
     this.data = resolvedEndpoint._transformRequest(resolvedEndpoint.resourceTransformers, resource);
   }
 
@@ -39,7 +40,7 @@ var LoadedDataEndpoint = (function (_ResolvedEndpoint) {
   _createClass(_LoadedDataEndpoint, [{
     key: "_load",
     value: function _load() {
-      return this._transformResponse(this.resourceTransformers, Promise.resolve({
+      return this._transformResponse(this.resourceTransformers, this.Promise.resolve({
         data: this.data, etag: this.templatedUrl.etag }));
     }
   }, {
@@ -56,7 +57,7 @@ var LoadedDataEndpoint = (function (_ResolvedEndpoint) {
     }
   }]);
 
-  LoadedDataEndpoint = (0, _SimpleFactoryInjectorJs.SimpleFactory)("LoadedDataEndpointFactory")(LoadedDataEndpoint) || LoadedDataEndpoint;
+  LoadedDataEndpoint = (0, _SimpleFactoryInjectorJs.SimpleFactory)("LoadedDataEndpointFactory", ["RelayerPromise"])(LoadedDataEndpoint) || LoadedDataEndpoint;
   return LoadedDataEndpoint;
 })(_ResolvedEndpointJs2["default"]);
 

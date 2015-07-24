@@ -1,20 +1,21 @@
 import ResolvedEndpoint from "./ResolvedEndpoint.js";
 import {SimpleFactory} from "../SimpleFactoryInjector.js";
 
-@SimpleFactory('LoadedDataEndpointFactory')
+@SimpleFactory('LoadedDataEndpointFactory', ['RelayerPromise'])
 export default class LoadedDataEndpoint extends ResolvedEndpoint {
 
-  constructor(resolvedEndpoint, resource, resourceTransformers = [], createResourceTransformers = []) {
-    super(resolvedEndpoint.transport,
+  constructor(Promise, resolvedEndpoint, resource, resourceTransformers = [], createResourceTransformers = []) {
+    super(Promise, resolvedEndpoint.transport,
       resolvedEndpoint.templatedUrl,
       resolvedEndpoint.resourceTransformers.concat(resourceTransformers),
       resolvedEndpoint.createResourceTransformers.concat(createResourceTransformers));
     this.resource = resource;
+    this.Promise = Promise;
     this.data = resolvedEndpoint._transformRequest(resolvedEndpoint.resourceTransformers, resource);
   }
 
   _load() {
-    return this._transformResponse(this.resourceTransformers, Promise.resolve({
+    return this._transformResponse(this.resourceTransformers, this.Promise.resolve({
       data: this.data, etag: this.templatedUrl.etag}));
   }
 

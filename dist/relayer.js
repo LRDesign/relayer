@@ -13,6 +13,7 @@ import ResourceBuilder from "./relayer/ResourceBuilder.js";
 import Transport from "./relayer/Transport.js";
 import UrlHelper from "./relayer/UrlHelper.js";
 import * as TemplatedUrls from "./relayer/TemplatedUrl.js";
+import RelayerPromiseFactory from "./relayer/Promise.js";
 import {AsModule, Provider} from "a1atscript";
 import Inflector from "xing-inflector";
 
@@ -34,7 +35,8 @@ import Inflector from "xing-inflector";
   InitializedResourceClasses,
   ResourceBuilder,
   PrimaryResourceBuilder,
-  Inflector
+  Inflector,
+  RelayerPromiseFactory
 ])
 @Provider('relayer', ['$provide'])
 export default class ResourceLayer {

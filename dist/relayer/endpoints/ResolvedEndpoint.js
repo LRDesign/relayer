@@ -1,9 +1,9 @@
 import Endpoint from "./Endpoint.js";
 import {SimpleFactory} from "../SimpleFactoryInjector.js";
 
-@SimpleFactory('ResolvedEndpointFactory')
+@SimpleFactory('ResolvedEndpointFactory', ["RelayerPromise"])
 export default class ResolvedEndpoint extends Endpoint {
-  constructor(transport, templatedUrl, resourceTransformers = [], createResourceTransformers = []) {
+  constructor(Promise, transport, templatedUrl, resourceTransformers = [], createResourceTransformers = []) {
     super();
     this.transport = transport;
     this.templatedUrl = templatedUrl;

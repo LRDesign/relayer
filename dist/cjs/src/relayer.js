@@ -70,6 +70,10 @@ var _relayerTemplatedUrlJs = require("./relayer/TemplatedUrl.js");
 
 var TemplatedUrls = _interopRequireWildcard(_relayerTemplatedUrlJs);
 
+var _relayerPromiseJs = require("./relayer/Promise.js");
+
+var _relayerPromiseJs2 = _interopRequireDefault(_relayerPromiseJs);
+
 var _a1atscript = require("a1atscript");
 
 var _xingInflector = require("xing-inflector");
@@ -126,7 +130,7 @@ var ResourceLayer = (function () {
   }]);
 
   ResourceLayer = (0, _a1atscript.Provider)("relayer", ["$provide"])(ResourceLayer) || ResourceLayer;
-  ResourceLayer = (0, _a1atscript.AsModule)("relayer", [Endpoints, Serializers, Mappers, Transformers, Initializers, Decorators, RelationshipDescriptions, _relayerListResourceJs2["default"], _relayerPrimaryResourceBuilderJs2["default"], _relayerResourceBuilderJs2["default"], _relayerTransportJs2["default"], _relayerUrlHelperJs2["default"], TemplatedUrls, _relayerResourceDescriptionJs.ResourceDescription, _relayerResourceDescriptionJs.InitializedResourceClasses, _relayerResourceBuilderJs2["default"], _relayerPrimaryResourceBuilderJs2["default"], _xingInflector2["default"]])(ResourceLayer) || ResourceLayer;
+  ResourceLayer = (0, _a1atscript.AsModule)("relayer", [Endpoints, Serializers, Mappers, Transformers, Initializers, Decorators, RelationshipDescriptions, _relayerListResourceJs2["default"], _relayerPrimaryResourceBuilderJs2["default"], _relayerResourceBuilderJs2["default"], _relayerTransportJs2["default"], _relayerUrlHelperJs2["default"], TemplatedUrls, _relayerResourceDescriptionJs.ResourceDescription, _relayerResourceDescriptionJs.InitializedResourceClasses, _relayerResourceBuilderJs2["default"], _relayerPrimaryResourceBuilderJs2["default"], _xingInflector2["default"], _relayerPromiseJs2["default"]])(ResourceLayer) || ResourceLayer;
   return ResourceLayer;
 })();
 
