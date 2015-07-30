@@ -4578,6 +4578,9 @@ define('relayer/RelationshipUtilities',["a1atscript", "./TemplatedUrl"], functio
           newRelationship.addDataPathLink(resource, linksPath, false);
         }
         resource.relationships[name] = newRelationship;
+        if (!resource.relationships[name]) {
+          delete resource.relationships[name];
+        }
       };
     }}, {});
   var $__default = RelationshipUtilities;
