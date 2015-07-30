@@ -22,6 +22,9 @@ export default class RelationshipUtilities {
         newRelationship.addDataPathLink(resource, linksPath, false);
       }
       resource.relationships[name] = newRelationship;
+      if (!resource.relationships[name]) {
+        delete resource.relationships[name];
+      }
     }
   }
 }
