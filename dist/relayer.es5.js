@@ -2654,17 +2654,27 @@ define('relayer/TemplatedUrl',["./SimpleFactoryInjector"], function($__0) {
       this._uriParams = uriParams;
     },
     addDataPathLink: function(resource, path) {
-      var newUrl = resource.pathGet(path);
-      if (newUrl) {
-        this._setUrl(newUrl);
-        this._paths.forEach((function(path) {
-          path.resource.pathSet(path.path, newUrl);
-        }));
-        this._paths.push({
-          resource: resource,
-          path: path
-        });
+      var overwrite = arguments[2] !== (void 0) ? arguments[2] : true;
+      if (overwrite) {
+        var newUrl = resource.pathGet(path);
+        if (newUrl) {
+          this._setUrl(newUrl);
+          this._paths.forEach((function(path) {
+            path.resource.pathSet(path.path, newUrl);
+          }));
+        }
+      } else {
+        resource.pathSet(path, this.url);
       }
+      this._paths.push({
+        resource: resource,
+        path: path
+      });
+    },
+    removeDataPathLink: function(resource, path) {
+      this._paths = this._paths.filter((function(pathLink) {
+        return (pathLink.resource != resource) || (pathLink.path != path);
+      }));
     }
   }, {});
   Object.defineProperty(TemplatedUrl, "annotations", {get: function() {
@@ -3795,9 +3805,10 @@ define('relayer/decorators/RelatedResourceDecorator',["./ResourceDecorator", "..
   var ResourceDecorator = $__0.default;
   var TemplatedUrl = $__2.TemplatedUrl;
   var SimpleFactory = $__4.SimpleFactory;
-  var RelatedResourceDecorator = function RelatedResourceDecorator(promiseEndpointFactory, name, relationship) {
+  var RelatedResourceDecorator = function RelatedResourceDecorator(promiseEndpointFactory, relationshipUtilities, name, relationship) {
     $traceurRuntime.superConstructor($RelatedResourceDecorator).call(this, name);
     this.promiseEndpointFactory = promiseEndpointFactory;
+    this.relationshipUtilities = relationshipUtilities;
     this.relationship = relationship;
   };
   var $RelatedResourceDecorator = RelatedResourceDecorator;
@@ -3807,6 +3818,7 @@ define('relayer/decorators/RelatedResourceDecorator',["./ResourceDecorator", "..
         var name = this.name;
         var relationship = this.relationship;
         var promiseEndpointFactory = this.promiseEndpointFactory;
+        var relationshipUtilities = this.relationshipUtilities;
         this._resourceFn = function(uriParams) {
           var recursiveCall = arguments[1] !== (void 0) ? arguments[1] : false;
           if (relationship.async && this.isPersisted) {
@@ -3825,6 +3837,7 @@ define('relayer/decorators/RelatedResourceDecorator',["./ResourceDecorator", "..
               endpoint = relationship.embeddedEndpoint(this, uriParams);
             }
             relationship.ResourceClass.resourceDescription.applyToEndpoint(endpoint);
+            relationshipUtilities.addMethods(endpoint, this, name);
             return endpoint;
           } else {
             if (this.relationships[name] instanceof TemplatedUrl) {
@@ -3899,7 +3912,7 @@ define('relayer/decorators/RelatedResourceDecorator',["./ResourceDecorator", "..
   }, {}, ResourceDecorator);
   var $__default = RelatedResourceDecorator;
   Object.defineProperty(RelatedResourceDecorator, "annotations", {get: function() {
-      return [new SimpleFactory("RelatedResourceDecoratorFactory", ['PromiseEndpointFactory'])];
+      return [new SimpleFactory("RelatedResourceDecoratorFactory", ['PromiseEndpointFactory', 'RelationshipUtilities'])];
     }});
   return {
     get default() {
@@ -4535,6 +4548,51 @@ define('relayer/Promise',["a1atscript"], function($__0) {
   };
 });
 
+define('relayer/RelationshipUtilities',["a1atscript", "./TemplatedUrl"], function($__0,$__2) {
+  
+  if (!$__0 || !$__0.__esModule)
+    $__0 = {default: $__0};
+  if (!$__2 || !$__2.__esModule)
+    $__2 = {default: $__2};
+  var Service = $__0.Service;
+  var TemplatedUrl = $__2.TemplatedUrl;
+  var RelationshipUtilities = function RelationshipUtilities() {
+    ;
+  };
+  ($traceurRuntime.createClass)(RelationshipUtilities, {addMethods: function(target, resource, name) {
+      target.get = function() {
+        return resource.relationships[name];
+      };
+      target.present = function() {
+        return resource.relationships[name] ? true : false;
+      };
+      target.set = function(newRelationship) {
+        if (resource.relationships[name] instanceof TemplatedUrl) {
+          var linksPath = resource.constructor.relationships[name].linksPath;
+          resource.relationships[name].removeDataPathLink(resource, linksPath);
+          resource.relationships[name] = newRelationship;
+          if (newRelationship) {
+            newRelationship.addDataPathLink(resource, linksPath, false);
+          } else {
+            resource.pathSet(linksPath, "");
+          }
+        } else {
+          resource.relationships[name] = newRelationship;
+        }
+      };
+    }}, {});
+  var $__default = RelationshipUtilities;
+  Object.defineProperty(RelationshipUtilities, "annotations", {get: function() {
+      return [new Service('RelationshipUtilities')];
+    }});
+  return {
+    get default() {
+      return $__default;
+    },
+    __esModule: true
+  };
+});
+
 define('xing-inflector',["a1atscript"], function($__0) {
   
   if (!$__0 || !$__0.__esModule)
@@ -4594,7 +4652,7 @@ define('xing-inflector',["a1atscript"], function($__0) {
   };
 });
 
-define('relayer',["./relayer/ResourceDescription", "./relayer/Resource", "./relayer/endpoints", "./relayer/serializers", "./relayer/mappers", "./relayer/transformers", "./relayer/initializers", "./relayer/decorators", "./relayer/relationshipDescriptions", "./relayer/ListResource", "./relayer/PrimaryResourceBuilder", "./relayer/ResourceBuilder", "./relayer/Transport", "./relayer/UrlHelper", "./relayer/TemplatedUrl", "./relayer/Promise", "a1atscript", "xing-inflector"], function($__0,$__2,$__4,$__5,$__6,$__7,$__8,$__9,$__10,$__11,$__13,$__15,$__17,$__19,$__21,$__22,$__24,$__26) {
+define('relayer',["./relayer/ResourceDescription", "./relayer/Resource", "./relayer/endpoints", "./relayer/serializers", "./relayer/mappers", "./relayer/transformers", "./relayer/initializers", "./relayer/decorators", "./relayer/relationshipDescriptions", "./relayer/ListResource", "./relayer/PrimaryResourceBuilder", "./relayer/ResourceBuilder", "./relayer/Transport", "./relayer/UrlHelper", "./relayer/TemplatedUrl", "./relayer/Promise", "./relayer/RelationshipUtilities", "a1atscript", "xing-inflector"], function($__0,$__2,$__4,$__5,$__6,$__7,$__8,$__9,$__10,$__11,$__13,$__15,$__17,$__19,$__21,$__22,$__24,$__26,$__28) {
   
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
@@ -4632,6 +4690,8 @@ define('relayer',["./relayer/ResourceDescription", "./relayer/Resource", "./rela
     $__24 = {default: $__24};
   if (!$__26 || !$__26.__esModule)
     $__26 = {default: $__26};
+  if (!$__28 || !$__28.__esModule)
+    $__28 = {default: $__28};
   var $__1 = $__0,
       describeResource = $__1.describeResource,
       InitializedResourceClasses = $__1.InitializedResourceClasses,
@@ -4651,17 +4711,18 @@ define('relayer',["./relayer/ResourceDescription", "./relayer/Resource", "./rela
   var UrlHelper = $__19.default;
   var TemplatedUrls = $__21;
   var RelayerPromiseFactory = $__22.default;
-  var $__25 = $__24,
-      AsModule = $__25.AsModule,
-      Provider = $__25.Provider;
-  var Inflector = $__26.default;
+  var RelationshipUtilities = $__24.default;
+  var $__27 = $__26,
+      AsModule = $__27.AsModule,
+      Provider = $__27.Provider;
+  var Inflector = $__28.default;
   var ResourceLayer = function ResourceLayer($provide) {
-    var $__28 = this;
+    var $__30 = this;
     this.apis = {};
     this.$provide = $provide;
     this.$get = ['$injector', (function($injector) {
       var builtApis = {};
-      Object.keys($__28.apis).forEach((function(apiName) {
+      Object.keys($__30.apis).forEach((function(apiName) {
         buildApis[apiName] = $injector.get(apiName);
       }));
       return buildApis;
@@ -4692,7 +4753,7 @@ define('relayer',["./relayer/ResourceDescription", "./relayer/Resource", "./rela
   });
   var $__default = ResourceLayer;
   Object.defineProperty(ResourceLayer, "annotations", {get: function() {
-      return [new AsModule('relayer', [Endpoints, Serializers, Mappers, Transformers, Initializers, Decorators, RelationshipDescriptions, ListResource, PrimaryResourceBuilder, ResourceBuilder, Transport, UrlHelper, TemplatedUrls, ResourceDescription, InitializedResourceClasses, ResourceBuilder, PrimaryResourceBuilder, Inflector, RelayerPromiseFactory]), new Provider('relayer', ['$provide'])];
+      return [new AsModule('relayer', [Endpoints, Serializers, Mappers, Transformers, Initializers, Decorators, RelationshipDescriptions, ListResource, PrimaryResourceBuilder, ResourceBuilder, Transport, UrlHelper, TemplatedUrls, ResourceDescription, InitializedResourceClasses, ResourceBuilder, PrimaryResourceBuilder, Inflector, RelayerPromiseFactory, RelationshipUtilities]), new Provider('relayer', ['$provide'])];
     }});
   return {
     get default() {

@@ -2,13 +2,14 @@ import ResourceDecorator from "./ResourceDecorator.js"
 import {TemplatedUrl} from "../TemplatedUrl.js"
 import {SimpleFactory} from "../SimpleFactoryInjector.js"
 
-@SimpleFactory("RelatedResourceDecoratorFactory", ['PromiseEndpointFactory'])
+@SimpleFactory("RelatedResourceDecoratorFactory", ['PromiseEndpointFactory', 'RelationshipUtilities'])
 export default class RelatedResourceDecorator extends ResourceDecorator {
 
-  constructor(promiseEndpointFactory, name, relationship){
+  constructor(promiseEndpointFactory, relationshipUtilities, name, relationship){
     super(name);
 
     this.promiseEndpointFactory = promiseEndpointFactory;
+    this.relationshipUtilities = relationshipUtilities;
     this.relationship = relationship;
   }
 
@@ -17,6 +18,7 @@ export default class RelatedResourceDecorator extends ResourceDecorator {
       var name = this.name;
       var relationship = this.relationship;
       var promiseEndpointFactory = this.promiseEndpointFactory;
+      var relationshipUtilities = this.relationshipUtilities;
       this._resourceFn = function(uriParams, recursiveCall = false) {
         if (relationship.async && this.isPersisted) {
           var endpoint;
@@ -34,6 +36,7 @@ export default class RelatedResourceDecorator extends ResourceDecorator {
             endpoint = relationship.embeddedEndpoint(this, uriParams);
           }
           relationship.ResourceClass.resourceDescription.applyToEndpoint(endpoint);
+          relationshipUtilities.addMethods(endpoint, this, name);
           return endpoint;
         } else {
           if (this.relationships[name] instanceof TemplatedUrl) {

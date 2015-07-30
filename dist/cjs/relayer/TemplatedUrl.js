@@ -4,7 +4,7 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; desc = parent = getter = undefined; _again = false; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+var _get = function get(_x3, _x4, _x5) { var _again = true; _function: while (_again) { var object = _x3, property = _x4, receiver = _x5; desc = parent = getter = undefined; _again = false; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x3 = parent; _x4 = property; _x5 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
@@ -51,17 +51,30 @@ var TemplatedUrl = (function () {
   }, {
     key: 'addDataPathLink',
     value: function addDataPathLink(resource, path) {
-      var newUrl = resource.pathGet(path);
-      if (newUrl) {
-        this._setUrl(newUrl);
-        this._paths.forEach(function (path) {
-          path.resource.pathSet(path.path, newUrl);
-        });
-        this._paths.push({
-          resource: resource,
-          path: path
-        });
+      var overwrite = arguments[2] === undefined ? true : arguments[2];
+
+      if (overwrite) {
+        var newUrl = resource.pathGet(path);
+        if (newUrl) {
+          this._setUrl(newUrl);
+          this._paths.forEach(function (path) {
+            path.resource.pathSet(path.path, newUrl);
+          });
+        }
+      } else {
+        resource.pathSet(path, this.url);
       }
+      this._paths.push({
+        resource: resource,
+        path: path
+      });
+    }
+  }, {
+    key: 'removeDataPathLink',
+    value: function removeDataPathLink(resource, path) {
+      this._paths = this._paths.filter(function (pathLink) {
+        return pathLink.resource != resource || pathLink.path != path;
+      });
     }
   }]);
 

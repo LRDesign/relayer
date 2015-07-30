@@ -26,18 +26,27 @@ export class TemplatedUrl {
     this._uriParams = uriParams;
   }
 
-  addDataPathLink(resource, path) {
-    var newUrl = resource.pathGet(path);
-    if (newUrl) {
-      this._setUrl(newUrl);
-      this._paths.forEach((path) => {
-        path.resource.pathSet(path.path, newUrl);
-      });
-      this._paths.push({
-        resource: resource,
-        path: path
-      });
+  addDataPathLink(resource, path, overwrite = true) {
+
+    if (overwrite) {
+      var newUrl = resource.pathGet(path);
+      if (newUrl) {
+        this._setUrl(newUrl);
+        this._paths.forEach((path) => {
+          path.resource.pathSet(path.path, newUrl);
+        });
+      }
+    } else {
+      resource.pathSet(path, this.url);
     }
+    this._paths.push({
+      resource: resource,
+      path: path
+    });
+  }
+
+  removeDataPathLink(resource, path) {
+    this._paths = this._paths.filter((pathLink) => (pathLink.resource != resource) || (pathLink.path != path));
   }
 }
 
