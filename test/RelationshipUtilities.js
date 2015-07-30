@@ -82,7 +82,7 @@ describe("RelationshipUtilities", function() {
         target.set(undefined);
         initialTemplatedUrl.addDataPathLink(otherResource, "$.links.cheese");
         expect(initialTemplatedUrl.url).toEqual("/cheese/5")
-        expect(resource.relationships[name]).toEqual(undefined);
+        expect(Object.keys(resource.relationships)).not.toContain(name);
         expect(resource.pathGet('$.links.cheese')).toEqual("");
       });
 
