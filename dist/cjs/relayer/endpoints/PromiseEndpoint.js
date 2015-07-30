@@ -19,11 +19,11 @@ var _EndpointJs2 = _interopRequireDefault(_EndpointJs);
 var _SimpleFactoryInjectorJs = require("../SimpleFactoryInjector.js");
 
 var PromiseEndpoint = (function (_Endpoint) {
-  function PromiseEndpoint(promise) {
+  function PromiseEndpoint(promiseFunction) {
     _classCallCheck(this, _PromiseEndpoint);
 
     _get(Object.getPrototypeOf(_PromiseEndpoint.prototype), "constructor", this).call(this);
-    this.endpointPromise = promise;
+    this.endpointPromise = promiseFunction;
   }
 
   _inherits(PromiseEndpoint, _Endpoint);

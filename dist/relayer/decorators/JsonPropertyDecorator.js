@@ -67,11 +67,13 @@ export default class JsonPropertyDecorator extends ResourceDecorator {
       this._endpointFn = function(uriParams = {}){
         // 'this' in here = Endpoint
 
-        var newPromise = this.load().then((resource) => {
-          return loadedDataEndpointFactory(resource.self(),
-            resource,
-            [embeddedPropertyTransformerFactory(path)]);
-        });
+        var newPromise = () => {
+          return this.load().then((resource) => {
+            return loadedDataEndpointFactory(resource.self(),
+              resource,
+              [embeddedPropertyTransformerFactory(path)]);
+          });
+        }
 
         var newEndpoint = promiseEndpointFactory(newPromise);
 

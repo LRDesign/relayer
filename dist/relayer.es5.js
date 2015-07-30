@@ -2391,7 +2391,7 @@ define('relayer/endpoints/Endpoint',[], function() {
   var Endpoint = function Endpoint() {};
   ($traceurRuntime.createClass)(Endpoint, {
     create: function(resource, res, rej) {
-      return this.endpointPromise.then((function(endpoint) {
+      return this.endpointPromise().then((function(endpoint) {
         if (endpoint._create) {
           return endpoint._create(resource);
         } else {
@@ -2400,7 +2400,7 @@ define('relayer/endpoints/Endpoint',[], function() {
       })).then(res, rej);
     },
     update: function(resource, res, rej) {
-      return this.endpointPromise.then((function(endpoint) {
+      return this.endpointPromise().then((function(endpoint) {
         if (endpoint._update) {
           return endpoint._update(resource);
         } else {
@@ -2409,7 +2409,7 @@ define('relayer/endpoints/Endpoint',[], function() {
       })).then(res, rej);
     },
     load: function(res, rej) {
-      return this.endpointPromise.then((function(endpoint) {
+      return this.endpointPromise().then((function(endpoint) {
         if (endpoint._load) {
           return endpoint._load();
         } else {
@@ -2431,7 +2431,7 @@ define('relayer/endpoints/Endpoint',[], function() {
       }));
     },
     remove: function(res, rej) {
-      return this.endpointPromise.then((function(endpoint) {
+      return this.endpointPromise().then((function(endpoint) {
         return endpoint._remove();
       })).then(res, rej);
     }
@@ -2453,9 +2453,9 @@ define('relayer/endpoints/PromiseEndpoint',["./Endpoint", "../SimpleFactoryInjec
     $__2 = {default: $__2};
   var Endpoint = $__0.default;
   var SimpleFactory = $__2.SimpleFactory;
-  var PromiseEndpoint = function PromiseEndpoint(promise) {
+  var PromiseEndpoint = function PromiseEndpoint(promiseFunction) {
     $traceurRuntime.superConstructor($PromiseEndpoint).call(this);
-    this.endpointPromise = promise;
+    this.endpointPromise = promiseFunction;
   };
   var $PromiseEndpoint = PromiseEndpoint;
   ($traceurRuntime.createClass)(PromiseEndpoint, {}, {}, Endpoint);
@@ -2482,6 +2482,7 @@ define('relayer/endpoints/ResolvedEndpoint',["./Endpoint", "../SimpleFactoryInje
   var ResolvedEndpoint = function ResolvedEndpoint(Promise, transport, templatedUrl) {
     var resourceTransformers = arguments[3] !== (void 0) ? arguments[3] : [];
     var createResourceTransformers = arguments[4] !== (void 0) ? arguments[4] : [];
+    var $__4;
     $traceurRuntime.superConstructor($ResolvedEndpoint).call(this);
     this.transport = transport;
     this.templatedUrl = templatedUrl;
@@ -2495,7 +2496,9 @@ define('relayer/endpoints/ResolvedEndpoint',["./Endpoint", "../SimpleFactoryInje
     } else {
       this.createResourceTransformers = [createResourceTransformers];
     }
-    this.endpointPromise = Promise.resolve(this);
+    this.endpointPromise = ($__4 = this, function() {
+      return Promise.resolve($__4);
+    });
   };
   var $ResolvedEndpoint = ResolvedEndpoint;
   ($traceurRuntime.createClass)(ResolvedEndpoint, {
@@ -3769,9 +3772,12 @@ define('relayer/decorators/JsonPropertyDecorator',["./ResourceDecorator", "../Si
         var embeddedPropertyTransformerFactory = this.embeddedPropertyTransformerFactory;
         this._endpointFn = function() {
           var uriParams = arguments[0] !== (void 0) ? arguments[0] : {};
-          var newPromise = this.load().then((function(resource) {
-            return loadedDataEndpointFactory(resource.self(), resource, [embeddedPropertyTransformerFactory(path)]);
-          }));
+          var $__4 = this;
+          var newPromise = (function() {
+            return $__4.load().then((function(resource) {
+              return loadedDataEndpointFactory(resource.self(), resource, [embeddedPropertyTransformerFactory(path)]);
+            }));
+          });
           var newEndpoint = promiseEndpointFactory(newPromise);
           return newEndpoint;
         };
@@ -3821,13 +3827,16 @@ define('relayer/decorators/RelatedResourceDecorator',["./ResourceDecorator", "..
         var relationshipUtilities = this.relationshipUtilities;
         this._resourceFn = function(uriParams) {
           var recursiveCall = arguments[1] !== (void 0) ? arguments[1] : false;
+          var $__6 = this;
           if (relationship.async && this.isPersisted) {
             var endpoint;
             if (!this.relationships[name]) {
               if (recursiveCall == false) {
-                endpoint = promiseEndpointFactory(this.self().load().then((function(resource) {
-                  return resource[name](uriParams, true);
-                })));
+                endpoint = promiseEndpointFactory((function() {
+                  return $__6.self().load().then((function(resource) {
+                    return resource[name](uriParams, true);
+                  }));
+                }));
               } else {
                 throw "Error: Unable to find relationship, even on canonical resource";
               }
@@ -3881,15 +3890,18 @@ define('relayer/decorators/RelatedResourceDecorator',["./ResourceDecorator", "..
         var promiseEndpointFactory = this.promiseEndpointFactory;
         this._endpointFn = function() {
           var uriParams = arguments[0] !== (void 0) ? arguments[0] : {};
-          var newPromise = this.load().then((function(resource) {
-            if (relationship.async) {
-              return resource[name](uriParams);
-            } else {
-              var endpoint = relationship.embeddedEndpoint(resource, uriParams);
-              description.applyToEndpoint(endpoint);
-              return endpoint;
-            }
-          }));
+          var $__6 = this;
+          var newPromise = (function() {
+            return $__6.load().then((function(resource) {
+              if (relationship.async) {
+                return resource[name](uriParams);
+              } else {
+                var endpoint = relationship.embeddedEndpoint(resource, uriParams);
+                description.applyToEndpoint(endpoint);
+                return endpoint;
+              }
+            }));
+          });
           var newEndpoint = promiseEndpointFactory(newPromise);
           relationship.decorateEndpoint(newEndpoint, uriParams);
           description.applyToEndpoint(newEndpoint);

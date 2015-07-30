@@ -46,15 +46,19 @@ var RelatedResourceDecorator = (function (_ResourceDecorator) {
         var promiseEndpointFactory = this.promiseEndpointFactory;
         var relationshipUtilities = this.relationshipUtilities;
         this._resourceFn = function (uriParams) {
+          var _this = this;
+
           var recursiveCall = arguments[1] === undefined ? false : arguments[1];
 
           if (relationship.async && this.isPersisted) {
             var endpoint;
             if (!this.relationships[name]) {
               if (recursiveCall == false) {
-                endpoint = promiseEndpointFactory(this.self().load().then(function (resource) {
-                  return resource[name](uriParams, true);
-                }));
+                endpoint = promiseEndpointFactory(function () {
+                  return _this.self().load().then(function (resource) {
+                    return resource[name](uriParams, true);
+                  });
+                });
               } else {
                 throw "Error: Unable to find relationship, even on canonical resource";
               }
@@ -114,19 +118,23 @@ var RelatedResourceDecorator = (function (_ResourceDecorator) {
         var relationship = this.relationship;
         var promiseEndpointFactory = this.promiseEndpointFactory;
         this._endpointFn = function () {
+          var _this2 = this;
+
           var uriParams = arguments[0] === undefined ? {} : arguments[0];
 
           // 'this' in here = Endpoint
 
-          var newPromise = this.load().then(function (resource) {
-            if (relationship.async) {
-              return resource[name](uriParams);
-            } else {
-              var endpoint = relationship.embeddedEndpoint(resource, uriParams);
-              description.applyToEndpoint(endpoint);
-              return endpoint;
-            }
-          });
+          var newPromise = function newPromise() {
+            return _this2.load().then(function (resource) {
+              if (relationship.async) {
+                return resource[name](uriParams);
+              } else {
+                var endpoint = relationship.embeddedEndpoint(resource, uriParams);
+                description.applyToEndpoint(endpoint);
+                return endpoint;
+              }
+            });
+          };
 
           var newEndpoint = promiseEndpointFactory(newPromise);
 
