@@ -4,9 +4,9 @@ import {SimpleFactory} from "../SimpleFactoryInjector.js";
 @SimpleFactory('PromiseEndpointFactory')
 export default class PromiseEndpoint extends Endpoint {
 
-  constructor(promise) {
+  constructor(promiseFunction) {
     super();
-    this.endpointPromise = promise;
+    this.endpointPromise = promiseFunction;
   }
 
 }
