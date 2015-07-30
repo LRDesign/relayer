@@ -4567,18 +4567,17 @@ define('relayer/RelationshipUtilities',["a1atscript", "./TemplatedUrl"], functio
         return resource.relationships[name] ? true : false;
       };
       target.set = function(newRelationship) {
+        var linksPath = resource.constructor.relationships[name].linksPath;
         if (resource.relationships[name] instanceof TemplatedUrl) {
-          var linksPath = resource.constructor.relationships[name].linksPath;
           resource.relationships[name].removeDataPathLink(resource, linksPath);
-          resource.relationships[name] = newRelationship;
-          if (newRelationship) {
-            newRelationship.addDataPathLink(resource, linksPath, false);
-          } else {
+          if (!newRelationship) {
             resource.pathSet(linksPath, "");
           }
-        } else {
-          resource.relationships[name] = newRelationship;
         }
+        if (newRelationship instanceof TemplatedUrl) {
+          newRelationship.addDataPathLink(resource, linksPath, false);
+        }
+        resource.relationships[name] = newRelationship;
       };
     }}, {});
   var $__default = RelationshipUtilities;
