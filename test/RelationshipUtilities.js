@@ -10,7 +10,9 @@ describe("RelationshipUtilities", function() {
 
   beforeEach(function() {
     resource = new Something({ data: {}, links: { cheese: ""}});
-
+    Something.relationships[name] = {
+      linksPath: "$.links.cheese"
+    }
     target = {};
 
     name = "cheese";
@@ -60,9 +62,6 @@ describe("RelationshipUtilities", function() {
     describe("for template url", function() {
       var initialTemplatedUrl, newTemplatedUrl, otherResource;
       beforeEach(function() {
-        Something.relationships[name] = {
-          linksPath: "$.links.cheese"
-        }
         otherResource = new Something({data: {}, links: { cheese: "/cheese/5"}});
         initialTemplatedUrl = new TemplatedUrlFromUrl("/cheese/{cheese}", "/cheese/4");
         resource.relationships[name] = initialTemplatedUrl;
@@ -85,6 +84,20 @@ describe("RelationshipUtilities", function() {
         expect(initialTemplatedUrl.url).toEqual("/cheese/5")
         expect(resource.relationships[name]).toEqual(undefined);
         expect(resource.pathGet('$.links.cheese')).toEqual("");
+      });
+
+    });
+
+    describe("nothing to template url", function() {
+      var newTemplatedUrl;
+      beforeEach(function() {
+        newTemplatedUrl = new TemplatedUrlFromUrl("/baggins/{name}", "/baggins/bilbo");
+      });
+
+      it("on reassignment it should connect to new url", function() {
+        target.set(newTemplatedUrl);
+        expect(resource.relationships[name]).toEqual(newTemplatedUrl);
+        expect(resource.pathGet('$.links.cheese')).toEqual("/baggins/bilbo");
       });
     });
 
