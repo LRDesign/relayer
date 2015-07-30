@@ -22,9 +22,11 @@ export default class RelatedResourceDecorator extends ResourceDecorator {
           var endpoint;
           if (!this.relationships[name]) {
             if (recursiveCall == false) {
-              endpoint = promiseEndpointFactory(this.self().load().then((resource) => {
-                return resource[name](uriParams, true);
-              }));
+              endpoint = promiseEndpointFactory(() => {
+                return this.self().load().then((resource) => {
+                  return resource[name](uriParams, true);
+                })
+              });
             } else {
               throw "Error: Unable to find relationship, even on canonical resource";
             }
@@ -83,15 +85,17 @@ export default class RelatedResourceDecorator extends ResourceDecorator {
       this._endpointFn = function(uriParams = {}){
         // 'this' in here = Endpoint
 
-        var newPromise = this.load().then((resource) => {
-          if (relationship.async) {
-            return resource[name](uriParams);
-          } else {
-            var endpoint = relationship.embeddedEndpoint(resource, uriParams);
-            description.applyToEndpoint(endpoint);
-            return endpoint;
-          }
-        });
+        var newPromise = () => {
+          return this.load().then((resource) => {
+            if (relationship.async) {
+              return resource[name](uriParams);
+            } else {
+              var endpoint = relationship.embeddedEndpoint(resource, uriParams);
+              description.applyToEndpoint(endpoint);
+              return endpoint;
+            }
+          });
+        }
 
         var newEndpoint = promiseEndpointFactory(newPromise);
 

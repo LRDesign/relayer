@@ -128,7 +128,7 @@ describe("JsonPropertyDecorator", function() {
   describe("on endpoint", function() {
     beforeEach(function(done) {
       jsonPropertyDecorator.endpointApply(mockEndpoint);
-      mockEndpoint.awesome().endpointPromise.then((result) => {
+      mockEndpoint.awesome().endpointPromise().then((result) => {
         loadedEndpoint = result;
         done();
       });
