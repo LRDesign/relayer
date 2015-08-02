@@ -9,6 +9,7 @@ export default class ResourceBuilder {
     resolvedEndpointFactory,
     primaryResourceTransformerFactory,
     throwErrorTransformerFactory,
+
     transport,
     response,
     mapperFactory,

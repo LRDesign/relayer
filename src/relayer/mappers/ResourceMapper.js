@@ -9,6 +9,7 @@ export default class ResourceMapper extends Mapper {
   constructor(templatedUrlFromUrlFactory,
     resourceBuilderFactory,
     primaryResourceBuilderFactory,
+
     transport,
     response,
     ResourceClass,

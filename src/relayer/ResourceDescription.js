@@ -67,6 +67,7 @@ export class ResourceDescription {
     this.mapRelationshipDescriptionFactory = mapRelationshipDescriptionFactory;
     this.inflector = inflector;
 
+    // XXX decorators (by name) never used except to record them
     this.decorators = {};
     this.allDecorators = [];
     this.parentDescription = null; //automated inheritance?
@@ -141,6 +142,7 @@ export class ResourceDescription {
 
   relatedResource(property, rezClass, initialValues, relationshipDescriptionFactory){
     var relationship = relationshipDescriptionFactory(property, rezClass, initialValues);
+    //XXX "name" appears to be copypasta - but it works?
     this.recordDecorator(name, this.relatedResourceDecoratorFactory(property, relationship));
     return relationship;
   }

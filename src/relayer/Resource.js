@@ -127,6 +127,7 @@ export default class Resource extends DataWrapper {
     Object.keys(this.constructor.relationships).forEach((relationshipName) => {
       var relationshipDescription = this.constructor.relationships[relationshipName]
       if (relationshipDescription.initializeOnCreate) {
+        // XXX does this initializer ever vary? Feels like a split responsibility
         var relationship = relationshipDescription.initializer.initialize();
         this.relationships[relationshipName] = relationship;
       }

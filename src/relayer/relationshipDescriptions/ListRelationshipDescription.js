@@ -16,7 +16,7 @@ import {SimpleFactory} from "../SimpleFactoryInjector.js";
   'LoadedDataEndpointFactory',
   'TemplatedUrlFromUrlFactory',
   'TemplatedUrlFactory'])
-export default class SingleRelationshipDescription extends RelationshipDescription {
+export default class ListRelationshipDescription extends RelationshipDescription {
   constructor(relationshipInitializerFactory,
     resourceMapperFactory,
     resourceSerializerFactory,
@@ -34,7 +34,6 @@ export default class SingleRelationshipDescription extends RelationshipDescripti
     name,
     ResourceClass,
     initialValues) {
-
 
     super(relationshipInitializerFactory,
       resourceMapperFactory,
