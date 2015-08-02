@@ -1,16 +1,22 @@
 import RelationshipInitializer from "./RelationshipInitializer.js";
-import {SimpleFactory} from "../SimpleFactoryInjector.js";
+import {ListResource} from "../ListResource.js";
+import {factory as manyRelFactory} from "./ManyRelationshipInitializer.js";
 
-@SimpleFactory('ListRelationshipInitializerFactory', ['ListResource', 'ManyRelationshipInitializerFactory'])
+export function factory(ResourceClass, initialValues) {
+  var manyRelationshipInitializer = manyRelFactory(ResourceClass, initialValues);
+  new ListRelationInitializer(ListResource, manyRelationshipInitializer, ResourceClass, initialValues);
+
+}
+
 export default class ListRelationshipInitializer extends RelationshipInitializer {
   constructor(ListResource,
-    manyRelationshipInitializerFactory,
+    manyRelationshipInitializer,
     ResourceClass,
     initialValues) {
 
     super(ResourceClass, initialValues);
 
-    this.manyRelationshipInitializer = manyRelationshipInitializerFactory(ResourceClass, initialValues);
+    this.manyRelationshipInitializer = manyRelationshipInitializer;
     this.ListResource = ListResource;
   }
 

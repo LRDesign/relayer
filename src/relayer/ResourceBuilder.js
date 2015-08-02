@@ -1,9 +1,11 @@
 import {SimpleFactory} from "./SimpleFactoryInjector.js";
 
-@SimpleFactory("ResourceBuilderFactory", ["TemplatedUrlFromUrlFactory",
+@SimpleFactory("ResourceBuilderFactory", [
+  //"TemplatedUrlFromUrlFactory",
   "ResolvedEndpointFactory",
   "PrimaryResourceTransformerFactory",
-  "ThrowErrorTransformerFactory"])
+  "ThrowErrorTransformerFactory"
+])
 export default class ResourceBuilder {
   constructor(templatedUrlFromUrlFactory,
     resolvedEndpointFactory,

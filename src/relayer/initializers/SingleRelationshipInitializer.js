@@ -1,7 +1,5 @@
 import RelationshipInitializer from "./RelationshipInitializer.js";
-import {SimpleFactory} from "../SimpleFactoryInjector.js";
 
-@SimpleFactory('SingleRelationshipInitializerFactory', [])
 export default class SingleRelationshipInitializer extends RelationshipInitializer {
   initialize() {
     var relationship = new this.ResourceClass();

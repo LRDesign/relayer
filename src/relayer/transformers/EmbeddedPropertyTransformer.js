@@ -1,7 +1,5 @@
 import ResourceTransformer from "./ResourceTransformer.js";
-import {SimpleFactory} from "../SimpleFactoryInjector.js";
 
-@SimpleFactory('EmbeddedPropertyTransformerFactory')
 export default class EmbeddedPropertyTransformer extends ResourceTransformer {
   constructor(path) {
     super();

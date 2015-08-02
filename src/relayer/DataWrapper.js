@@ -1,5 +1,4 @@
 import jsonPath from './jsonpath.js';
-import {SimpleFactory} from "./SimpleFactoryInjector.js"
 
 export default class DataWrapper {
   constructor(response){

@@ -1,7 +1,6 @@
 import {Factory} from "a1atscript";
 
 class RelayerPromise {
-
   static resolve(value) {
     return new RelayerPromise((res, rej) => res(value));
   }
@@ -28,11 +27,9 @@ class RelayerPromise {
 }
 
 export default class RelayerPromiseFactory {
-
   @Factory('RelayerPromise', ['$q'])
   static factory($q) {
     RelayerPromiseFactory.$q = $q;
     return RelayerPromise;
   }
-
 }

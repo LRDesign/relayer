@@ -1,7 +1,12 @@
 import ResolvedEndpoint from "./ResolvedEndpoint.js";
-import {SimpleFactory} from "../SimpleFactoryInjector.js";
+import {RelayerPromiseFactory} from "../Promise.js";
 
-@SimpleFactory('LoadedDataEndpointFactory', ['RelayerPromise'])
+export function factory(resolvedEndpoint, resource, resourceTransformers = [], createResourceTransformers = []) {
+  var promise = RelayerPromiseFactory.factory();
+
+  return new LeadedDataEndpoint(promise, resolvedEndpoint, resource, resourceTransformers, createResourceTransformers);
+}
+
 export default class LoadedDataEndpoint extends ResolvedEndpoint {
 
   constructor(Promise, resolvedEndpoint, resource, resourceTransformers = [], createResourceTransformers = []) {

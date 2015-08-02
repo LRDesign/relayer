@@ -1,7 +1,10 @@
 import Endpoint from "./Endpoint.js";
-import {SimpleFactory} from "../SimpleFactoryInjector.js";
+import {Promise} from "../Promise.js";
 
-@SimpleFactory('ResolvedEndpointFactory', ["RelayerPromise"])
+export function factory(transport, templatedUrl, resourceTransformers = [], createResourceTransformers = []) {
+  return new ResolvedEndpoint(Promise, transport, templatedUrl, resourceTransformers, createResourceTransformers);
+}
+
 export default class ResolvedEndpoint extends Endpoint {
   constructor(Promise, transport, templatedUrl, resourceTransformers = [], createResourceTransformers = []) {
     super();
@@ -28,7 +31,8 @@ export default class ResolvedEndpoint extends Endpoint {
   _update(resource) {
     var request = this._transformRequest(this.resourceTransformers, resource);
     var response = this.transport.put(this.templatedUrl.url, request, this.templatedUrl.etag);
-    return this._transformResponse(this.resourceTransformers, response) }
+    return this._transformResponse(this.resourceTransformers, response);
+  }
 
   _create(resource) {
     var request = this._transformRequest(this.createResourceTransformers, resource);

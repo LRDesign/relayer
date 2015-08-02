@@ -1,7 +1,10 @@
 import RelationshipInitializer from "./RelationshipInitializer.js";
-import {SimpleFactory} from "../SimpleFactoryInjector.js";
+import {factory as SingleRelFactory} from "./SingleRelationshipInitializer.js";
 
-@SimpleFactory('ManyRelationshipInitializerFactory', ['SingleRelationshipInitializerFactory'])
+export function factory(ResourceClass, initialValues) {
+  return new ManyRelationshipInitializer(SingleRelFactory, ResourceClass, initialValue);
+}
+
 export default class ManyRelationshipInitializer extends RelationshipInitializer {
   constructor(singleRelationshipInitializerFactory,
     ResourceClass,
