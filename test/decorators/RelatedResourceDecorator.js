@@ -3,6 +3,7 @@ import {TemplatedUrl} from "../../src/relayer/TemplatedUrl.js";
 
 describe("RelatedResourceDecorator", function() {
   var promiseEndpointFactory,
+  relationshipUtilities,
   name,
   relationship,
   OtherResourceClass,
@@ -70,7 +71,14 @@ describe("RelatedResourceDecorator", function() {
       }
     }
 
+    relationshipUtilities = {
+      addMethods(target, resource, name) {
+        target.awesome = "set it awesome";
+      }
+    }
+
     relatedResourceDecorator = new RelatedResourceDecorator(promiseEndpointFactory,
+      relationshipUtilities,
       name,
       relationship);
   });
@@ -93,13 +101,13 @@ describe("RelatedResourceDecorator", function() {
           expect(resource.awesome("cheese")).toEqual({
             thisResource: resource,
             uriParams: "cheese",
-            applied: true
+            applied: true,
+            awesome: "set it awesome"
           })
         });
 
-        it("the endpoint should be embedded", function() {
-          resource.awesome("cheese");
-          expect(embeddedEndpointSpy).toHaveBeenCalled();
+        it("should setup utility methods", function() {
+          expect(resource.awesome)
         })
       });
       describe("linked", function() {
@@ -116,7 +124,8 @@ describe("RelatedResourceDecorator", function() {
           expect(resource.awesome("cheese")).toEqual({
             thisResource: resource,
             uriParams: "cheese",
-            applied: true
+            applied: true,
+            awesome: "set it awesome"
           })
         });
 
@@ -142,7 +151,8 @@ describe("RelatedResourceDecorator", function() {
 
           it("should setup the right endpoint", function() {
             expect(result).toEqual({endpointPromise: jasmine.any(Promise),
-              applied: true
+              applied: true,
+              awesome: "set it awesome"
             });
           });
 
@@ -159,7 +169,8 @@ describe("RelatedResourceDecorator", function() {
               expect(result).toEqual({
                 thisResource: resource,
                 uriParams: "cheese",
-                applied: true
+                applied: true,
+                awesome: "set it awesome"
               });
             });
           });
@@ -278,7 +289,8 @@ describe("RelatedResourceDecorator", function() {
           expect(returnedEndpoint).toEqual({
             thisResource: resource,
             uriParams: "cheese",
-            applied: true
+            applied: true,
+            awesome: "set it awesome"
           });
         });
       });

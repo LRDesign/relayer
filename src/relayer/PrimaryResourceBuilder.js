@@ -1,6 +1,3 @@
-import {SimpleFactory} from "./SimpleFactoryInjector.js";
-
-@SimpleFactory("PrimaryResourceBuilderFactory", [])
 export default class PrimaryResourceBuilder {
   constructor(response, ResourceClass) {
     this.response = response;

@@ -1,9 +1,23 @@
 import ResourceDecorator from "./ResourceDecorator.js";
 import {SimpleFactory} from "../SimpleFactoryInjector.js";
 
-@SimpleFactory('JsonPropertyDecoratorFactory', ['LoadedDataEndpointFactory',
-  'EmbeddedPropertyTransformerFactory',
-  'PromiseEndpointFactory'])
+import {factory as LoadedDataEndpointFactory} from "../endpoints/LoadedDataEndpoint.js";
+import EmbeddedPropertyTransformer from "../transformers/EmbeddedPropertyTranformer.js";
+import PromiseEndpoint from "../endpoints/PromiseEndpoint.js";
+
+export function factory(name, path, value, options){
+  function embeddedPropertyTransformerFactory(path){
+    return new EmbeddedPropertyTransformer(path);
+  }
+  function promiseEndpointFactory(promise){
+    return new PromiseEndpoint(promise);
+  }
+
+  return new JsonPropertyDecorator(
+    loadedDataEndpointFactory, embeddedPropertyTransformerFactory, promiseEndpointFactory,
+    name, path, value, options);
+}
+
 export default class JsonPropertyDecorator extends ResourceDecorator {
   constructor(loadedDataEndpointFactory,
     embeddedPropertyTransformerFactory,

@@ -1,11 +1,20 @@
-import {SimpleFactory} from "./SimpleFactoryInjector.js";
+import {templatedUrlFromUrlFactory} from "./TemplatedUrl.js";
+import {factory as resEndpointFactory} from "./endpoints/ResolvedEndpoint.js";
+import {factory as primResTransFac} from "./transformers/PrimaryResourceTransformer.js";
+import {factory as throwErrTransFactory} from "./transformers/ThrowErrorTransformer.js";
 
-@SimpleFactory("ResourceBuilderFactory", [
-  //"TemplatedUrlFromUrlFactory",
-  "ResolvedEndpointFactory",
-  "PrimaryResourceTransformerFactory",
-  "ThrowErrorTransformerFactory"
-])
+
+export function factory(transport, response, mapperFactory, serializerFactory, ResourceClass) {
+
+  return new ResourceBuilder(
+    templatedUrlFromUrlFactory,
+    resEndpointFactory,
+    primResTransFactory,
+    throwErrTransFactory,
+
+    transport, response, mapperFactory, serializerFactory, ResourceClass);
+}
+
 export default class ResourceBuilder {
   constructor(templatedUrlFromUrlFactory,
     resolvedEndpointFactory,
