@@ -1,16 +1,30 @@
 import RelationshipDescription from "./RelationshipDescription.js";
-import {SimpleFactory} from "../SimpleFactoryInjector.js";
+import inflector from "../singletons/Inflector.js";
+import {factory as relationshipInitializerFactory} from "../initializers/RelationshipInitializer.js";
+import {factory as resourceMapperFactory} from "../mappers/ResourceMapper.js";
+import {factory as resourceSerializerFactory} from "../serializers/ResourceSerializer.js";
+import {factory as primaryResourceTransformerFactory} from "../transformers/PrimaryResourceTransformer.js";
+import {factory as embeddedRelationshipTransformerFactory} from "../transformers/EmbeddedPropertyTransformer.js";
+import {factory as resolvedEndpointFactory} from "../endpoints/ResolvedEndpoint.js";
+import {factory as loadedDataEndpointFactory} from "../endpoints/LoadedDataEndpoint.js";
+import {factory as templatedUrlFromUrlFactory} from "../TemplatedUrl.js";
 
-@SimpleFactory('SingleRelationshipDescriptionFactory',
-  ['SingleRelationshipInitializerFactory',
-  'ResourceMapperFactory',
-  'ResourceSerializerFactory',
-  'Inflector',
-  'PrimaryResourceTransformerFactory',
-  'EmbeddedRelationshipTransformerFactory',
-  'ResolvedEndpointFactory',
-  'LoadedDataEndpointFactory',
-  'TemplatedUrlFromUrlFactory'])
+export function factory(name, ResourceClass, initialValues) {
+  return new SingleRelationshipDescription(
+    relationshipInitializerFactory,
+    resourceMapperFactory,
+    resourceSerializerFactory,
+    inflector,
+    primaryResourceTransformerFactory,
+    embeddedRelationshipTransformerFactory,
+    resolvedEndpointFactory,
+    loadedDataEndpointFactory,
+    templatedUrlFromUrlFactory,
+    name,
+    ResourceClass,
+    initialValues);
+}
+
 export default class SingleRelationshipDescription extends RelationshipDescription {
   constructor(relationshipInitializerFactory,
     resourceMapperFactory,

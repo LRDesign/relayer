@@ -1,6 +1,3 @@
-import {SimpleFactory} from "./SimpleFactoryInjector.js";
-
-@SimpleFactory('UrlHelperFactory', [])
 export default class UrlHelper {
   constructor(baseUrl) {
     if (this.isFullUrl(baseUrl)) {

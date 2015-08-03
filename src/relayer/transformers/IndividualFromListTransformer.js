@@ -1,7 +1,10 @@
 import ResourceTransformer from "./ResourceTransformer.js";
-import {SimpleFactory} from "../SimpleFactoryInjector.js";
+import {templatedUrlFactory} from "../TemplatedUrl.js";
 
-@SimpleFactory('IndividualFromListTransformerFactory', ['TemplatedUrlFactory'])
+export function factory(relationshipName, uriParams) {
+  return new IndividualFromListTransformer(templatedUrlFactory, relationshipName, uriParams);
+}
+
 export default class IndividualFromListTransformer extends ResourceTransformer {
   constructor(templatedUrlFactory, relationshipName, uriParams) {
     super();

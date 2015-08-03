@@ -1,7 +1,9 @@
 import ResourceTransformer from "./ResourceTransformer.js";
-import {SimpleFactory} from "../SimpleFactoryInjector.js";
 
-@SimpleFactory('EmbeddedRelationshipTransformerFactory')
+export function factory(relationshipName) {
+  return new EmbeddedRelationshipTransformer(relationshipName);
+}
+
 export default class EmbeddedRelationshipTransformer extends ResourceTransformer {
   constructor(relationshipName) {
     super();

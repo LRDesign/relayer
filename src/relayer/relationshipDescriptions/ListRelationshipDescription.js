@@ -1,22 +1,38 @@
-import RelationshipDescription from "./RelationshipDescription.js";
-import {SimpleFactory} from "../SimpleFactoryInjector.js";
+import {default as RelationshipDescription, partialFactory as superFactory} from "./RelationshipDescription.js";
+import {factory as singleResourceMapperFactory} from "../mappers/ResourceMapper.js";
+import {factory as singleResourceSerializerFactory} from "../serializers/ResourceSerializer.js";
+import {factory as primaryResourceTransformerFactory} from "../transformers/PrimaryResourceTransformer.js";
+import {factory as embeddedRelationshipTransformerFactory} from "../transformers/EmbeddedRelationshipTransformer.js";
+import {factory as individualFromListTranformerFactory} from "../transformers/IndividualFromListTransformer.js";
+import {factory as createResourceTransformerFactory} from "../transformers/CreateResourceTransformer.js";
+import {factory as resolvedEndpointFactory} from "../endpoints/ResolvedEndpoint.js";
+import {factory as loadedDataEndpointFactory} from "../endpoints/LoadedDataEndpoint.js";
+import {TemplatedUrlFactory, TemplatedUrlFromUrlFactory} from "../TemplatedUrl.js";
 
-@SimpleFactory('ListRelationshipDescriptionFactory',
-  ['ListRelationshipInitializerFactory',
-  'ListResourceMapperFactory',
-  'ListResourceSerializerFactory',
-  'Inflector',
-  'ResourceMapperFactory',
-  'ResourceSerializerFactory',
-  'PrimaryResourceTransformerFactory',
-  'EmbeddedRelationshipTransformerFactory',
-  'IndividualFromListTransformerFactory',
-  'CreateResourceTransformerFactory',
-  'ResolvedEndpointFactory',
-  'LoadedDataEndpointFactory',
-  'TemplatedUrlFromUrlFactory',
-  'TemplatedUrlFactory'])
+export function factory( name, ResourceClass, initialValues) {
+  return superFactory(name, ResourceClass, initialValue, (
+    relationshipInitializerFactory,
+    resourceMapperFactory,
+    resourceSerializerFactory,
+    inflector,
+
+    name, ResourceClass, initialValues
+  ) => {
+    return new SingleRelationshipDescription(
+      relationshipInitializerFactory, resourceMapperFactory, resourceSerializerFactory, inflector,
+
+      singleResourceMapperFactory, singleResourceSerializerFactory,
+      primaryResourceTransformerFactory, embeddedRelationshipTransformerFactory,
+      individualFromListTransformerFactory, createResourceTransformerFactory,
+      resolvedEndpointFactory, loadedDataEndpointFactory,
+      TemplatedUrlFromUrlFactory, TemplatedUrlFactory,
+
+      name, ResourceClass, initialValues);
+  });
+}
+
 export default class SingleRelationshipDescription extends RelationshipDescription {
+
   constructor(relationshipInitializerFactory,
     resourceMapperFactory,
     resourceSerializerFactory,

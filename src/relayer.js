@@ -1,4 +1,5 @@
-import {describeResource, InitializedResourceClasses, ResourceDescription}from "./relayer/ResourceDescription.js";
+import {describeResource, InitializedResourceClasses} from "./relayer/ResourceInitializer.js";
+import ResourceDescription from "./relayer/ResourceDescription.js";
 import Resource from "./relayer/Resource.js";
 import * as Endpoints from "./relayer/endpoints.js";
 import * as Serializers from "./relayer/serializers.js";
@@ -62,7 +63,7 @@ export default class ResourceLayer {
   createApi(apiName, topLevelResource, baseUrl) {
     this.apis[apiName] = {
       topLevelResource, baseUrl
-    }
+    };
     this.$provide.factory(apiName, ['UrlHelperFactory',
       'TransportFactory',
       'TemplatedUrlFromUrlFactory',

@@ -1,7 +1,14 @@
 import Serializer from "./Serializer.js";
-import {SimpleFactory} from "../SimpleFactoryInjector.js";
+import ResourceSerializer from "./ResourceSerializer.js";
 
-@SimpleFactory('ManyResourceSerializerFactory', ['ResourceSerializerFactory'])
+export function factory(resourceSerializerFactory, resource) {
+  function makeResourceSerializer(resource){
+    return new ResourceSerializer(resource);
+  }
+
+  return new ManyResourceSerializer(makeResourceSerializer, resource);
+}
+
 export default class ManyResourceSerializer extends Serializer {
   constructor(resourceSerializerFactory, resource) {
     super(resource);
@@ -9,6 +16,6 @@ export default class ManyResourceSerializer extends Serializer {
   }
 
   serialize() {
-    return this.resource.map((resource) => this.resourceSerializerFactory(resource).serialize())
+    return this.resource.map((resource) => this.resourceSerializerFactory(resource).serialize());
   }
 }

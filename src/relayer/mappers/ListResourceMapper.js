@@ -1,12 +1,29 @@
-import {SimpleFactory} from "../SimpleFactoryInjector.js";
-import ResourceMapper from "./ResourceMapper.js";
+import {default as ResourceMapper, partialFactory as superFactory} from "./ResourceMapper.js";
+import ListResource from "../ListResource.js";
+import {factory as manyResourceMapperFactory} from "./ManyResourceMapper.js";
 
-@SimpleFactory('ListResourceMapperFactory', [
-  'TemplatedUrlFromUrlFactory',
-  'ResourceBuilderFactory',
-  'PrimaryResourceBuilderFactory',
-  'ListResource',
-  'ManyResourceMapperFactory'])
+export function factory(transport, response, ResourceClass, mapperFactory, serializerFactory, endpoint = null) {
+  return superFactory(transport, response, ResourceClass, mapperFactory, serializerFactory, endpoint, (
+    templatedUrlFromUrlFactory, resourceBuilderFactory, primaryResourceBuilderFactory,
+    transport, response, ResourceClass, mapperFactory, serializerFactory, endpoint
+  ) => {
+    return new ListResourceMapper(
+      templatedUrlFromUrlFactory,
+      resourceBuilderFactory,
+      primaryResourceBuilderFactory,
+
+      ListResource,
+      manyResourceMapperFactory,
+
+      transport,
+      response,
+      ItemResourceClass,
+      mapperFactory,
+      serializerFactory,
+      endpoint);
+  });
+}
+
 export default class ListResourceMapper extends ResourceMapper {
   constructor(templatedUrlFromUrlFactory,
       resourceBuilderFactory,
@@ -55,9 +72,9 @@ export default class ListResourceMapper extends ResourceMapper {
         this.push(created);
         return created;
       });
-    }
+    };
 
     var ItemResourceClass = this.ItemResourceClass;
-    this.mapped.new = function() { return new ItemResourceClass(); }
+    this.mapped.new = function() { return new ItemResourceClass(); };
   }
 }

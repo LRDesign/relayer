@@ -1,14 +1,9 @@
-import MultipleRelationshipDescription from "./MultipleRelationshipDescription.js";
-import {SimpleFactory} from "../SimpleFactoryInjector.js";
+import {default as MultipleRelationshipDescription, partialFactory as multipleFactory} from "./MultipleRelationshipDescription.js";
 
-@SimpleFactory('ManyRelationshipDescriptionFactory',
-  ['ManyRelationshipInitializerFactory',
-  'ManyResourceMapperFactory',
-  'ManyResourceSerializerFactory',
-  'Inflector',
-  'EmbeddedRelationshipTransformerFactory',
-  'SingleFromManyTransformerFactory',
-  'LoadedDataEndpointFactory'])
-export default class ManyRelationshipDescription extends MultipleRelationshipDescription {
-
+export function factory(name, ResourceClass, initialValues) {
+  return multipleFactory(name, ResourceClass, initialValues, (...args) => {
+    return new ManyRelationshipsDescription(...args);
+  });
 }
+
+export default class ManyRelationshipDescription extends MultipleRelationshipDescription { }

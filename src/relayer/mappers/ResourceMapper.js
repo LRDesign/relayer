@@ -1,9 +1,21 @@
 import Mapper from "./Mapper.js";
-import {SimpleFactory} from "../SimpleFactoryInjector.js";
+import {templatedUrlFromUrlFactory} from "../TemplatedUrl.js";
+import {factory as resourceBuilderFactory} from "../ResourceBuilder.js";
+import {factory as primaryResourceBuilderFactory} from "../PrimaryResourceBuilder.js";
 
-@SimpleFactory("ResourceMapperFactory", ["TemplatedUrlFromUrlFactory",
-  "ResourceBuilderFactory",
-  "PrimaryResourceBuilderFactory"])
+export function partialFactory(transport, response, ResourceClass, mapperFactory, serializerFactory, endpoint, subfactory) {
+  return subfactory(
+    templatedUrlFromUrlFactory, resourceBuilderFactory, primaryResourceBuilderFactory,
+    transport, response, ResourceClass, mapperFactory, serializerFactory, endpoint
+  );
+}
+
+export function factory(transport, response, ResourceClass, mapperFactory, serializerFactory, endpoint = null) {
+  return partialFactory(transport, response, ResourceClass, mapperFactory, serializerFactory, endpoint, (...args) => {
+    return new ResourceMapper(...args);
+  });
+}
+
 export default class ResourceMapper extends Mapper {
 
   constructor(templatedUrlFromUrlFactory,

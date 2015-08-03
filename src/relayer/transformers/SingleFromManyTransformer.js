@@ -1,7 +1,5 @@
 import ResourceTransformer from "./ResourceTransformer.js";
-import {SimpleFactory} from "../SimpleFactoryInjector.js";
 
-@SimpleFactory('SingleFromManyTransformerFactory')
 export default class SingleFromManyTransformer extends ResourceTransformer {
   constructor(relationshipName, property) {
     super();

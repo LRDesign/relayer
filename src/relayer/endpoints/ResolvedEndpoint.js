@@ -20,7 +20,7 @@ export default class ResolvedEndpoint extends Endpoint {
     } else {
       this.createResourceTransformers = [createResourceTransformers];
     }
-    this.endpointPromise = Promise.resolve(this);
+    this.endpointPromise = () => { return Promise.resolve(this) };
   }
 
   _load() {

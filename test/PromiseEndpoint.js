@@ -78,7 +78,7 @@ describe("PromiseEndpoint", function() {
     resourceTransformerResponseSpy = spyOn(resourceTransformer, "transformResponse").and.callThrough();
 
     resolvedEndpoint = new ResolvedEndpoint(Promise, transport, templatedUrl, resourceTransformer, createResourceTransformer)
-    promiseEndpoint = new PromiseEndpoint(Promise.resolve(resolvedEndpoint));
+    promiseEndpoint = new PromiseEndpoint(function() { return Promise.resolve(resolvedEndpoint) });
 
   });
 

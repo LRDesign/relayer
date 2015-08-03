@@ -150,7 +150,7 @@ describe("RelatedResourceDecorator", function() {
 
 
           it("should setup the right endpoint", function() {
-            expect(result).toEqual({endpointPromise: jasmine.any(Promise),
+            expect(result).toEqual({endpointPromise: jasmine.any(Function),
               applied: true,
               awesome: "set it awesome"
             });
@@ -159,7 +159,7 @@ describe("RelatedResourceDecorator", function() {
           describe("second call resolves", function() {
             beforeEach(function(done) {
               resource.relationships["awesome"] = { value: "is here"};
-              result.endpointPromise.then((resolvedValue) => {
+              result.endpointPromise().then((resolvedValue) => {
                 result = resolvedValue;
                 done();
               });
@@ -177,7 +177,7 @@ describe("RelatedResourceDecorator", function() {
 
           describe("second call still missing", function() {
             beforeEach(function(done) {
-              result.endpointPromise.catch((error) => {
+              result.endpointPromise().catch((error) => {
                 result = error;
                 done();
               });
@@ -272,14 +272,14 @@ describe("RelatedResourceDecorator", function() {
 
       it("should have the right values", function() {
         expect(mockEndpoint.awesome()).toEqual({
-          endpointPromise: jasmine.any(Promise),
+          endpointPromise: jasmine.any(Function),
           applied: true
         });
       });
 
       describe("resolved", function() {
         beforeEach(function(done) {
-          mockEndpoint.awesome("cheese").endpointPromise.then((resolved) => {
+          mockEndpoint.awesome("cheese").endpointPromise().then((resolved) => {
             returnedEndpoint = resolved;
             done();
           });
@@ -304,14 +304,14 @@ describe("RelatedResourceDecorator", function() {
 
       it("should have the right values", function() {
         expect(mockEndpoint.awesome()).toEqual({
-          endpointPromise: jasmine.any(Promise),
+          endpointPromise: jasmine.any(Function),
           applied: true
         });
       });
 
       describe("resolved", function() {
         beforeEach(function(done) {
-          mockEndpoint.awesome("cheese").endpointPromise.then((resolved) => {
+          mockEndpoint.awesome("cheese").endpointPromise().then((resolved) => {
             returnedEndpoint = resolved;
             done();
           });

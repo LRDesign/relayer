@@ -1,3 +1,7 @@
+export function TemplatedUrlFactory(template, params = {}) {
+  return new TemplatedUrl(template, params);
+}
+
 export class TemplatedUrl {
 
   constructor(uriTemplate, uriParams = {}) {
@@ -52,10 +56,8 @@ export function templatedUrlFromUrlFactory(template, url){
 }
 
 export class TemplatedUrlFromUrl extends TemplatedUrl {
-
   constructor(uriTemplate, url) {
     super(uriTemplate);
-    super._setUrl(url)
+    super._setUrl(url);
   }
-
 }

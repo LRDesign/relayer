@@ -1,10 +1,11 @@
 import Serializer from "./Serializer.js";
-import {SimpleFactory} from "../SimpleFactoryInjector.js";
 import {TemplatedUrl} from "../TemplatedUrl.js";
 
-@SimpleFactory('ResourceSerializerFactory', [])
-export default class ResourceSerializer extends Serializer {
+export function factory(resource){
+  return new ResourceSerializer(resource);
+}
 
+export default class ResourceSerializer extends Serializer {
   serialize() {
     var relationship;
 

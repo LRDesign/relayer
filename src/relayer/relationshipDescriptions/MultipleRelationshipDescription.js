@@ -1,4 +1,40 @@
-import RelationshipDescription from "./RelationshipDescription.js";
+import {
+  default as RelationshipDescription,
+  partialFactory as superFactory
+} from "./RelationshipDescription.js";
+import {factory as embeddedRelationshipTransformerFactory} from '../transformers/EmbeddedRelationshipTransformer.js';
+import {factory as singleFromManyTransformerFactory} from '../transformers/SingleFromManyTransformer.js';
+import {factory as loadedDataEndpointFactory} from '../endpoints/LoadedDataEndpoint.js';
+
+export function partialFactory(name, ResourceClass, initialValues, subfactory) {
+  return superFactory(name, ResourceClass, initialValues, (
+      relationshipInitializerFactory,
+      resourceMapperFactory,
+      resourceSerializerFactory,
+      inflector,
+      name, ResourceClass, initialValues
+  ) => {
+
+    return subfactory( // TODO? reorder args so we can splat them
+      relationshipInitializerFactory,
+      resourceMapperFactory,
+      resourceSerializerFactory,
+      inflector,
+
+      embeddedRelationshipTransformerFactory,
+      singleFromManyTransformerFactory,
+      loadedDataEndpointFactory,
+
+      name, ResourceClass, initialValues
+    );
+  });
+}
+
+export function factory(name, ResourceClass, initialValues) {
+  partialFactory(name, ResourceClass, initialValues, (...args) => {
+    return new MultipleRelationshipDescription(...args);
+  });
+}
 
 export default class MultipleRelationshipDescription extends RelationshipDescription {
   constructor(relationshipInitializerFactory,

@@ -1,6 +1,3 @@
-import {SimpleFactory} from "./SimpleFactoryInjector.js";
-
-@SimpleFactory('TransportFactory', [])
 export default class Transport {
 
   constructor(urlHelper, $http){

@@ -1,4 +1,9 @@
-import ResourceTransformer from "./ResourceTransformer.js"
+import ResourceTransformer from "./ResourceTransformer.js";
+
+
+export function factory(primaryResourceMapperFactory, primaryResourceSerializerFactory, ResourceClass) {
+  return new PrimaryResourceTransformer(primaryResourceMapperFactory, primaryResourceSerializerFactory, ResourceClass);
+}
 
 export default class PrimaryResourceTransformer extends ResourceTransformer {
   constructor(primaryResourceMapperFactory,
