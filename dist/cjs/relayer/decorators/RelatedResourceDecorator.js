@@ -23,12 +23,13 @@ var _TemplatedUrlJs = require("../TemplatedUrl.js");
 var _SimpleFactoryInjectorJs = require("../SimpleFactoryInjector.js");
 
 var RelatedResourceDecorator = (function (_ResourceDecorator) {
-  function RelatedResourceDecorator(promiseEndpointFactory, name, relationship) {
+  function RelatedResourceDecorator(promiseEndpointFactory, relationshipUtilities, name, relationship) {
     _classCallCheck(this, _RelatedResourceDecorator);
 
     _get(Object.getPrototypeOf(_RelatedResourceDecorator.prototype), "constructor", this).call(this, name);
 
     this.promiseEndpointFactory = promiseEndpointFactory;
+    this.relationshipUtilities = relationshipUtilities;
     this.relationship = relationship;
   }
 
@@ -43,16 +44,21 @@ var RelatedResourceDecorator = (function (_ResourceDecorator) {
         var name = this.name;
         var relationship = this.relationship;
         var promiseEndpointFactory = this.promiseEndpointFactory;
+        var relationshipUtilities = this.relationshipUtilities;
         this._resourceFn = function (uriParams) {
+          var _this = this;
+
           var recursiveCall = arguments[1] === undefined ? false : arguments[1];
 
           if (relationship.async && this.isPersisted) {
             var endpoint;
             if (!this.relationships[name]) {
               if (recursiveCall == false) {
-                endpoint = promiseEndpointFactory(this.self().load().then(function (resource) {
-                  return resource[name](uriParams, true);
-                }));
+                endpoint = promiseEndpointFactory(function () {
+                  return _this.self().load().then(function (resource) {
+                    return resource[name](uriParams, true);
+                  });
+                });
               } else {
                 throw "Error: Unable to find relationship, even on canonical resource";
               }
@@ -62,6 +68,7 @@ var RelatedResourceDecorator = (function (_ResourceDecorator) {
               endpoint = relationship.embeddedEndpoint(this, uriParams);
             }
             relationship.ResourceClass.resourceDescription.applyToEndpoint(endpoint);
+            relationshipUtilities.addMethods(endpoint, this, name);
             return endpoint;
           } else {
             if (this.relationships[name] instanceof _TemplatedUrlJs.TemplatedUrl) {
@@ -111,19 +118,23 @@ var RelatedResourceDecorator = (function (_ResourceDecorator) {
         var relationship = this.relationship;
         var promiseEndpointFactory = this.promiseEndpointFactory;
         this._endpointFn = function () {
+          var _this2 = this;
+
           var uriParams = arguments[0] === undefined ? {} : arguments[0];
 
           // 'this' in here = Endpoint
 
-          var newPromise = this.load().then(function (resource) {
-            if (relationship.async) {
-              return resource[name](uriParams);
-            } else {
-              var endpoint = relationship.embeddedEndpoint(resource, uriParams);
-              description.applyToEndpoint(endpoint);
-              return endpoint;
-            }
-          });
+          var newPromise = function newPromise() {
+            return _this2.load().then(function (resource) {
+              if (relationship.async) {
+                return resource[name](uriParams);
+              } else {
+                var endpoint = relationship.embeddedEndpoint(resource, uriParams);
+                description.applyToEndpoint(endpoint);
+                return endpoint;
+              }
+            });
+          };
 
           var newEndpoint = promiseEndpointFactory(newPromise);
 
@@ -159,7 +170,7 @@ var RelatedResourceDecorator = (function (_ResourceDecorator) {
     }
   }]);
 
-  RelatedResourceDecorator = (0, _SimpleFactoryInjectorJs.SimpleFactory)("RelatedResourceDecoratorFactory", ["PromiseEndpointFactory"])(RelatedResourceDecorator) || RelatedResourceDecorator;
+  RelatedResourceDecorator = (0, _SimpleFactoryInjectorJs.SimpleFactory)("RelatedResourceDecoratorFactory", ["PromiseEndpointFactory", "RelationshipUtilities"])(RelatedResourceDecorator) || RelatedResourceDecorator;
   return RelatedResourceDecorator;
 })(_ResourceDecoratorJs2["default"]);
 

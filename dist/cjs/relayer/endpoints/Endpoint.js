@@ -16,7 +16,7 @@ var Endpoint = (function () {
   _createClass(Endpoint, [{
     key: 'create',
     value: function create(resource, res, rej) {
-      return this.endpointPromise.then(function (endpoint) {
+      return this.endpointPromise().then(function (endpoint) {
         if (endpoint._create) {
           return endpoint._create(resource);
         } else {
@@ -27,7 +27,7 @@ var Endpoint = (function () {
   }, {
     key: 'update',
     value: function update(resource, res, rej) {
-      return this.endpointPromise.then(function (endpoint) {
+      return this.endpointPromise().then(function (endpoint) {
         if (endpoint._update) {
           return endpoint._update(resource);
         } else {
@@ -38,7 +38,7 @@ var Endpoint = (function () {
   }, {
     key: 'load',
     value: function load(res, rej) {
-      return this.endpointPromise.then(function (endpoint) {
+      return this.endpointPromise().then(function (endpoint) {
         if (endpoint._load) {
           return endpoint._load();
         } else {
@@ -64,7 +64,7 @@ var Endpoint = (function () {
   }, {
     key: 'remove',
     value: function remove(res, rej) {
-      return this.endpointPromise.then(function (endpoint) {
+      return this.endpointPromise().then(function (endpoint) {
         return endpoint._remove();
       }).then(res, rej);
     }

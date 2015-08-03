@@ -1,3 +1,8 @@
+0.0.6 08-03-2015
+================
+* Convert all chained loads to being asynchronous -- until you call load, nothing happens
+* Add utility functions for accessing aspects of relationships
+
 0.0.5 07-24-2015
 ================
 * Convert to using $q for promises for now

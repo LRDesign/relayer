@@ -5,7 +5,7 @@ export default class Endpoint {
   }
 
   create(resource, res, rej){
-    return this.endpointPromise.then((endpoint) => {
+    return this.endpointPromise().then((endpoint) => {
       if (endpoint._create) {
         return endpoint._create(resource);
       } else {
@@ -15,7 +15,7 @@ export default class Endpoint {
   }
 
   update(resource, res, rej){
-    return this.endpointPromise.then((endpoint) => {
+    return this.endpointPromise().then((endpoint) => {
       if (endpoint._update) {
         return endpoint._update(resource);
       } else {
@@ -25,7 +25,7 @@ export default class Endpoint {
   }
 
   load(res, rej){
-    return this.endpointPromise.then((endpoint) => {
+    return this.endpointPromise().then((endpoint) => {
       if (endpoint._load) {
         return endpoint._load();
       } else {
@@ -45,7 +45,7 @@ export default class Endpoint {
   }
 
   remove(res, rej){
-    return this.endpointPromise.then((endpoint) => {
+    return this.endpointPromise().then((endpoint) => {
       return endpoint._remove();
     }).then(res, rej);
   }

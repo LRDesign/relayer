@@ -22,6 +22,8 @@ var _SimpleFactoryInjectorJs = require("../SimpleFactoryInjector.js");
 
 var ResolvedEndpoint = (function (_Endpoint) {
   function ResolvedEndpoint(Promise, transport, templatedUrl) {
+    var _this = this;
+
     var resourceTransformers = arguments[3] === undefined ? [] : arguments[3];
     var createResourceTransformers = arguments[4] === undefined ? [] : arguments[4];
 
@@ -40,7 +42,9 @@ var ResolvedEndpoint = (function (_Endpoint) {
     } else {
       this.createResourceTransformers = [createResourceTransformers];
     }
-    this.endpointPromise = Promise.resolve(this);
+    this.endpointPromise = function () {
+      return Promise.resolve(_this);
+    };
   }
 
   _inherits(ResolvedEndpoint, _Endpoint);
@@ -70,20 +74,20 @@ var ResolvedEndpoint = (function (_Endpoint) {
   }, {
     key: "_transformResponse",
     value: function _transformResponse(transformers, response) {
-      var _this = this;
+      var _this2 = this;
 
       return transformers.reduce(function (interimResponse, transformer) {
-        return transformer.transformResponse(_this, interimResponse);
+        return transformer.transformResponse(_this2, interimResponse);
       }, response);
     }
   }, {
     key: "_transformRequest",
     value: function _transformRequest(transformers, request) {
-      var _this2 = this;
+      var _this3 = this;
 
       return transformers.slice(0).reverse().reduce(function (interimRequest, transformer) {
 
-        return transformer.transformRequest(_this2, interimRequest);
+        return transformer.transformRequest(_this3, interimRequest);
       }, request);
     }
   }, {

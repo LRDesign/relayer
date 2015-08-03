@@ -2,13 +2,14 @@ import ResourceDecorator from "./ResourceDecorator.js"
 import {TemplatedUrl} from "../TemplatedUrl.js"
 import {SimpleFactory} from "../SimpleFactoryInjector.js"
 
-@SimpleFactory("RelatedResourceDecoratorFactory", ['PromiseEndpointFactory'])
+@SimpleFactory("RelatedResourceDecoratorFactory", ['PromiseEndpointFactory', 'RelationshipUtilities'])
 export default class RelatedResourceDecorator extends ResourceDecorator {
 
-  constructor(promiseEndpointFactory, name, relationship){
+  constructor(promiseEndpointFactory, relationshipUtilities, name, relationship){
     super(name);
 
     this.promiseEndpointFactory = promiseEndpointFactory;
+    this.relationshipUtilities = relationshipUtilities;
     this.relationship = relationship;
   }
 
@@ -17,14 +18,17 @@ export default class RelatedResourceDecorator extends ResourceDecorator {
       var name = this.name;
       var relationship = this.relationship;
       var promiseEndpointFactory = this.promiseEndpointFactory;
+      var relationshipUtilities = this.relationshipUtilities;
       this._resourceFn = function(uriParams, recursiveCall = false) {
         if (relationship.async && this.isPersisted) {
           var endpoint;
           if (!this.relationships[name]) {
             if (recursiveCall == false) {
-              endpoint = promiseEndpointFactory(this.self().load().then((resource) => {
-                return resource[name](uriParams, true);
-              }));
+              endpoint = promiseEndpointFactory(() => {
+                return this.self().load().then((resource) => {
+                  return resource[name](uriParams, true);
+                })
+              });
             } else {
               throw "Error: Unable to find relationship, even on canonical resource";
             }
@@ -34,6 +38,7 @@ export default class RelatedResourceDecorator extends ResourceDecorator {
             endpoint = relationship.embeddedEndpoint(this, uriParams);
           }
           relationship.ResourceClass.resourceDescription.applyToEndpoint(endpoint);
+          relationshipUtilities.addMethods(endpoint, this, name);
           return endpoint;
         } else {
           if (this.relationships[name] instanceof TemplatedUrl) {
@@ -83,15 +88,17 @@ export default class RelatedResourceDecorator extends ResourceDecorator {
       this._endpointFn = function(uriParams = {}){
         // 'this' in here = Endpoint
 
-        var newPromise = this.load().then((resource) => {
-          if (relationship.async) {
-            return resource[name](uriParams);
-          } else {
-            var endpoint = relationship.embeddedEndpoint(resource, uriParams);
-            description.applyToEndpoint(endpoint);
-            return endpoint;
-          }
-        });
+        var newPromise = () => {
+          return this.load().then((resource) => {
+            if (relationship.async) {
+              return resource[name](uriParams);
+            } else {
+              var endpoint = relationship.embeddedEndpoint(resource, uriParams);
+              description.applyToEndpoint(endpoint);
+              return endpoint;
+            }
+          });
+        }
 
         var newEndpoint = promiseEndpointFactory(newPromise);
 

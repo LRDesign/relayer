@@ -85,13 +85,17 @@ var JsonPropertyDecorator = (function (_ResourceDecorator) {
         var loadedDataEndpointFactory = this.loadedDataEndpointFactory;
         var embeddedPropertyTransformerFactory = this.embeddedPropertyTransformerFactory;
         this._endpointFn = function () {
+          var _this = this;
+
           var uriParams = arguments[0] === undefined ? {} : arguments[0];
 
           // 'this' in here = Endpoint
 
-          var newPromise = this.load().then(function (resource) {
-            return loadedDataEndpointFactory(resource.self(), resource, [embeddedPropertyTransformerFactory(path)]);
-          });
+          var newPromise = function newPromise() {
+            return _this.load().then(function (resource) {
+              return loadedDataEndpointFactory(resource.self(), resource, [embeddedPropertyTransformerFactory(path)]);
+            });
+          };
 
           var newEndpoint = promiseEndpointFactory(newPromise);
 
