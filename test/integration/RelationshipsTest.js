@@ -1,5 +1,6 @@
 import RL from "../../src/relayer.js"
 import {Module, Injector, Config} from "a1atscript";
+import {TemplatedUrl} from "../../src/relayer/TemplatedUrl.js";
 
 class Chapter extends RL.Resource {
 }
@@ -351,6 +352,14 @@ describe("Loading relationships test", function() {
           section = _section_;
           done();
         });
+      });
+
+      it("should verify relationships present and accessible", function() {
+        expect(section.book().present()).toBe(true);
+        expect(section.chapter().present()).toBe(true);
+        expect(section.paragraphs().present()).toBe(true);
+        expect(section.book().get()).toEqual(jasmine.any(TemplatedUrl));
+        expect(section.paragraphs().get()[0]).toEqual(jasmine.any(Paragraph));
       });
 
       it("should resolve the section", function() {

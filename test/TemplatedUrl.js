@@ -99,6 +99,48 @@ describe("TemplatedUrl", function() {
       templatedUrl.addDataPathLink(mockResource, "$.links.self");
       expect(mockOtherResource.links.cheese).toEqual("/cheese/5")
     });
+
+    it("when I add with no overwrite", function() {
+      templatedUrl.addDataPathLink(mockOtherResource, "$.links.cheese")
+      templatedUrl.addDataPathLink(mockResource, "$.links.self", false);
+      expect(mockResource.links.self).toEqual("/cheese/4");
+      expect(mockOtherResource.links.cheese).toEqual("/cheese/4");
+    });
+
+    describe("removeDataPathLink", function() {
+      var mockFinalResource;
+
+      beforeEach(function() {
+        mockFinalResource = {
+          links: {
+            thing: "/cheese/6"
+          },
+
+          pathGet(param) {
+            if (param === "$.links.thing") {
+              return this.links.thing;
+            }
+          },
+
+          pathSet(param, value) {
+            if (param === "$.links.thing") {
+              this.links.thing = value
+            }
+          }
+        }
+        templatedUrl.addDataPathLink(mockOtherResource, "$.links.cheese")
+        templatedUrl.addDataPathLink(mockResource, "$.links.self");
+      });
+
+      it("when I remove a data path link it should no longer get updated by additional writes", function() {
+        expect(mockOtherResource.links.cheese).toEqual("/cheese/5");
+        expect(mockResource.links.self).toEqual("/cheese/5");
+        templatedUrl.removeDataPathLink(mockOtherResource, "$.links.cheese");
+        templatedUrl.addDataPathLink(mockFinalResource, "$.links.thing");
+        expect(mockResource.links.self).toEqual("/cheese/6");
+        expect(mockOtherResource.links.cheese).toEqual("/cheese/5")
+      });
+    });
   });
 
 });
