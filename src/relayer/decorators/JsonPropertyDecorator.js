@@ -1,7 +1,7 @@
 import ResourceDecorator from "./ResourceDecorator.js";
 
 import LoadedDataEndpoint from "../endpoints/LoadedDataEndpoint.js";
-import EmbeddedPropertyTransformer from "../transformers/EmbeddedPropertyTranformer.js";
+import EmbeddedPropertyTransformer from "../transformers/EmbeddedPropertyTransformer.js";
 import PromiseEndpoint from "../endpoints/PromiseEndpoint.js";
 import makeFac from "../dumbMetaFactory.js";
 

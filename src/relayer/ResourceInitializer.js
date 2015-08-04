@@ -1,4 +1,5 @@
-import {Service} from 'a1atscript';
+import ResourceDescription from "./ResourceDescription.js";
+import makeFac from "./dumbMetaFactory.js";
 
 var resourcesToInitialize = [];
 
@@ -6,9 +7,8 @@ export function describeResource(resourceClass, defineFn){
   resourcesToInitialize.push({resourceClass, defineFn});
 }
 
-@Service('InitializedResourceClasses', ['ResourceDescriptionFactory'])
-export class InitializedResourceClasses {
-  constructor(resourceDescriptionFactory) {
+export default class InitializedResourceClasses {
+  constructor(resourceDescriptionFactory = makeFac(ResourceDescription)) {
     this.resourceDescriptionFactory = resourceDescriptionFactory;
     this.initializeClasses();
   }
@@ -28,7 +28,7 @@ export class InitializedResourceClasses {
       var resourceDescription = resourceClass.resourceDescription;
       var errorClass = function (responseData) {
         APIError.call(this);
-      }
+      };
       errorClass.relationships = {};
       errorClass.prototype = Object.create(APIError.prototype);
       errorClass.prototype.constructor = errorClass;

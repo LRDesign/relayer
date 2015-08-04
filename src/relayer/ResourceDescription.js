@@ -7,9 +7,9 @@ import ManyRelationshipDescription from "./relationshipDescriptions/ManyRelation
 import ListRelationshipDescription from "./relationshipDescriptions/ListRelationshipDescription.js";
 import MapRelationshipDescription from "./relationshipDescriptions/MapRelationshipDescription.js";
 import inflectorSingleton from "./singletons/Inflector.js";
-import makeFac from "../dumbMetaFactory.js";
+import makeFac from "./dumbMetaFactory.js";
 
-export class ResourceDescription {
+export default class ResourceDescription {
 
   constructor(
     jsonPropertyDecoratorFactory = makeFac(JsonPropertyDecorator),

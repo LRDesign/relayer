@@ -1,5 +1,5 @@
 import Endpoint from "./Endpoint.js";
-import {Promise as PromiseWrapper} from "../Promise.js";
+import PromiseWrapper from "../Promise.js";
 
 export default class ResolvedEndpoint extends Endpoint {
   constructor(

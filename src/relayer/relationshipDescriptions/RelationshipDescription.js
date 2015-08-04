@@ -1,6 +1,6 @@
 import RelationshipInitializer from '../initializers/RelationshipInitializer.js';
 import ResourceMapper from '../mappers/ResourceMapper.js';
-import ResourceSerializer from '../mappers/ResourceSerializer.js';
+import ResourceSerializer from '../serializers/ResourceSerializer.js';
 import inflectorSingleton from "../singletons/Inflector.js";
 import makeFac from "../dumbMetaFactory.js";
 

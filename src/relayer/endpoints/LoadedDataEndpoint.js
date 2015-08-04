@@ -1,5 +1,5 @@
 import ResolvedEndpoint from "./ResolvedEndpoint.js";
-import {RelayerPromiseFactory} from "../Promise.js";
+import Promise from "../Promise.js";
 
 export default class LoadedDataEndpoint extends ResolvedEndpoint {
   constructor(
@@ -7,14 +7,14 @@ export default class LoadedDataEndpoint extends ResolvedEndpoint {
     resource,
     resourceTransformers = [],
     createResourceTransformers = [],
-    Promise = RelayerPromiseFactory.factory()
+    thisPromise = Promise
   ) {
     super(Promise, resolvedEndpoint.transport,
       resolvedEndpoint.templatedUrl,
       resolvedEndpoint.resourceTransformers.concat(resourceTransformers),
       resolvedEndpoint.createResourceTransformers.concat(createResourceTransformers));
     this.resource = resource;
-    this.Promise = Promise;
+    this.Promise = thisPromise;
     this.data = resolvedEndpoint._transformRequest(resolvedEndpoint.resourceTransformers, resource);
   }
 

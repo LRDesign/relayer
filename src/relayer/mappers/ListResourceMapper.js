@@ -1,4 +1,4 @@
-import {default as ResourceMapper, partialFactory as superFactory} from "./ResourceMapper.js";
+import ResourceMapper from "./ResourceMapper.js";
 import ListResource from "../ListResource.js";
 import ManyResourceMapper from "./ManyResourceMapper.js";
 

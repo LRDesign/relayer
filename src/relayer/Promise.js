@@ -1,6 +1,14 @@
-import {Factory} from "a1atscript";
+var thenFactory;
 
-class RelayerPromise {
+if(typeof Promise !== "undefined" && typeof Promise.then !== "undefined"){
+  thenFactory = (resolver) => { return new Promise(resolver); };
+}
+
+export function setThenFactory(thenFac){
+  thenFactory = thenFac;
+}
+
+export default class RelayerPromise {
   static resolve(value) {
     return new RelayerPromise((res, rej) => res(value));
   }
@@ -10,7 +18,8 @@ class RelayerPromise {
   };
 
   constructor(resolver) {
-    this.internalPromise = RelayerPromiseFactory.$q(resolver);
+    //this.internalPromise = RelayerPromiseFactory.$q(resolver);
+    this.internalPromise = thenFactory(resolver);
   }
 
   then(onFulfilled, onRejected, progressBack) {
@@ -23,13 +32,5 @@ class RelayerPromise {
 
   finally(callback, progressBack) {
     return this.internalPromise.finally(callback, progressBack);
-  }
-}
-
-export default class RelayerPromiseFactory {
-  @Factory('RelayerPromise', ['$q'])
-  static factory($q) {
-    RelayerPromiseFactory.$q = $q;
-    return RelayerPromise;
   }
 }

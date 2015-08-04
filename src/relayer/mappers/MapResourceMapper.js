@@ -1,6 +1,6 @@
 import Mapper from "./Mapper.js";
 import ResourceMapper from "./ResourceMapper.js";
-import ResourceSerializer from "../serializer/ResourceSerializer.js";
+import ResourceSerializer from "../serializers/ResourceSerializer.js";
 import makeFac from "../dumbMetaFactory.js";
 
 export default class MapResourceMapper extends Mapper {

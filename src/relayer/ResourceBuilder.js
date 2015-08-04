@@ -2,7 +2,7 @@ import {TemplatedUrlFromUrl} from "./TemplatedUrl.js";
 import ResEndpoint from "./endpoints/ResolvedEndpoint.js";
 import PrimResTrans from "./transformers/PrimaryResourceTransformer.js";
 import ThrowErrTrans from "./transformers/ThrowErrorTransformer.js";
-import makeFac from "../dumbMetaFactory.js";
+import makeFac from "./dumbMetaFactory.js";
 
 export default class ResourceBuilder {
   constructor(
