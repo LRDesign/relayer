@@ -343,6 +343,10 @@ describe("Loading relationships test", function() {
       it("should add the new chapter on update", function() {
         expect(chapters.length).toEqual(4);
       });
+
+      it("should setup base classes properly", function() {
+        expect(chapters[0]).toEqual(jasmine.any(Chapter));
+      });
     });
 
     describe("section", function() {

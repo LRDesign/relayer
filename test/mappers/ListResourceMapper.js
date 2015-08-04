@@ -18,7 +18,10 @@ describe("ListResourceMapper", function() {
   results,
   transport,
   listResourceMapperFactory,
-  listResourceSerializerFactory;
+  listResourceSerializerFactory,
+  primaryResourceTransformer,
+  primaryResourceTransformerFactory
+  ;
 
   beforeEach(function() {
     manyResourceMapper = {
@@ -86,7 +89,13 @@ describe("ListResourceMapper", function() {
 
     templatedUrlFromUrlFactory = jasmine.createSpy("templatedUrlFromUrlFactory").and.returnValue(templatedUrl);
 
-    resourceBuilderFactory = jasmine.createSpy("resourceBuilderFactory").and.callFake(function(transport, thisResponse, mapperFactory, serializerFactory, ThisResourceClass) {
+    primaryResourceTransformer = {
+      properties: "dummy"
+    };
+
+    primaryResourceTransformerFactory = jasmine.createSpy("primaryResourceTransformerFactory").and.returnValue(primaryResourceTransformer);
+
+    resourceBuilderFactory = jasmine.createSpy("resourceBuilderFactory").and.callFake(function(thisTransport, thisResponse, thisPrimaryResourceTransformer, ThisResourceClass) {
       return {
         build() {
           var thisResource = new ThisResourceClass(thisResponse);
@@ -118,6 +127,7 @@ describe("ListResourceMapper", function() {
       templatedUrlFromUrlFactory,
       resourceBuilderFactory,
       primaryResourceBuilderFactory,
+      primaryResourceTransformerFactory,
       ListResource,
       manyResourceMapperFactory,
       transport,
@@ -171,12 +181,16 @@ describe("ListResourceMapper", function() {
       expect(results.resource.data).toEqual(data);
     });
 
+
+    it("should setup the primary resource transformer", function() {
+      expect(primaryResourceTransformerFactory).toHaveBeenCalledWith(listResourceMapperFactory, listResourceSerializerFactory, ItemResourceClass)
+    })
+
     it("should build the resource with the regular resource builder", function() {
       expect(resourceBuilderFactory).toHaveBeenCalledWith(
         transport,
         data,
-        listResourceMapperFactory,
-        listResourceSerializerFactory,
+        primaryResourceTransformer,
         ListResource);
     });
 

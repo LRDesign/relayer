@@ -3,12 +3,14 @@ import {SimpleFactory} from "../SimpleFactoryInjector.js";
 
 @SimpleFactory("ResourceMapperFactory", ["TemplatedUrlFromUrlFactory",
   "ResourceBuilderFactory",
-  "PrimaryResourceBuilderFactory"])
+  "PrimaryResourceBuilderFactory",
+  "PrimaryResourceTransformerFactory"])
 export default class ResourceMapper extends Mapper {
 
   constructor(templatedUrlFromUrlFactory,
     resourceBuilderFactory,
     primaryResourceBuilderFactory,
+    primaryResourceTransformerFactory,
     transport,
     response,
     ResourceClass,
@@ -18,6 +20,7 @@ export default class ResourceMapper extends Mapper {
 
     super(transport, response, ResourceClass, mapperFactory, serializerFactory);
 
+    this.primaryResourceTransformerFactory = primaryResourceTransformerFactory;
     this.templatedUrlFromUrlFactory = templatedUrlFromUrlFactory;
     this.resourceBuilderFactory = resourceBuilderFactory;
     this.primaryResourceBuilderFactory = primaryResourceBuilderFactory;
@@ -28,8 +31,13 @@ export default class ResourceMapper extends Mapper {
     if (this.endpoint) {
       this.mapped = this.primaryResourceBuilderFactory(this.response, this.ResourceClass).build(this.endpoint);
     } else {
-      this.mapped = this.resourceBuilderFactory(this.transport, this.response, this.mapperFactory, this.serializerFactory, this.ResourceClass).build(this.uriTemplate);
+      this.mapped = this.resourceBuilderFactory(this.transport, this.response, this.primaryResourceTransformer, this.ResourceClass).build(this.uriTemplate);
     }
+  }
+
+  get primaryResourceTransformer() {
+    this._primaryResourceTransformer = this._primaryResourceTransformer || this.primaryResourceTransformerFactory(this.mapperFactory, this.serializerFactory, this.ResourceClass)
+    return this._primaryResourceTransformer;
   }
 
   mapNestedRelationships() {

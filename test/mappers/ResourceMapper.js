@@ -13,7 +13,9 @@ describe("ResourceMapper", function() {
     mockEndpoint,
     transport,
     resourceMapperFactory,
-    resourceSerializerFactory;
+    resourceSerializerFactory,
+    primaryResourceTransformer,
+    primaryResourceTransformerFactory;
 
   beforeEach(function() {
     ResourceClass = function(resource) {
@@ -65,7 +67,13 @@ describe("ResourceMapper", function() {
 
     mockEndpoint = {};
 
-    resourceBuilderFactory = jasmine.createSpy("resourceBuilderFactory").and.callFake(function(thisTransport, thisResponse, thisMapperFactory, thisSerializerFactory, ThisResourceClass) {
+    primaryResourceTransformer = {
+      properties: "dummy"
+    };
+
+    primaryResourceTransformerFactory = jasmine.createSpy("primaryResourceTransformerFactory").and.returnValue(primaryResourceTransformer);
+
+    resourceBuilderFactory = jasmine.createSpy("resourceBuilderFactory").and.callFake(function(thisTransport, thisResponse, thisPrimaryResourceTransformer, ThisResourceClass) {
       return {
         build(uriTemplate) {
           var thisResource = new ThisResourceClass(thisResponse);
@@ -98,6 +106,7 @@ describe("ResourceMapper", function() {
     resourceMapper = new ResourceMapper(templatedUrlFromUrlFactory,
       resourceBuilderFactory,
       primaryResourceBuilderFactory,
+      primaryResourceTransformerFactory,
       transport,
       resource,
       ResourceClass,
@@ -121,11 +130,15 @@ describe("ResourceMapper", function() {
       expect(templatedUrlDataPathSpy).toHaveBeenCalledWith(builtResource, "$.links.awesome");
     });
 
+
+    it("should setup the primary resource transformer", function() {
+      expect(primaryResourceTransformerFactory).toHaveBeenCalledWith(resourceMapperFactory, resourceSerializerFactory, ResourceClass)
+    })
+
     it("should build the resource with the regular resource builder", function() {
       expect(resourceBuilderFactory).toHaveBeenCalledWith(transport,
         resource,
-        resourceMapperFactory,
-        resourceSerializerFactory,
+        primaryResourceTransformer,
         ResourceClass);
     });
   });
@@ -148,11 +161,14 @@ describe("ResourceMapper", function() {
       expect(templatedUrlDataPathSpy).toHaveBeenCalledWith(builtResource, "$.links.awesome");
     });
 
+    it("should setup the primary resource transformer", function() {
+      expect(primaryResourceTransformerFactory).toHaveBeenCalledWith(resourceMapperFactory, resourceSerializerFactory, ResourceClass)
+    })
+
     it("should build the resource with the regular resource builder", function() {
       expect(resourceBuilderFactory).toHaveBeenCalledWith(transport,
         resource,
-        resourceMapperFactory,
-        resourceSerializerFactory,
+        primaryResourceTransformer,
         ResourceClass);
     })
   });

@@ -47,8 +47,6 @@ describe("ResourceBuilder", function() {
       properties: "dummy"
     };
 
-    primaryResourceTransformerFactory = jasmine.createSpy("primaryResourceTransformerFactory").and.returnValue(primaryResourceTransformer);
-
     throwErrorTransformer = {
       properties: "dummy"
     };
@@ -61,22 +59,12 @@ describe("ResourceBuilder", function() {
 
     transport = {};
 
-    mapperFactory = function() {
-      return "hello";
-    }
-
-    serializerFactory = function() {
-      return "goodbye";
-    }
-
     resourceBuilder = new ResourceBuilder(templatedUrlFromUrlFactory,
       resolvedEndpointFactory,
-      primaryResourceTransformerFactory,
       throwErrorTransformerFactory,
       transport,
       resource,
-      mapperFactory,
-      serializerFactory,
+      primaryResourceTransformer,
       ResourceClass);
   });
 
@@ -97,9 +85,6 @@ describe("ResourceBuilder", function() {
     });
 
     it("should setup the transformers", function() {
-      expect(primaryResourceTransformerFactory).toHaveBeenCalledWith(mapperFactory,
-        serializerFactory,
-        ResourceClass);
       expect(throwErrorTransformerFactory).toHaveBeenCalled();
     });
 
@@ -129,10 +114,6 @@ describe("ResourceBuilder", function() {
     });
 
     it("should setup the transformers", function() {
-      expect(primaryResourceTransformerFactory).toHaveBeenCalledWith(
-        mapperFactory,
-        serializerFactory,
-        ResourceClass);
       expect(throwErrorTransformerFactory).toHaveBeenCalled();
     });
 

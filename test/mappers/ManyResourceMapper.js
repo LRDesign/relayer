@@ -13,7 +13,9 @@ describe("ManyResourceMapper", function() {
     resourceSerializerFactory,
     manyResourceMapper,
     builtResources,
-    transport;
+    transport,
+    primaryResourceTransformerFactory,
+    primaryResourceTransformer;
 
   beforeEach(function() {
     ResourceClass = function(resource) {
@@ -59,12 +61,18 @@ describe("ManyResourceMapper", function() {
 
     templatedUrlFromUrlFactory = jasmine.createSpy("templatedUrlFromUrlFactory").and.returnValue(templatedUrl);
 
-    resourceBuilderFactory = jasmine.createSpy("resourceBuilderFactory").and.callFake(function(thisTransport, thisResponse, thisMapperFactory, thisSerializerFactory, ThisResourceClass) {
+    primaryResourceTransformer = {
+      properties: "dummy"
+    };
+
+    primaryResourceTransformerFactory = jasmine.createSpy("primaryResourceTransformerFactory").and.returnValue(primaryResourceTransformer);
+
+    resourceBuilderFactory = jasmine.createSpy("resourceBuilderFactory").and.callFake(function(thisTransport, thisResponse, thisPrimaryResourceTransformer, ThisResourceClass) {
       return {
         build(uriTemplate) {
-          var resource = new ThisResourceClass(thisResponse);
-          resource.uriTemplate = uriTemplate;
-          return resource;
+          var thisResource = new ThisResourceClass(thisResponse);
+          thisResource.uriTemplate = uriTemplate;
+          return thisResource;
         }
       }
     });
@@ -90,6 +98,7 @@ describe("ManyResourceMapper", function() {
       return new ResourceMapper(templatedUrlFromUrlFactory,
         resourceBuilderFactory,
         primaryResourceBuilderFactory,
+        primaryResourceTransformerFactory,
         thisTransport,
         response,
         ThisResourceClass,
