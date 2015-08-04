@@ -1,30 +1,17 @@
 import ResourceDecorator from "./ResourceDecorator.js";
 
-import {factory as LoadedDataEndpointFactory} from "../endpoints/LoadedDataEndpoint.js";
+import LoadedDataEndpoint from "../endpoints/LoadedDataEndpoint.js";
 import EmbeddedPropertyTransformer from "../transformers/EmbeddedPropertyTranformer.js";
 import PromiseEndpoint from "../endpoints/PromiseEndpoint.js";
-
-export function factory(name, path, value, options){
-  function embeddedPropertyTransformerFactory(path){
-    return new EmbeddedPropertyTransformer(path);
-  }
-  function promiseEndpointFactory(promise){
-    return new PromiseEndpoint(promise);
-  }
-
-  return new JsonPropertyDecorator(
-    loadedDataEndpointFactory, embeddedPropertyTransformerFactory, promiseEndpointFactory,
-    name, path, value, options);
-}
+import makeFac from "../dumbMetaFactory.js";
 
 export default class JsonPropertyDecorator extends ResourceDecorator {
-  constructor(loadedDataEndpointFactory,
-    embeddedPropertyTransformerFactory,
-    promiseEndpointFactory,
-    name,
-    path,
-    value,
-    options){
+  constructor( name, path, value, options,
+
+    loadedDataEndpointFactory = makeFac(LoadedDataEndpoint),
+    embeddedPropertyTransformerFactory = makeFac(EmbeddedPropertyTranformer),
+    promiseEndpointFactory = makeFac(PromiseEndpoint)
+  ){
 
     super(name);
 

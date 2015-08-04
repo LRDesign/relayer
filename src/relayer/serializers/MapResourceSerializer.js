@@ -1,12 +1,11 @@
 import Serializer from "./Serializer.js";
-import {factory as resourceSerializerFactory} from "./ResourceSerializer.js";
-
-export function factory(resourceSerializerFactory, resource) {
-  return new MapResourceSerializer(resourceSerializerFactory, resource);
-}
+import ResourceSerializer from "./ResourceSerializer.js";
+import makeFac from "../dumbMetaFactory.js";
 
 export default class MapResourceSerializer extends Serializer {
-  constructor(resourceSerializerFactory, resource) {
+  constructor( resource,
+    resourceSerializerFactory = makeFac(ResourceSerializer)
+  ) {
     super(resource);
     this.resourceSerializerFactory = resourceSerializerFactory;
   }

@@ -1,12 +1,14 @@
 import Endpoint from "./Endpoint.js";
-import {Promise} from "../Promise.js";
-
-export function factory(transport, templatedUrl, resourceTransformers = [], createResourceTransformers = []) {
-  return new ResolvedEndpoint(Promise, transport, templatedUrl, resourceTransformers, createResourceTransformers);
-}
+import {Promise as PromiseWrapper} from "../Promise.js";
 
 export default class ResolvedEndpoint extends Endpoint {
-  constructor(Promise, transport, templatedUrl, resourceTransformers = [], createResourceTransformers = []) {
+  constructor(
+    transport,
+    templatedUrl,
+    resourceTransformers = [],
+    createResourceTransformers = [],
+    Promise = PromiseWrapper
+  ) {
     super();
     this.transport = transport;
     this.templatedUrl = templatedUrl;
@@ -20,7 +22,7 @@ export default class ResolvedEndpoint extends Endpoint {
     } else {
       this.createResourceTransformers = [createResourceTransformers];
     }
-    this.endpointPromise = () => { return Promise.resolve(this) };
+    this.endpointPromise = () => { return Promise.resolve(this); };
   }
 
   _load() {

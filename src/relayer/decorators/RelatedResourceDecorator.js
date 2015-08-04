@@ -1,17 +1,15 @@
 import ResourceDecorator from "./ResourceDecorator.js";
 import {TemplatedUrl} from "../TemplatedUrl.js";
-import {factory as promiseEndpointFactory} from "../endpoints/PromiseEndpoint.js";
+import PromiseEndpoint from "../endpoints/PromiseEndpoint.js";
 import RelationshipUtilities from "../RelationshipUtilities.js";
-
-export function factory(name, relationship){
-  relUtils = new RelationshipUtilities(); //should just be the function
-
-  return new RelatedResourceDecorator(promiseEndpointFactory, relUtils, name, relationship);
-}
+import makeFac from "../dumbMetaFactory.js";
 
 export default class RelatedResourceDecorator extends ResourceDecorator {
 
-  constructor(promiseEndpointFactory, relationshipUtilities, name, relationship){
+  constructor(name, relationship,
+    promiseEndpointFactory = makeFac(PromiseEndpoint),
+    relationshipUtilities = new RelationshipUtilities()
+  ){
     super(name);
 
     this.promiseEndpointFactory = promiseEndpointFactory;

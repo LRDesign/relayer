@@ -5,10 +5,6 @@
 // customization like lists, admin role endpoints, paginated endpoints, etc
 // I even had the idea that these could potentially be chained
 
-export function factory(){
-  return new ResourceTransformer();
-}
-
 export default class ResourceTransformer {
   transformRequest(endpoint, resource) {
     return resource;

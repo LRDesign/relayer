@@ -1,16 +1,12 @@
 import Serializer from "./Serializer.js";
 import ResourceSerializer from "./ResourceSerializer.js";
-
-export function factory(resourceSerializerFactory, resource) {
-  function makeResourceSerializer(resource){
-    return new ResourceSerializer(resource);
-  }
-
-  return new ManyResourceSerializer(makeResourceSerializer, resource);
-}
+import makeFac from "../dumbMetaFactory.js";
 
 export default class ManyResourceSerializer extends Serializer {
-  constructor(resourceSerializerFactory, resource) {
+  constructor(
+    resource,
+    resourceSerializerFactory = makeFac(ResourceSerializer)
+  ) {
     super(resource);
     this.resourceSerializerFactory = resourceSerializerFactory;
   }

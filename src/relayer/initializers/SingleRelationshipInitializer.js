@@ -1,10 +1,4 @@
-import {default as RelationshipInitializer, partialFactory as superFactory} from "./RelationshipInitializer.js";
-
-export function factory(ResourceClass, initialValues) {
-  return partialFactory(ResourceClass, initialValues, (...args) => {
-    return new SingleRelationshipInitializer(...args);
-  });
-}
+import RelationshipInitializer from "./RelationshipInitializer.js";
 
 export default class SingleRelationshipInitializer extends RelationshipInitializer {
   initialize() {

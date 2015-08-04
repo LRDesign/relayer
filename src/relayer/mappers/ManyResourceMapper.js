@@ -1,14 +1,18 @@
 import Mapper from "./Mapper.js";
-import {factory as singleResourceMapperFactory} from "./ResourceMapper.js";
-import {factory as singleResourceSerializerFactory} from "../serializers/ResourceSerializer.js";
-
-export function factory(transport, response, ResourceClass) {
-  return new ManyResourceMapper(singleResourceMapperFactory, singleResourceSerializerFactory, transport, response, ResourceClass);
-}
+import SingleResourceMapper from "./ResourceMapper.js";
+import SingleResourceSerializer from "../serializers/ResourceSerializer.js";
+import makeFac from "../dumbMetaFactory.js";
 
 export default class ManyResourceMapper extends Mapper {
 
-  constructor(singleResourceMapperFactory, singleResourceSerializerFactory, transport, response, ResourceClass) {
+  constructor(
+    transport,
+    response,
+    ResourceClass,
+
+    singleResourceMapperFactory = makeFac(SingleResourceMapper),
+    singleResourceSerializerFactory = makeFac(SingeResourceSerializer)
+  ) {
     super(transport, response, ResourceClass);
     this.singleResourceMapperFactory = singleResourceMapperFactory;
     this.singleResourceSerializerFactory = singleResourceSerializerFactory;

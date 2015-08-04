@@ -1,7 +1,5 @@
 export default class Endpoint {
-
   constructor() {
-
   }
 
   create(resource, res, rej){

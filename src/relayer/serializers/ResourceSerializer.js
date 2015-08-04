@@ -1,10 +1,6 @@
 import Serializer from "./Serializer.js";
 import {TemplatedUrl} from "../TemplatedUrl.js";
 
-export function factory(resource){
-  return new ResourceSerializer(resource);
-}
-
 export default class ResourceSerializer extends Serializer {
   serialize() {
     var relationship;

@@ -1,31 +1,22 @@
-import {templatedUrlFromUrlFactory} from "./TemplatedUrl.js";
-import {factory as resEndpointFactory} from "./endpoints/ResolvedEndpoint.js";
-import {factory as primResTransFac} from "./transformers/PrimaryResourceTransformer.js";
-import {factory as throwErrTransFactory} from "./transformers/ThrowErrorTransformer.js";
-
-
-export function factory(transport, response, mapperFactory, serializerFactory, ResourceClass) {
-
-  return new ResourceBuilder(
-    templatedUrlFromUrlFactory,
-    resEndpointFactory,
-    primResTransFactory,
-    throwErrTransFactory,
-
-    transport, response, mapperFactory, serializerFactory, ResourceClass);
-}
+import {TemplatedUrlFromUrl} from "./TemplatedUrl.js";
+import ResEndpoint from "./endpoints/ResolvedEndpoint.js";
+import PrimResTrans from "./transformers/PrimaryResourceTransformer.js";
+import ThrowErrTrans from "./transformers/ThrowErrorTransformer.js";
+import makeFac from "../dumbMetaFactory.js";
 
 export default class ResourceBuilder {
-  constructor(templatedUrlFromUrlFactory,
-    resolvedEndpointFactory,
-    primaryResourceTransformerFactory,
-    throwErrorTransformerFactory,
+  constructor(
     transport,
     response,
     mapperFactory,
     serializerFactory,
-    ResourceClass) {
+    ResourceClass,
 
+    templatedUrlFromUrlFactory = makeFac(TemplatedUrlFromUrl),
+    resolvedEndpointFactory = makeFac(ResEndpoint),
+    primaryResourceTransformerFactory = makeFac(PrimRestTrans),
+    throwErrorTransformerFactory = makeFac(ThrowErrTrans)
+  ) {
     this.transport = transport;
     this.ResourceClass = ResourceClass;
     this.templatedUrlFromUrlFactory = templatedUrlFromUrlFactory;

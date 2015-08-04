@@ -1,64 +1,38 @@
-import {default as RelationshipDescription, partialFactory as superFactory} from "./RelationshipDescription.js";
-import {factory as singleResourceMapperFactory} from "../mappers/ResourceMapper.js";
-import {factory as singleResourceSerializerFactory} from "../serializers/ResourceSerializer.js";
-import {factory as primaryResourceTransformerFactory} from "../transformers/PrimaryResourceTransformer.js";
-import {factory as embeddedRelationshipTransformerFactory} from "../transformers/EmbeddedRelationshipTransformer.js";
-import {factory as individualFromListTranformerFactory} from "../transformers/IndividualFromListTransformer.js";
-import {factory as createResourceTransformerFactory} from "../transformers/CreateResourceTransformer.js";
-import {factory as resolvedEndpointFactory} from "../endpoints/ResolvedEndpoint.js";
-import {factory as loadedDataEndpointFactory} from "../endpoints/LoadedDataEndpoint.js";
-import {TemplatedUrlFactory, TemplatedUrlFromUrlFactory} from "../TemplatedUrl.js";
-
-export function factory( name, ResourceClass, initialValues) {
-  return superFactory(name, ResourceClass, initialValue, (
-    relationshipInitializerFactory,
-    resourceMapperFactory,
-    resourceSerializerFactory,
-    inflector,
-
-    name, ResourceClass, initialValues
-  ) => {
-    return new SingleRelationshipDescription(
-      relationshipInitializerFactory, resourceMapperFactory, resourceSerializerFactory, inflector,
-
-      singleResourceMapperFactory, singleResourceSerializerFactory,
-      primaryResourceTransformerFactory, embeddedRelationshipTransformerFactory,
-      individualFromListTransformerFactory, createResourceTransformerFactory,
-      resolvedEndpointFactory, loadedDataEndpointFactory,
-      TemplatedUrlFromUrlFactory, TemplatedUrlFactory,
-
-      name, ResourceClass, initialValues);
-  });
-}
+import RelationshipDescription from "./RelationshipDescription.js";
+import ResourceMapper from "../mappers/ResourceMapper.js";
+import ResourceSerializer from "../serializers/ResourceSerializer.js";
+import PrimaryResourceTransformer from "../transformers/PrimaryResourceTransformer.js";
+import EmbeddedRelationshipTransformer from "../transformers/EmbeddedRelationshipTransformer.js";
+import IndividualFromListTranformer from "../transformers/IndividualFromListTransformer.js";
+import CreateResourceTransformer from "../transformers/CreateResourceTransformer.js";
+import ResolvedEndpoint from "../endpoints/ResolvedEndpoint.js";
+import LoadedDataEndpoint from "../endpoints/LoadedDataEndpoint.js";
+import {TemplatedUrl, TemplatedUrlFromUrl} from "../TemplatedUrl.js";
+import makeFac from "../dumbMetaFactory.js";
 
 export default class SingleRelationshipDescription extends RelationshipDescription {
-
-  constructor(relationshipInitializerFactory,
-    resourceMapperFactory,
-    resourceSerializerFactory,
-    inflector,
-    singleResourceMapperFactory,
-    singleResourceSerializerFactory,
-    primaryResourceTransformerFactory,
-    embeddedRelationshipTransformerFactory,
-    individualFromListTransformerFactory,
-    createResourceTransformerFactory,
-    resolvedEndpointFactory,
-    loadedDataEndpointFactory,
-    templatedUrlFromUrlFactory,
-    templatedUrlFactory,
+  constructor(
     name,
     ResourceClass,
-    initialValues) {
+    initialValues,
+
+    singleResourceMapperFactory = makeFac(ResourceMapper),
+    singleResourceSerializerFactory = makeFac(ResourceSerializer),
+    primaryResourceTransformerFactory = makeFac(PrimaryResourceTransformer),
+    embeddedRelationshipTransformerFactory = makeFac(EmbeddedRelationshipTransformer),
+    individualFromListTransformerFactory = makeFac(IndividualFromListTransformer),
+    createResourceTransformerFactory = makeFac(CreateResourceTransformer),
+    resolvedEndpointFactory = makeFac(ResolvedEndpoint),
+    loadedDataEndpointFactory = makeFac(LoadedDataEndpoint),
+    templatedUrlFromUrlFactory = makeFac(TemplatedUrlFromUrl),
+    templatedUrlFactory = makeFac(TemplatedUrl),
+
+    ...superArgs
+  ) {
 
 
-    super(relationshipInitializerFactory,
-      resourceMapperFactory,
-      resourceSerializerFactory,
-      inflector,
-      name,
-      ResourceClass,
-      initialValues);
+    super(name, ResourceClass, initialValues,
+          ...superArgs);
 
     this.singleResourceMapperFactory = singleResourceMapperFactory;
     this.singleResourceSerializerFactory = singleResourceSerializerFactory;

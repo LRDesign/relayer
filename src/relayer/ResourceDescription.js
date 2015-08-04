@@ -1,32 +1,25 @@
 import APIError from "./APIError.js";
 
-import {factory as jsonPropertyDecoratorFactory} from "./decorators/JsonPropertyDecorator.js";
-import {factory as relatedResourceDecoratorFactory} from "./decorators/RelatedResourceDecorator.js";
-import {factory as singleRelationshipDescriptionFactory} from "./relationshipDescriptions/SingleRelationshipDescription.js";
-import {factory as manyRelationshipDescriptionFactory} from "./relationshipDescriptions/ManyRelationshipDescription.js";
-import {factory as listRelationshipDescriptionFactory} from "./relationshipDescriptions/ListRelationshipDescription.js";
-import {factory as mapRelationshipDescriptionFactory} from "./relationshipDescriptions/MapRelationshipDescription.js";
-import inflector from "./singletons/Inflector.js";
-
-export function factory() {
-  return new ResourceDescription(jsonPropertyDecoratorFactory,
-                                 relatedResourceDecoratorFactory,
-                                 singleRelationshipDescriptionFactory,
-                                 manyRelationshipDescriptionFactory,
-                                 listRelationshipDescriptionFactory,
-                                 mapRelationshipDescriptionFactory,
-                                 inflector);
-}
+import JsonPropertyDecorator from "./decorators/JsonPropertyDecorator.js";
+import RelatedResourceDecorator from "./decorators/RelatedResourceDecorator.js";
+import SingleRelationshipDescription from "./relationshipDescriptions/SingleRelationshipDescription.js";
+import ManyRelationshipDescription from "./relationshipDescriptions/ManyRelationshipDescription.js";
+import ListRelationshipDescription from "./relationshipDescriptions/ListRelationshipDescription.js";
+import MapRelationshipDescription from "./relationshipDescriptions/MapRelationshipDescription.js";
+import inflectorSingleton from "./singletons/Inflector.js";
+import makeFac from "../dumbMetaFactory.js";
 
 export class ResourceDescription {
 
-  constructor(jsonPropertyDecoratorFactory,
-    relatedResourceDecoratorFactory,
-    singleRelationshipDescriptionFactory,
-    manyRelationshipDescriptionFactory,
-    listRelationshipDescriptionFactory,
-    mapRelationshipDescriptionFactory,
-    inflector) {
+  constructor(
+    jsonPropertyDecoratorFactory = makeFac(JsonPropertyDecorator),
+    relatedResourceDecoratorFactory = makeFac(RelatedResourceDecorator),
+    singleRelationshipDescriptionFactory = makeFac(SingleRelationshipDescription),
+    manyRelationshipDescriptionFactory = makeFac(ManyRelationshipDescription),
+    listRelationshipDescriptionFactory = makeFac(ListRelationshipDescription),
+    mapRelationshipDescriptionFactory = makeFac(MapRelationshipDescription),
+    inflector = inflectorSingleton
+  ) {
 
     this.jsonPropertyDecoratorFactory = jsonPropertyDecoratorFactory;
     this.relatedResourceDecoratorFactory = relatedResourceDecoratorFactory;

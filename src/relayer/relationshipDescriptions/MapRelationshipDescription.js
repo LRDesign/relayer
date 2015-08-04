@@ -1,10 +1,4 @@
-import {default as MultipleRelationshipDescription, partialFactory as multipleFactory} from "./MultipleRelationshipDescription.js";
+import MultipleRelationshipDescription from "./MultipleRelationshipDescription.js";
 
-export function factory(name, ResourceClass, initialValues) {
-  return multipleFactory(name, ResourceClass, initialValues, (...args) => {
-    return new MapRelationshipsDescription(...args);
-  });
-}
-
-export default class MapRelationshipDescription extends MultipleRelationshipDescription {
-}
+//XXX Why do we need this subclass, either?
+export default class MapRelationshipDescription extends MultipleRelationshipDescription { }

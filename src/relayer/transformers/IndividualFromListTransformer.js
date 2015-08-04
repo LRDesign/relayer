@@ -1,12 +1,12 @@
 import ResourceTransformer from "./ResourceTransformer.js";
-import {templatedUrlFactory} from "../TemplatedUrl.js";
-
-export function factory(relationshipName, uriParams) {
-  return new IndividualFromListTransformer(templatedUrlFactory, relationshipName, uriParams);
-}
+import {TemplatedUrl} from "../TemplatedUrl.js";
+import makeFac from "../dumbMetaFactory.js";
 
 export default class IndividualFromListTransformer extends ResourceTransformer {
-  constructor(templatedUrlFactory, relationshipName, uriParams) {
+  constructor(
+    relationshipName, uriParams,
+    templatedUrlFactory = makeFac(TemplatedUrl)
+  ) {
     super();
     this.templatedUrlFactory = templatedUrlFactory;
     this.relationshipName = relationshipName;

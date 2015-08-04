@@ -1,34 +1,16 @@
-import {factory as relationshipInitializerFactory} from '../initializers/RelationshipInitializer.js';
-import {factory as resourceMapperFactory} from '../mappers/ResourceMapper.js';
-import {factory as resourceSerializerFactory} from '../mappers/ResourceSerializer.js';
-import inflector from "../singletons/Inflector.js";
-
-export function partialFactory(name, ResourceClass, initialValues, subfactory) {
-  return subfactory(
-    relationshipInitializerFactory,
-    resourceMapperFactory,
-    resourceSerializerFactory,
-    inflector,
-
-    name, ResourceClass, initialValues
-  );
-}
-
-export function factory(name, ResourceClass, initialValues) {
-  return partialFactory(name, ResourceClass, initialValues, (...args) => {
-    return new RelationshipDescription(...args);
-  });
-}
+import RelationshipInitializer from '../initializers/RelationshipInitializer.js';
+import ResourceMapper from '../mappers/ResourceMapper.js';
+import ResourceSerializer from '../mappers/ResourceSerializer.js';
+import inflectorSingleton from "../singletons/Inflector.js";
+import makeFac from "../dumbMetaFactory.js";
 
 export default class RelationshipDescription {
-  constructor(
-    relationshipInitializerFactory,
-    resourceMapperFactory,
-    resourceSerializerFactory,
-    inflector,
-    name,
-    ResourceClass,
-    initialValues) {
+  constructor( name, ResourceClass, initialValues,
+    relationshipInitializerFactory = makeFac(RelationshipInitializer),
+    resourceMapperFactory          = makeFac(ResourceMapper),
+    resourceSerializerFactory      = makeFac(ResourceSerializer),
+    inflector                      = inflectorSingleton
+  ) {
 
 
     this.initializer = relationshipInitializerFactory(ResourceClass, initialValues);
@@ -39,7 +21,7 @@ export default class RelationshipDescription {
     this.ResourceClass = ResourceClass;
     this.initialValues = initialValues;
     this.async = true;
-    if (initialValues == undefined) {
+    if (initialValues === undefined) {
       this.initializeOnCreate = false;
     } else {
       this.initializeOnCreate = true;

@@ -1,50 +1,29 @@
 import {default as ResourceMapper, partialFactory as superFactory} from "./ResourceMapper.js";
 import ListResource from "../ListResource.js";
-import {factory as manyResourceMapperFactory} from "./ManyResourceMapper.js";
+import ManyResourceMapper from "./ManyResourceMapper.js";
 
-export function factory(transport, response, ResourceClass, mapperFactory, serializerFactory, endpoint = null) {
-  return superFactory(transport, response, ResourceClass, mapperFactory, serializerFactory, endpoint, (
-    templatedUrlFromUrlFactory, resourceBuilderFactory, primaryResourceBuilderFactory,
-    transport, response, ResourceClass, mapperFactory, serializerFactory, endpoint
-  ) => {
-    return new ListResourceMapper(
-      templatedUrlFromUrlFactory,
-      resourceBuilderFactory,
-      primaryResourceBuilderFactory,
-
-      ListResource,
-      manyResourceMapperFactory,
-
-      transport,
-      response,
-      ItemResourceClass,
-      mapperFactory,
-      serializerFactory,
-      endpoint);
-  });
-}
+import makeFac from "../dumbMetaFactory.js";
 
 export default class ListResourceMapper extends ResourceMapper {
-  constructor(templatedUrlFromUrlFactory,
-      resourceBuilderFactory,
-      primaryResourceBuilderFactory,
-      ListResource,
-      manyResourceMapperFactory,
-      transport,
-      response,
-      ItemResourceClass,
-      mapperFactory,
-      serializerFactory,
-      endpoint) {
+  constructor(
+    transport,
+    response,
+    ListResource,
+    ItemResourceClass,
+    endpoint = null,
+    manyResourceMapperFactory = makeFac(ManyResourceMapper),
 
-    super(templatedUrlFromUrlFactory,
-      resourceBuilderFactory,
-      primaryResourceBuilderFactory,
+    ...superArgs
+
+  ) {
+
+    super(
       transport,
       response,
-      ListResource,
-      mapperFactory,
-      serializerFactory);
+      serializerFactory,
+      ...superArgs
+    );
+
     this.ItemResourceClass = ItemResourceClass;
     this.manyResourceMapperFactory = manyResourceMapperFactory;
     this.endpoint = endpoint;

@@ -1,32 +1,22 @@
 import Mapper from "./Mapper.js";
-import {templatedUrlFromUrlFactory} from "../TemplatedUrl.js";
-import {factory as resourceBuilderFactory} from "../ResourceBuilder.js";
-import {factory as primaryResourceBuilderFactory} from "../PrimaryResourceBuilder.js";
-
-export function partialFactory(transport, response, ResourceClass, mapperFactory, serializerFactory, endpoint, subfactory) {
-  return subfactory(
-    templatedUrlFromUrlFactory, resourceBuilderFactory, primaryResourceBuilderFactory,
-    transport, response, ResourceClass, mapperFactory, serializerFactory, endpoint
-  );
-}
-
-export function factory(transport, response, ResourceClass, mapperFactory, serializerFactory, endpoint = null) {
-  return partialFactory(transport, response, ResourceClass, mapperFactory, serializerFactory, endpoint, (...args) => {
-    return new ResourceMapper(...args);
-  });
-}
+import {TemplatedUrlFromUrl} from "../TemplatedUrl.js";
+import ResourceBuilder from "../ResourceBuilder.js";
+import PrimaryResourceBuilder from "../PrimaryResourceBuilder.js";
+import makeFac from "../dumbMetaFactory.js";
 
 export default class ResourceMapper extends Mapper {
-
-  constructor(templatedUrlFromUrlFactory,
-    resourceBuilderFactory,
-    primaryResourceBuilderFactory,
+  constructor(
     transport,
     response,
     ResourceClass,
     mapperFactory,
     serializerFactory,
-    endpoint = null) {
+    endpoint = null,
+
+    templatedUrlFromUrlFactory = makeFac(TemplatedUrlFromUrl),
+    resourceBuilderFactory = makeFac(ResourceBuild),
+    primaryResourceBuilderFactory = makeFac(PrimaryResourceBuilder)
+  ) {
 
     super(transport, response, ResourceClass, mapperFactory, serializerFactory);
 

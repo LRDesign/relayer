@@ -1,18 +1,11 @@
 import ResourceTransformer from "./ResourceTransformer.js";
 
-
-export function factory(primaryResourceMapperFactory, primaryResourceSerializerFactory, ResourceClass) {
-  return new PrimaryResourceTransformer(primaryResourceMapperFactory, primaryResourceSerializerFactory, ResourceClass);
-}
-
 export default class PrimaryResourceTransformer extends ResourceTransformer {
-  constructor(primaryResourceMapperFactory,
-    primaryResourceSerializerFactory,
-    ResourceClass) {
+  constructor(ResourceClass, primaryResourceMapperFactory, primaryResourceSerializerFactory) {
     super();
+    this.ResourceClass = ResourceClass;
     this.primaryResourceSerializerFactory = primaryResourceSerializerFactory;
     this.primaryResourceMapperFactory = primaryResourceMapperFactory;
-    this.ResourceClass = ResourceClass;
   }
 
   transformRequest(endpoint, resource) {

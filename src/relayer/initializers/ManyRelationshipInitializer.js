@@ -1,14 +1,13 @@
 import RelationshipInitializer from "./RelationshipInitializer.js";
-import {factory as SingleRelFactory} from "./SingleRelationshipInitializer.js";
-
-export function factory(ResourceClass, initialValues) {
-  return new ManyRelationshipInitializer(SingleRelFactory, ResourceClass, initialValue);
-}
+import SingleRelInit from "./SingleRelationshipInitializer.js";
+import makeFac from "../dumbMetaFactory.js";
 
 export default class ManyRelationshipInitializer extends RelationshipInitializer {
-  constructor(singleRelationshipInitializerFactory,
+  constructor(
     ResourceClass,
-    initialValues) {
+    initialValues,
+    singleRelationshipInitializerFactory = makeFac(SingleRelInit)
+  ) {
     super(ResourceClass, initialValues);
     this.singleRelationshipInitializerFactory = singleRelationshipInitializerFactory;
   }

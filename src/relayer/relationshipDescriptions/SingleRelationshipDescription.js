@@ -1,51 +1,27 @@
 import RelationshipDescription from "./RelationshipDescription.js";
-import inflector from "../singletons/Inflector.js";
-import {factory as relationshipInitializerFactory} from "../initializers/RelationshipInitializer.js";
-import {factory as resourceMapperFactory} from "../mappers/ResourceMapper.js";
-import {factory as resourceSerializerFactory} from "../serializers/ResourceSerializer.js";
-import {factory as primaryResourceTransformerFactory} from "../transformers/PrimaryResourceTransformer.js";
-import {factory as embeddedRelationshipTransformerFactory} from "../transformers/EmbeddedPropertyTransformer.js";
-import {factory as resolvedEndpointFactory} from "../endpoints/ResolvedEndpoint.js";
-import {factory as loadedDataEndpointFactory} from "../endpoints/LoadedDataEndpoint.js";
-import {factory as templatedUrlFromUrlFactory} from "../TemplatedUrl.js";
 
-export function factory(name, ResourceClass, initialValues) {
-  return new SingleRelationshipDescription(
-    relationshipInitializerFactory,
-    resourceMapperFactory,
-    resourceSerializerFactory,
-    inflector,
-    primaryResourceTransformerFactory,
-    embeddedRelationshipTransformerFactory,
-    resolvedEndpointFactory,
-    loadedDataEndpointFactory,
-    templatedUrlFromUrlFactory,
-    name,
-    ResourceClass,
-    initialValues);
-}
+import RrimaryResourceTransformer from "../transformers/PrimaryResourceTransformer.js";
+import EmbeddedRelationshipTransformer from "../transformers/EmbeddedPropertyTransformer.js";
+import ResolvedEndpoint from "../endpoints/ResolvedEndpoint.js";
+import LoadedDataEndpoint from "../endpoints/LoadedDataEndpoint.js";
+import {TemplatedUrlFromUrl} from "../TemplatedUrl.js";
 
 export default class SingleRelationshipDescription extends RelationshipDescription {
-  constructor(relationshipInitializerFactory,
-    resourceMapperFactory,
-    resourceSerializerFactory,
-    inflector,
-    primaryResourceTransformerFactory,
-    embeddedRelationshipTransformerFactory,
-    resolvedEndpointFactory,
-    loadedDataEndpointFactory,
-    templatedUrlFromUrlFactory,
+  constructor(
     name,
     ResourceClass,
-    initialValues) {
+    initialValues,
 
-    super(relationshipInitializerFactory,
-      resourceMapperFactory,
-      resourceSerializerFactory,
-      inflector,
-      name,
-      ResourceClass,
-      initialValues);
+    primaryResourceTransformerFactory = makeFac(PrimaryResourceTransformer),
+    embeddedRelationshipTransformerFactory = makeFac(EmbeddedRelationshipTransformer),
+    resolvedEndpointFactory = makeFac(ResolvedEndpoint),
+    loadedDataEndpointFactory = makeFac(LoadedDataEndpoint),
+    templatedUrlFromUrlFactory = makeFac(TemplatedUrlFromUrl),
+
+    ...superArgs
+  ) {
+
+    super( name, ResourceClass, initialValues, ...superArgs);
 
     this.primaryResourceTransformerFactory = primaryResourceTransformerFactory;
     this.embeddedRelationshipTransformerFactory = embeddedRelationshipTransformerFactory;
@@ -65,9 +41,11 @@ export default class SingleRelationshipDescription extends RelationshipDescripti
     var url = parent.pathGet(this.linksPath);
     var templatedUrl = this.templatedUrlFromUrlFactory(url, url);
     templatedUrl.addDataPathLink(parent, this.linksPath);
-    var primaryResourceTransformer = this.primaryResourceTransformerFactory(this.mapperFactory,
+    var primaryResourceTransformer = this.primaryResourceTransformerFactory(
+      this.mapperFactory,
       this.serializerFactory,
-      this.ResourceClass);
+      this.ResourceClass
+    );
     return this.resolvedEndpointFactory(transport, templatedUrl, primaryResourceTransformer);
   }
 

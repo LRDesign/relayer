@@ -1,9 +1,5 @@
 import ResourceTransformer from "./ResourceTransformer.js";
 
-export function factory(relationshipName) {
-  return new EmbeddedRelationshipTransformer(relationshipName);
-}
-
 export default class EmbeddedRelationshipTransformer extends ResourceTransformer {
   constructor(relationshipName) {
     super();

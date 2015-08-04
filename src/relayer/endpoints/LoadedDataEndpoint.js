@@ -1,15 +1,14 @@
 import ResolvedEndpoint from "./ResolvedEndpoint.js";
 import {RelayerPromiseFactory} from "../Promise.js";
 
-export function factory(resolvedEndpoint, resource, resourceTransformers = [], createResourceTransformers = []) {
-  var promise = RelayerPromiseFactory.factory();
-
-  return new LeadedDataEndpoint(promise, resolvedEndpoint, resource, resourceTransformers, createResourceTransformers);
-}
-
 export default class LoadedDataEndpoint extends ResolvedEndpoint {
-
-  constructor(Promise, resolvedEndpoint, resource, resourceTransformers = [], createResourceTransformers = []) {
+  constructor(
+    resolvedEndpoint,
+    resource,
+    resourceTransformers = [],
+    createResourceTransformers = [],
+    Promise = RelayerPromiseFactory.factory()
+  ) {
     super(Promise, resolvedEndpoint.transport,
       resolvedEndpoint.templatedUrl,
       resolvedEndpoint.resourceTransformers.concat(resourceTransformers),
