@@ -1,3 +1,7 @@
+0.0.7 08-04-2015
+================
+* Fixed error with calling update on embedded list
+
 0.0.6 08-03-2015
 ================
 * Convert all chained loads to being asynchronous -- until you call load, nothing happens

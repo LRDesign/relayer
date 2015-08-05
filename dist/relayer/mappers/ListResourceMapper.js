@@ -5,12 +5,14 @@ import ResourceMapper from "./ResourceMapper.js";
   'TemplatedUrlFromUrlFactory',
   'ResourceBuilderFactory',
   'PrimaryResourceBuilderFactory',
+  'PrimaryResourceTransformerFactory',
   'ListResource',
   'ManyResourceMapperFactory'])
 export default class ListResourceMapper extends ResourceMapper {
   constructor(templatedUrlFromUrlFactory,
       resourceBuilderFactory,
       primaryResourceBuilderFactory,
+      primaryResourceTransformerFactory,
       ListResource,
       manyResourceMapperFactory,
       transport,
@@ -23,6 +25,7 @@ export default class ListResourceMapper extends ResourceMapper {
     super(templatedUrlFromUrlFactory,
       resourceBuilderFactory,
       primaryResourceBuilderFactory,
+      primaryResourceTransformerFactory,
       transport,
       response,
       ListResource,
@@ -31,6 +34,11 @@ export default class ListResourceMapper extends ResourceMapper {
     this.ItemResourceClass = ItemResourceClass;
     this.manyResourceMapperFactory = manyResourceMapperFactory;
     this.endpoint = endpoint;
+  }
+
+  get primaryResourceTransformer() {
+    this._primaryResourceTransformer = this._primaryResourceTransformer || this.primaryResourceTransformerFactory(this.mapperFactory, this.serializerFactory, this.ItemResourceClass)
+    return this._primaryResourceTransformer;
   }
 
   mapNestedRelationships() {

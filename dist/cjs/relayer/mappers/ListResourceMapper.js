@@ -21,10 +21,10 @@ var _ResourceMapperJs = require("./ResourceMapper.js");
 var _ResourceMapperJs2 = _interopRequireDefault(_ResourceMapperJs);
 
 var ListResourceMapper = (function (_ResourceMapper) {
-  function ListResourceMapper(templatedUrlFromUrlFactory, resourceBuilderFactory, primaryResourceBuilderFactory, ListResource, manyResourceMapperFactory, transport, response, ItemResourceClass, mapperFactory, serializerFactory, endpoint) {
+  function ListResourceMapper(templatedUrlFromUrlFactory, resourceBuilderFactory, primaryResourceBuilderFactory, primaryResourceTransformerFactory, ListResource, manyResourceMapperFactory, transport, response, ItemResourceClass, mapperFactory, serializerFactory, endpoint) {
     _classCallCheck(this, _ListResourceMapper);
 
-    _get(Object.getPrototypeOf(_ListResourceMapper.prototype), "constructor", this).call(this, templatedUrlFromUrlFactory, resourceBuilderFactory, primaryResourceBuilderFactory, transport, response, ListResource, mapperFactory, serializerFactory);
+    _get(Object.getPrototypeOf(_ListResourceMapper.prototype), "constructor", this).call(this, templatedUrlFromUrlFactory, resourceBuilderFactory, primaryResourceBuilderFactory, primaryResourceTransformerFactory, transport, response, ListResource, mapperFactory, serializerFactory);
     this.ItemResourceClass = ItemResourceClass;
     this.manyResourceMapperFactory = manyResourceMapperFactory;
     this.endpoint = endpoint;
@@ -35,6 +35,12 @@ var ListResourceMapper = (function (_ResourceMapper) {
   var _ListResourceMapper = ListResourceMapper;
 
   _createClass(_ListResourceMapper, [{
+    key: "primaryResourceTransformer",
+    get: function () {
+      this._primaryResourceTransformer = this._primaryResourceTransformer || this.primaryResourceTransformerFactory(this.mapperFactory, this.serializerFactory, this.ItemResourceClass);
+      return this._primaryResourceTransformer;
+    }
+  }, {
     key: "mapNestedRelationships",
     value: function mapNestedRelationships() {
       var _this = this;
@@ -88,7 +94,7 @@ var ListResourceMapper = (function (_ResourceMapper) {
     }
   }]);
 
-  ListResourceMapper = (0, _SimpleFactoryInjectorJs.SimpleFactory)("ListResourceMapperFactory", ["TemplatedUrlFromUrlFactory", "ResourceBuilderFactory", "PrimaryResourceBuilderFactory", "ListResource", "ManyResourceMapperFactory"])(ListResourceMapper) || ListResourceMapper;
+  ListResourceMapper = (0, _SimpleFactoryInjectorJs.SimpleFactory)("ListResourceMapperFactory", ["TemplatedUrlFromUrlFactory", "ResourceBuilderFactory", "PrimaryResourceBuilderFactory", "PrimaryResourceTransformerFactory", "ListResource", "ManyResourceMapperFactory"])(ListResourceMapper) || ListResourceMapper;
   return ListResourceMapper;
 })(_ResourceMapperJs2["default"]);
 

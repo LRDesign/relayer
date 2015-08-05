@@ -2899,9 +2899,10 @@ define('relayer/mappers/ResourceMapper',["./Mapper", "../SimpleFactoryInjector"]
     $__2 = {default: $__2};
   var Mapper = $__0.default;
   var SimpleFactory = $__2.SimpleFactory;
-  var ResourceMapper = function ResourceMapper(templatedUrlFromUrlFactory, resourceBuilderFactory, primaryResourceBuilderFactory, transport, response, ResourceClass, mapperFactory, serializerFactory) {
-    var endpoint = arguments[8] !== (void 0) ? arguments[8] : null;
+  var ResourceMapper = function ResourceMapper(templatedUrlFromUrlFactory, resourceBuilderFactory, primaryResourceBuilderFactory, primaryResourceTransformerFactory, transport, response, ResourceClass, mapperFactory, serializerFactory) {
+    var endpoint = arguments[9] !== (void 0) ? arguments[9] : null;
     $traceurRuntime.superConstructor($ResourceMapper).call(this, transport, response, ResourceClass, mapperFactory, serializerFactory);
+    this.primaryResourceTransformerFactory = primaryResourceTransformerFactory;
     this.templatedUrlFromUrlFactory = templatedUrlFromUrlFactory;
     this.resourceBuilderFactory = resourceBuilderFactory;
     this.primaryResourceBuilderFactory = primaryResourceBuilderFactory;
@@ -2913,8 +2914,12 @@ define('relayer/mappers/ResourceMapper',["./Mapper", "../SimpleFactoryInjector"]
       if (this.endpoint) {
         this.mapped = this.primaryResourceBuilderFactory(this.response, this.ResourceClass).build(this.endpoint);
       } else {
-        this.mapped = this.resourceBuilderFactory(this.transport, this.response, this.mapperFactory, this.serializerFactory, this.ResourceClass).build(this.uriTemplate);
+        this.mapped = this.resourceBuilderFactory(this.transport, this.response, this.primaryResourceTransformer, this.ResourceClass).build(this.uriTemplate);
       }
+    },
+    get primaryResourceTransformer() {
+      this._primaryResourceTransformer = this._primaryResourceTransformer || this.primaryResourceTransformerFactory(this.mapperFactory, this.serializerFactory, this.ResourceClass);
+      return this._primaryResourceTransformer;
     },
     mapNestedRelationships: function() {
       var relationship;
@@ -2936,7 +2941,7 @@ define('relayer/mappers/ResourceMapper',["./Mapper", "../SimpleFactoryInjector"]
   }, {}, Mapper);
   var $__default = ResourceMapper;
   Object.defineProperty(ResourceMapper, "annotations", {get: function() {
-      return [new SimpleFactory("ResourceMapperFactory", ["TemplatedUrlFromUrlFactory", "ResourceBuilderFactory", "PrimaryResourceBuilderFactory"])];
+      return [new SimpleFactory("ResourceMapperFactory", ["TemplatedUrlFromUrlFactory", "ResourceBuilderFactory", "PrimaryResourceBuilderFactory", "PrimaryResourceTransformerFactory"])];
     }});
   return {
     get default() {
@@ -2993,14 +2998,19 @@ define('relayer/mappers/ListResourceMapper',["../SimpleFactoryInjector", "./Reso
     $__2 = {default: $__2};
   var SimpleFactory = $__0.SimpleFactory;
   var ResourceMapper = $__2.default;
-  var ListResourceMapper = function ListResourceMapper(templatedUrlFromUrlFactory, resourceBuilderFactory, primaryResourceBuilderFactory, ListResource, manyResourceMapperFactory, transport, response, ItemResourceClass, mapperFactory, serializerFactory, endpoint) {
-    $traceurRuntime.superConstructor($ListResourceMapper).call(this, templatedUrlFromUrlFactory, resourceBuilderFactory, primaryResourceBuilderFactory, transport, response, ListResource, mapperFactory, serializerFactory);
+  var ListResourceMapper = function ListResourceMapper(templatedUrlFromUrlFactory, resourceBuilderFactory, primaryResourceBuilderFactory, primaryResourceTransformerFactory, ListResource, manyResourceMapperFactory, transport, response, ItemResourceClass, mapperFactory, serializerFactory, endpoint) {
+    $traceurRuntime.superConstructor($ListResourceMapper).call(this, templatedUrlFromUrlFactory, resourceBuilderFactory, primaryResourceBuilderFactory, primaryResourceTransformerFactory, transport, response, ListResource, mapperFactory, serializerFactory);
     this.ItemResourceClass = ItemResourceClass;
     this.manyResourceMapperFactory = manyResourceMapperFactory;
     this.endpoint = endpoint;
   };
   var $ListResourceMapper = ListResourceMapper;
-  ($traceurRuntime.createClass)(ListResourceMapper, {mapNestedRelationships: function() {
+  ($traceurRuntime.createClass)(ListResourceMapper, {
+    get primaryResourceTransformer() {
+      this._primaryResourceTransformer = this._primaryResourceTransformer || this.primaryResourceTransformerFactory(this.mapperFactory, this.serializerFactory, this.ItemResourceClass);
+      return this._primaryResourceTransformer;
+    },
+    mapNestedRelationships: function() {
       var $__4 = this;
       this.resource = this.mapped;
       var manyResourceMapper = this.manyResourceMapperFactory(this.transport, this.resource.pathGet("$.data"), this.ItemResourceClass);
@@ -3041,10 +3051,11 @@ define('relayer/mappers/ListResourceMapper',["../SimpleFactoryInjector", "./Reso
       this.mapped.new = function() {
         return new ItemResourceClass();
       };
-    }}, {}, ResourceMapper);
+    }
+  }, {}, ResourceMapper);
   var $__default = ListResourceMapper;
   Object.defineProperty(ListResourceMapper, "annotations", {get: function() {
-      return [new SimpleFactory('ListResourceMapperFactory', ['TemplatedUrlFromUrlFactory', 'ResourceBuilderFactory', 'PrimaryResourceBuilderFactory', 'ListResource', 'ManyResourceMapperFactory'])];
+      return [new SimpleFactory('ListResourceMapperFactory', ['TemplatedUrlFromUrlFactory', 'ResourceBuilderFactory', 'PrimaryResourceBuilderFactory', 'PrimaryResourceTransformerFactory', 'ListResource', 'ManyResourceMapperFactory'])];
     }});
   return {
     get default() {
@@ -4332,16 +4343,14 @@ define('relayer/ResourceBuilder',["./SimpleFactoryInjector"], function($__0) {
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   var SimpleFactory = $__0.SimpleFactory;
-  var ResourceBuilder = function ResourceBuilder(templatedUrlFromUrlFactory, resolvedEndpointFactory, primaryResourceTransformerFactory, throwErrorTransformerFactory, transport, response, mapperFactory, serializerFactory, ResourceClass) {
+  var ResourceBuilder = function ResourceBuilder(templatedUrlFromUrlFactory, resolvedEndpointFactory, throwErrorTransformerFactory, transport, response, primaryResourceTransformer, ResourceClass) {
     this.transport = transport;
     this.ResourceClass = ResourceClass;
     this.templatedUrlFromUrlFactory = templatedUrlFromUrlFactory;
     this.resolvedEndpointFactory = resolvedEndpointFactory;
-    this.primaryResourceTransformerFactory = primaryResourceTransformerFactory;
     this.throwErrorTransformerFactory = throwErrorTransformerFactory;
     this.response = response;
-    this.mapperFactory = mapperFactory;
-    this.serializerFactory = serializerFactory;
+    this.primaryResourceTransformer = primaryResourceTransformer;
   };
   ($traceurRuntime.createClass)(ResourceBuilder, {build: function() {
       var uriTemplate = arguments[0] !== (void 0) ? arguments[0] : null;
@@ -4353,9 +4362,8 @@ define('relayer/ResourceBuilder',["./SimpleFactoryInjector"], function($__0) {
           resource.templatedUrl = this.templatedUrlFromUrlFactory(resource.pathGet("$.links.self"), resource.pathGet("$.links.self"));
         }
         resource.templatedUrl.addDataPathLink(resource, "$.links.self");
-        var resourceTransformer = this.primaryResourceTransformerFactory(this.mapperFactory, this.serializerFactory, this.ResourceClass);
         var createResourceTransformer = this.throwErrorTransformerFactory();
-        var endpoint = this.resolvedEndpointFactory(this.transport, resource.templatedUrl, resourceTransformer, createResourceTransformer);
+        var endpoint = this.resolvedEndpointFactory(this.transport, resource.templatedUrl, this.primaryResourceTransformer, createResourceTransformer);
         resource.self = function() {
           return endpoint;
         };
@@ -4364,7 +4372,7 @@ define('relayer/ResourceBuilder',["./SimpleFactoryInjector"], function($__0) {
     }}, {});
   var $__default = ResourceBuilder;
   Object.defineProperty(ResourceBuilder, "annotations", {get: function() {
-      return [new SimpleFactory("ResourceBuilderFactory", ["TemplatedUrlFromUrlFactory", "ResolvedEndpointFactory", "PrimaryResourceTransformerFactory", "ThrowErrorTransformerFactory"])];
+      return [new SimpleFactory("ResourceBuilderFactory", ["TemplatedUrlFromUrlFactory", "ResolvedEndpointFactory", "ThrowErrorTransformerFactory"])];
     }});
   return {
     get default() {

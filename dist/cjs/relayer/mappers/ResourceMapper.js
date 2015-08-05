@@ -21,13 +21,14 @@ var _MapperJs2 = _interopRequireDefault(_MapperJs);
 var _SimpleFactoryInjectorJs = require("../SimpleFactoryInjector.js");
 
 var ResourceMapper = (function (_Mapper) {
-  function ResourceMapper(templatedUrlFromUrlFactory, resourceBuilderFactory, primaryResourceBuilderFactory, transport, response, ResourceClass, mapperFactory, serializerFactory) {
-    var endpoint = arguments[8] === undefined ? null : arguments[8];
+  function ResourceMapper(templatedUrlFromUrlFactory, resourceBuilderFactory, primaryResourceBuilderFactory, primaryResourceTransformerFactory, transport, response, ResourceClass, mapperFactory, serializerFactory) {
+    var endpoint = arguments[9] === undefined ? null : arguments[9];
 
     _classCallCheck(this, _ResourceMapper);
 
     _get(Object.getPrototypeOf(_ResourceMapper.prototype), "constructor", this).call(this, transport, response, ResourceClass, mapperFactory, serializerFactory);
 
+    this.primaryResourceTransformerFactory = primaryResourceTransformerFactory;
     this.templatedUrlFromUrlFactory = templatedUrlFromUrlFactory;
     this.resourceBuilderFactory = resourceBuilderFactory;
     this.primaryResourceBuilderFactory = primaryResourceBuilderFactory;
@@ -44,8 +45,14 @@ var ResourceMapper = (function (_Mapper) {
       if (this.endpoint) {
         this.mapped = this.primaryResourceBuilderFactory(this.response, this.ResourceClass).build(this.endpoint);
       } else {
-        this.mapped = this.resourceBuilderFactory(this.transport, this.response, this.mapperFactory, this.serializerFactory, this.ResourceClass).build(this.uriTemplate);
+        this.mapped = this.resourceBuilderFactory(this.transport, this.response, this.primaryResourceTransformer, this.ResourceClass).build(this.uriTemplate);
       }
+    }
+  }, {
+    key: "primaryResourceTransformer",
+    get: function () {
+      this._primaryResourceTransformer = this._primaryResourceTransformer || this.primaryResourceTransformerFactory(this.mapperFactory, this.serializerFactory, this.ResourceClass);
+      return this._primaryResourceTransformer;
     }
   }, {
     key: "mapNestedRelationships",
@@ -70,7 +77,7 @@ var ResourceMapper = (function (_Mapper) {
     }
   }]);
 
-  ResourceMapper = (0, _SimpleFactoryInjectorJs.SimpleFactory)("ResourceMapperFactory", ["TemplatedUrlFromUrlFactory", "ResourceBuilderFactory", "PrimaryResourceBuilderFactory"])(ResourceMapper) || ResourceMapper;
+  ResourceMapper = (0, _SimpleFactoryInjectorJs.SimpleFactory)("ResourceMapperFactory", ["TemplatedUrlFromUrlFactory", "ResourceBuilderFactory", "PrimaryResourceBuilderFactory", "PrimaryResourceTransformerFactory"])(ResourceMapper) || ResourceMapper;
   return ResourceMapper;
 })(_MapperJs2["default"]);
 
