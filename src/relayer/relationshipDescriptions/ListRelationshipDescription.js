@@ -1,49 +1,20 @@
 import RelationshipDescription from "./RelationshipDescription.js";
-import ResourceMapper from "../mappers/ResourceMapper.js";
-import ResourceSerializer from "../serializers/ResourceSerializer.js";
-import PrimaryResourceTransformer from "../transformers/PrimaryResourceTransformer.js";
-import EmbeddedRelationshipTransformer from "../transformers/EmbeddedRelationshipTransformer.js";
-import IndividualFromListTranformer from "../transformers/IndividualFromListTransformer.js";
-import CreateResourceTransformer from "../transformers/CreateResourceTransformer.js";
-import ResolvedEndpoint from "../endpoints/ResolvedEndpoint.js";
-import LoadedDataEndpoint from "../endpoints/LoadedDataEndpoint.js";
-import {TemplatedUrl, TemplatedUrlFromUrl} from "../TemplatedUrl.js";
-import makeFac from "../dumbMetaFactory.js";
 
 export default class SingleRelationshipDescription extends RelationshipDescription {
-  constructor(
-    name,
-    ResourceClass,
-    initialValues,
+  constructor( services, name, ResourceClass, initialValues) {
+    super( services, name, ResourceClass, initialValues);
 
-    singleResourceMapperFactory = makeFac(ResourceMapper),
-    singleResourceSerializerFactory = makeFac(ResourceSerializer),
-    primaryResourceTransformerFactory = makeFac(PrimaryResourceTransformer),
-    embeddedRelationshipTransformerFactory = makeFac(EmbeddedRelationshipTransformer),
-    individualFromListTransformerFactory = makeFac(IndividualFromListTransformer),
-    createResourceTransformerFactory = makeFac(CreateResourceTransformer),
-    resolvedEndpointFactory = makeFac(ResolvedEndpoint),
-    loadedDataEndpointFactory = makeFac(LoadedDataEndpoint),
-    templatedUrlFromUrlFactory = makeFac(TemplatedUrlFromUrl),
-    templatedUrlFactory = makeFac(TemplatedUrl),
+    this.singleResourceMapperFactory            = services.resourceMapperFactory;
+    this.singleResourceSerializerFactory        = services.resourceSerializerFactory;
+    this.primaryResourceTransformerFactory      = services.primaryResourceTransformerFactory;
+    this.embeddedRelationshipTransformerFactory = services.embeddedRelationshipTransformerFactory;
+    this.individualFromListTransformerFactory   = services.individualFromListTransformerFactory;
+    this.createResourceTransformerFactory       = services.createResourceTransformerFactory;
+    this.resolvedEndpointFactory                = services.resolvedEndpointFactory;
+    this.loadedDataEndpointFactory              = services.loadedDataEndpointFactory;
+    this.templatedUrlFromUrlFactory             = services.templatedUrlFromUrlFactory;
+    this.templatedUrlFactory                    = services.templatedUrlFactory;
 
-    ...superArgs
-  ) {
-
-
-    super(name, ResourceClass, initialValues,
-          ...superArgs);
-
-    this.singleResourceMapperFactory = singleResourceMapperFactory;
-    this.singleResourceSerializerFactory = singleResourceSerializerFactory;
-    this.primaryResourceTransformerFactory = primaryResourceTransformerFactory;
-    this.embeddedRelationshipTransformerFactory = embeddedRelationshipTransformerFactory;
-    this.individualFromListTransformerFactory = individualFromListTransformerFactory;
-    this.createResourceTransformerFactory = createResourceTransformerFactory;
-    this.resolvedEndpointFactory = resolvedEndpointFactory;
-    this.loadedDataEndpointFactory = loadedDataEndpointFactory;
-    this.templatedUrlFromUrlFactory = templatedUrlFromUrlFactory;
-    this.templatedUrlFactory = templatedUrlFactory;
     this.canCreate = false;
     this._linkTemplatePath = null;
   }

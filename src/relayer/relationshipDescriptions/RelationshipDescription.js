@@ -1,25 +1,14 @@
-import RelationshipInitializer from '../initializers/RelationshipInitializer.js';
-import ResourceMapper from '../mappers/ResourceMapper.js';
-import ResourceSerializer from '../serializers/ResourceSerializer.js';
-import inflectorSingleton from "../singletons/Inflector.js";
-import makeFac from "../dumbMetaFactory.js";
-
 export default class RelationshipDescription {
-  constructor( name, ResourceClass, initialValues,
-    relationshipInitializerFactory = makeFac(RelationshipInitializer),
-    resourceMapperFactory          = makeFac(ResourceMapper),
-    resourceSerializerFactory      = makeFac(ResourceSerializer),
-    inflector                      = inflectorSingleton
-  ) {
-
-
-    this.initializer = relationshipInitializerFactory(ResourceClass, initialValues);
-    this.mapperFactory = resourceMapperFactory;
-    this.serializerFactory = resourceSerializerFactory;
-    this.inflector = inflector;
+  constructor( name, ResourceClass, initialValues) {
     this.name = name;
     this.ResourceClass = ResourceClass;
     this.initialValues = initialValues;
+
+    this.initializer = services.relationshipInitializerFactory(ResourceClass, initialValues);
+    this.mapperFactory = services.resourceMapperFactory;
+    this.serializerFactory = services.resourceSerializerFactory;
+    this.inflector = services.inflector;
+
     this.async = true;
     if (initialValues === undefined) {
       this.initializeOnCreate = false;

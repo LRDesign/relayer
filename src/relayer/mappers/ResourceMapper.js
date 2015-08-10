@@ -1,28 +1,21 @@
 import Mapper from "./Mapper.js";
-import {TemplatedUrlFromUrl} from "../TemplatedUrl.js";
-import ResourceBuilder from "../ResourceBuilder.js";
-import PrimaryResourceBuilder from "../PrimaryResourceBuilder.js";
-import makeFac from "../dumbMetaFactory.js";
 
 export default class ResourceMapper extends Mapper {
   constructor(
+    services,
     transport,
     response,
     ResourceClass,
     mapperFactory,
     serializerFactory,
-    endpoint = null,
-
-    templatedUrlFromUrlFactory = makeFac(TemplatedUrlFromUrl),
-    resourceBuilderFactory = makeFac(ResourceBuild),
-    primaryResourceBuilderFactory = makeFac(PrimaryResourceBuilder)
+    endpoint = null
   ) {
 
-    super(transport, response, ResourceClass, mapperFactory, serializerFactory);
+    super(services, transport, response, ResourceClass, mapperFactory, serializerFactory); //XXX factories as args?
 
-    this.templatedUrlFromUrlFactory = templatedUrlFromUrlFactory;
-    this.resourceBuilderFactory = resourceBuilderFactory;
-    this.primaryResourceBuilderFactory = primaryResourceBuilderFactory;
+    this.templatedUrlFromUrlFactory = services.templatedUrlFromUrlFactory;
+    this.resourceBuilderFactory = services.resourceBuilderFactory;
+    this.primaryResourceBuilderFactory = services.primaryResourceBuilderFactory;
     this.endpoint = endpoint;
   }
 

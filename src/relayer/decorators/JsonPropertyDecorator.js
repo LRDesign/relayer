@@ -1,26 +1,17 @@
 import ResourceDecorator from "./ResourceDecorator.js";
 
-import LoadedDataEndpoint from "../endpoints/LoadedDataEndpoint.js";
-import EmbeddedPropertyTransformer from "../transformers/EmbeddedPropertyTransformer.js";
-import PromiseEndpoint from "../endpoints/PromiseEndpoint.js";
-import makeFac from "../dumbMetaFactory.js";
 
 export default class JsonPropertyDecorator extends ResourceDecorator {
-  constructor( name, path, value, options,
-
-    loadedDataEndpointFactory = makeFac(LoadedDataEndpoint),
-    embeddedPropertyTransformerFactory = makeFac(EmbeddedPropertyTranformer),
-    promiseEndpointFactory = makeFac(PromiseEndpoint)
-  ){
-
-    super(name);
+  constructor( services, name, path, value, options = {} ){
+    super(services, name);
 
     this.path = path;
-    this.options = options || {};
-    this.loadedDataEndpointFactory = loadedDataEndpointFactory;
-    this.embeddedPropertyTransformerFactory = embeddedPropertyTransformerFactory;
-    this.promiseEndpointFactory = promiseEndpointFactory;
+    this.options = options;
     this.value = value;
+
+    this.loadedDataEndpointFactory = services.loadedDataEndpointFactory;
+    this.embeddedPropertyTransformerFactory = services.embeddedPropertyTransformerFactory;
+    this.promiseEndpointFactory = services.promiseEndpointFactory;
   }
 
   recordApply(target){

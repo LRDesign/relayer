@@ -1,32 +1,36 @@
 import ResourceMapper from "./ResourceMapper.js";
-import ListResource from "../ListResource.js";
-import ManyResourceMapper from "./ManyResourceMapper.js";
-
-import makeFac from "../dumbMetaFactory.js";
 
 export default class ListResourceMapper extends ResourceMapper {
   constructor(
+    services,
     transport,
     response,
-    ListResource,
     ItemResourceClass,
-    endpoint = null,
-    manyResourceMapperFactory = makeFac(ManyResourceMapper),
-
-    ...superArgs
-
+    endpoint = null
   ) {
 
     super(
+      services,
       transport,
       response,
-      serializerFactory,
-      ...superArgs
+      serializerFactory
     );
 
-    this.ItemResourceClass = ItemResourceClass;
-    this.manyResourceMapperFactory = manyResourceMapperFactory;
+    this.manyResourceMapperFactory = services.manyResourceMapperFactory;
     this.endpoint = endpoint;
+  }
+
+  mappedDelegationFn(name) {
+    return function(...args) {
+      return this.resource[name](...args);
+    };
+  }
+
+  mappedRetreiveFn(name) {
+    var mapped = this.mapped;
+    return function(...args) {
+      return this.resource.self()[func](mapped,...args);
+    };
   }
 
   mapNestedRelationships() {
@@ -35,17 +39,15 @@ export default class ListResourceMapper extends ResourceMapper {
     manyResourceMapper.uriTemplate = this.resource.pathGet("$.links.template");
     this.mapped = manyResourceMapper.map();
     this.mapped.resource = this.resource;
-    ["url", "uriTemplate", "uriParams"].forEach((func) => {
-      this.mapped[func] = function(...args) {
-        return this.resource[func](...args);
-      };
-    });
-    var mapped = this.mapped;
-    ["remove", "update", "load"].forEach((func) => {
-      this.mapped[func] = function(...args) {
-        return this.resource.self()[func](mapped,...args);
-      };
-    });
+
+    this.mapped.url         = this.mappedDelegationFn("url");
+    this.mapped.uriTemplate = this.mappedDelegationFn("uriTemplate");
+    this.mapped.uriParams   = this.mappedDelegationFn("uriParams");
+
+    this.mapped.remove = this.mappedRetreiveFn("remove");
+    this.mapped.update = this.mappedRetreiveFn("update");
+    this.mapped.load   = this.mappedRetreiveFn("load");
+
     this.mapped.create = function(...args) {
       return this.resource.create(...args).then((created) => {
         this.push(created);

@@ -1,23 +1,12 @@
 import RelationshipDescription from "./RelationshipDescription.js";
-import EmbeddedRelationshipTransformer from '../transformers/EmbeddedRelationshipTransformer.js';
-import SingleFromManyTransformer from '../transformers/SingleFromManyTransformer.js';
-import LoadedDataEndpoint from '../endpoints/LoadedDataEndpoint.js';
 
 export default class MultipleRelationshipDescription extends RelationshipDescription {
-  constructor( name, ResourceClass, initialValues,
-    embeddedRelationshipTransformerFactory = makeFac(EmbeddedRelationshipTransformer),
-    singleFromManyTransformerFactory       = makeFac(SingleFromManyTransformer),
-    loadedDataEndpointFactory              = makeFac(LoadedDataEndpoint),
-    ...superArgs
-  ) {
+  constructor( services, name, ResourceClass, initialValues) {
+    super( services, name, ResourceClass, initialValues );
 
-    super( name, ResourceClass, initialValues,
-      ...superArgs
-    );
-
-    this.embeddedRelationshipTransformerFactory = embeddedRelationshipTransformerFactory;
-    this.singleFromManyTransformerFactory = singleFromManyTransformerFactory;
-    this.loadedDataEndpointFactory = loadedDataEndpointFactory;
+    this.embeddedRelationshipTransformerFactory = services.embeddedRelationshipTransformerFactory;
+    this.singleFromManyTransformerFactory       = services.singleFromManyTransformerFactory;
+    this.loadedDataEndpointFactory              = services.loadedDataEndpointFactory;
   }
 
   embeddedEndpoint(parent, uriParams) {

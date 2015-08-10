@@ -1,20 +1,12 @@
 import RelationshipInitializer from "./RelationshipInitializer.js";
-import {ListResource} from "../ListResource.js";
-import ManyRelationshipInitializer from "./ManyRelationshipInitializer.js";
-import makeFac from "../dumbMetaFactory.js";
 
 export default class ListRelationshipInitializer extends RelationshipInitializer {
-  constructor(
-    ResourceClass,
-    initialValues,
-    ListResourceFactory = makeFac(ListResource),
-    manyRelationshipInitializer = new ManyRelationshipInitializer(ResourceClass, initialValues)
-  ) {
+  constructor( services, ResourceClass, initialValues) {
 
-    super(ResourceClass, initialValues);
+    super(services, ResourceClass, initialValues);
 
-    this.manyRelationshipInitializer = manyRelationshipInitializer;
-    this.ListResourceFac = ListResourceFactory;
+    this.manyRelationshipInitializer = services.manyRelationshipInitializer;
+    this.ListResourceFac = services.ListResourceFactory;
   }
 
   initialize() {

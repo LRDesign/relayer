@@ -1,5 +1,4 @@
-import ResourceDescription from "./ResourceDescription.js";
-import makeFac from "./dumbMetaFactory.js";
+import APIError from "./APIError.js";
 
 var resourcesToInitialize = [];
 
@@ -8,8 +7,8 @@ export function describeResource(resourceClass, defineFn){
 }
 
 export default class InitializedResourceClasses {
-  constructor(resourceDescriptionFactory = makeFac(ResourceDescription)) {
-    this.resourceDescriptionFactory = resourceDescriptionFactory;
+  constructor(services) {
+    this.resourceDescriptionFactory = services.resourceDescriptionFactory;
     this.initializeClasses();
   }
 

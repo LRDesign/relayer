@@ -1,33 +1,14 @@
-import APIError from "./APIError.js";
-
-import JsonPropertyDecorator from "./decorators/JsonPropertyDecorator.js";
-import RelatedResourceDecorator from "./decorators/RelatedResourceDecorator.js";
-import SingleRelationshipDescription from "./relationshipDescriptions/SingleRelationshipDescription.js";
-import ManyRelationshipDescription from "./relationshipDescriptions/ManyRelationshipDescription.js";
-import ListRelationshipDescription from "./relationshipDescriptions/ListRelationshipDescription.js";
-import MapRelationshipDescription from "./relationshipDescriptions/MapRelationshipDescription.js";
-import inflectorSingleton from "./singletons/Inflector.js";
-import makeFac from "./dumbMetaFactory.js";
-
 export default class ResourceDescription {
 
-  constructor(
-    jsonPropertyDecoratorFactory = makeFac(JsonPropertyDecorator),
-    relatedResourceDecoratorFactory = makeFac(RelatedResourceDecorator),
-    singleRelationshipDescriptionFactory = makeFac(SingleRelationshipDescription),
-    manyRelationshipDescriptionFactory = makeFac(ManyRelationshipDescription),
-    listRelationshipDescriptionFactory = makeFac(ListRelationshipDescription),
-    mapRelationshipDescriptionFactory = makeFac(MapRelationshipDescription),
-    inflector = inflectorSingleton
-  ) {
+  constructor(services) {
 
-    this.jsonPropertyDecoratorFactory = jsonPropertyDecoratorFactory;
-    this.relatedResourceDecoratorFactory = relatedResourceDecoratorFactory;
-    this.singleRelationshipDescriptionFactory = singleRelationshipDescriptionFactory;
-    this.manyRelationshipDescriptionFactory = manyRelationshipDescriptionFactory;
-    this.listRelationshipDescriptionFactory = listRelationshipDescriptionFactory;
-    this.mapRelationshipDescriptionFactory = mapRelationshipDescriptionFactory;
-    this.inflector = inflector;
+    this.jsonPropertyDecoratorFactory         = services.jsonPropertyDecoratorFactory;
+    this.relatedResourceDecoratorFactory      = services.relatedResourceDecoratorFactory;
+    this.singleRelationshipDescriptionFactory = services.singleRelationshipDescriptionFactory;
+    this.manyRelationshipDescriptionFactory   = services.manyRelationshipDescriptionFactory;
+    this.listRelationshipDescriptionFactory   = services.listRelationshipDescriptionFactory;
+    this.mapRelationshipDescriptionFactory    = services.mapRelationshipDescriptionFactory;
+    this.inflector                            = services.inflector;
 
     this.decorators = {};
     this.allDecorators = [];

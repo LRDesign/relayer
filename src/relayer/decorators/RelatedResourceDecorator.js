@@ -1,19 +1,14 @@
 import ResourceDecorator from "./ResourceDecorator.js";
 import {TemplatedUrl} from "../TemplatedUrl.js";
-import PromiseEndpoint from "../endpoints/PromiseEndpoint.js";
 import RelationshipUtilities from "../RelationshipUtilities.js";
-import makeFac from "../dumbMetaFactory.js";
 
 export default class RelatedResourceDecorator extends ResourceDecorator {
 
-  constructor(name, relationship,
-    promiseEndpointFactory = makeFac(PromiseEndpoint),
-    relationshipUtilities = new RelationshipUtilities()
-  ){
-    super(name);
+  constructor(services, name, relationship, relationshipUtilities = new RelationshipUtilities()) {
+    super(services, name);
 
-    this.promiseEndpointFactory = promiseEndpointFactory;
-    this.relationshipUtilities = relationshipUtilities;
+    this.promiseEndpointFactory = services.promiseEndpointFactory;
+    this.relationshipUtilities = relationshipUtilities; //XXX to services?
     this.relationship = relationship;
   }
 

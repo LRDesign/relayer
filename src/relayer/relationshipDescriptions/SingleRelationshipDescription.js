@@ -1,33 +1,15 @@
 import RelationshipDescription from "./RelationshipDescription.js";
 
-import RrimaryResourceTransformer from "../transformers/PrimaryResourceTransformer.js";
-import EmbeddedRelationshipTransformer from "../transformers/EmbeddedPropertyTransformer.js";
-import ResolvedEndpoint from "../endpoints/ResolvedEndpoint.js";
-import LoadedDataEndpoint from "../endpoints/LoadedDataEndpoint.js";
-import {TemplatedUrlFromUrl} from "../TemplatedUrl.js";
-
 export default class SingleRelationshipDescription extends RelationshipDescription {
-  constructor(
-    name,
-    ResourceClass,
-    initialValues,
+  constructor( services, name, ResourceClass, initialValues) {
 
-    primaryResourceTransformerFactory = makeFac(PrimaryResourceTransformer),
-    embeddedRelationshipTransformerFactory = makeFac(EmbeddedRelationshipTransformer),
-    resolvedEndpointFactory = makeFac(ResolvedEndpoint),
-    loadedDataEndpointFactory = makeFac(LoadedDataEndpoint),
-    templatedUrlFromUrlFactory = makeFac(TemplatedUrlFromUrl),
+    super( services, name, ResourceClass, initialValues);
 
-    ...superArgs
-  ) {
-
-    super( name, ResourceClass, initialValues, ...superArgs);
-
-    this.primaryResourceTransformerFactory = primaryResourceTransformerFactory;
-    this.embeddedRelationshipTransformerFactory = embeddedRelationshipTransformerFactory;
-    this.resolvedEndpointFactory = resolvedEndpointFactory;
-    this.loadedDataEndpointFactory = loadedDataEndpointFactory;
-    this.templatedUrlFromUrlFactory = templatedUrlFromUrlFactory;
+    this.primaryResourceTransformerFactory      = services.primaryResourceTransformerFactory;
+    this.embeddedRelationshipTransformerFactory = services.embeddedRelationshipTransformerFactory;
+    this.resolvedEndpointFactory                = services.resolvedEndpointFactory;
+    this.loadedDataEndpointFactory              = services.loadedDataEndpointFactory;
+    this.templatedUrlFromUrlFactory             = services.templatedUrlFromUrlFactory;
   }
 
   embeddedEndpoint(parent, uriParams) {
