@@ -1,3 +1,7 @@
+0.0.8 08-29-2015
+================
+* Allow Angular 1.4x
+
 0.0.7 08-04-2015
 ================
 * Fixed error with calling update on embedded list
