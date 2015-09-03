@@ -21,13 +21,13 @@ var _RelationshipDescriptionJs2 = _interopRequireDefault(_RelationshipDescriptio
 var _SimpleFactoryInjectorJs = require("../SimpleFactoryInjector.js");
 
 var SingleRelationshipDescription = (function (_RelationshipDescription) {
-  function SingleRelationshipDescription(relationshipInitializerFactory, resourceMapperFactory, resourceSerializerFactory, inflector, singleResourceMapperFactory, singleResourceSerializerFactory, primaryResourceTransformerFactory, embeddedRelationshipTransformerFactory, individualFromListTransformerFactory, createResourceTransformerFactory, resolvedEndpointFactory, loadedDataEndpointFactory, templatedUrlFromUrlFactory, templatedUrlFactory, name, ResourceClass, initialValues) {
+  function SingleRelationshipDescription(relationshipInitializerFactory, resourceMapperFactory, resourceSerializerFactory, inflector, singleRelationshipDescriptionFactory, ListResource, primaryResourceTransformerFactory, embeddedRelationshipTransformerFactory, individualFromListTransformerFactory, createResourceTransformerFactory, resolvedEndpointFactory, loadedDataEndpointFactory, templatedUrlFromUrlFactory, templatedUrlFactory, name, ResourceClass, initialValues) {
     _classCallCheck(this, _SingleRelationshipDescription);
 
     _get(Object.getPrototypeOf(_SingleRelationshipDescription.prototype), "constructor", this).call(this, relationshipInitializerFactory, resourceMapperFactory, resourceSerializerFactory, inflector, name, ResourceClass, initialValues);
 
-    this.singleResourceMapperFactory = singleResourceMapperFactory;
-    this.singleResourceSerializerFactory = singleResourceSerializerFactory;
+    this.singleRelationshipDescriptionFactory = singleRelationshipDescriptionFactory;
+    this.ListResource = ListResource;
     this.primaryResourceTransformerFactory = primaryResourceTransformerFactory;
     this.embeddedRelationshipTransformerFactory = embeddedRelationshipTransformerFactory;
     this.individualFromListTransformerFactory = individualFromListTransformerFactory;
@@ -45,6 +45,14 @@ var SingleRelationshipDescription = (function (_RelationshipDescription) {
   var _SingleRelationshipDescription = SingleRelationshipDescription;
 
   _createClass(_SingleRelationshipDescription, [{
+    key: "ListResourceClass",
+    get: function () {
+      return this._ListResourceClass || this.ListResource;
+    },
+    set: function (ListResourceClass) {
+      this._ListResourceClass = ListResourceClass;
+    }
+  }, {
     key: "linkTemplate",
     get: function () {
       return this._linkTemplatePath;
@@ -80,12 +88,12 @@ var SingleRelationshipDescription = (function (_RelationshipDescription) {
   }, {
     key: "listResourceTransformer",
     value: function listResourceTransformer() {
-      return this.primaryResourceTransformerFactory(this.mapperFactory, this.serializerFactory, this.ResourceClass);
+      return this.primaryResourceTransformerFactory(this);
     }
   }, {
     key: "singleResourceTransformer",
     value: function singleResourceTransformer() {
-      return this.primaryResourceTransformerFactory(this.singleResourceMapperFactory, this.singleResourceSerializerFactory, this.ResourceClass);
+      return this.primaryResourceTransformerFactory(this.singleRelationshipDescriptionFactory("", this.ResourceClass));
     }
   }, {
     key: "linkedEndpoint",
@@ -108,7 +116,7 @@ var SingleRelationshipDescription = (function (_RelationshipDescription) {
         templatedUrl.addDataPathLink(parent, this.linksPath);
         primaryResourceTransformer = this.listResourceTransformer();
         if (this.canCreate) {
-          createTransformer = this.createResourceTransformerFactory(this.singleResourceMapperFactory, this.singleResourceSerializerFactory, this.ResourceClass);
+          createTransformer = this.createResourceTransformerFactory(this.singleRelationshipDescriptionFactory("", this.ResourceClass));
         }
       }
 
@@ -137,7 +145,7 @@ var SingleRelationshipDescription = (function (_RelationshipDescription) {
     }
   }]);
 
-  SingleRelationshipDescription = (0, _SimpleFactoryInjectorJs.SimpleFactory)("ListRelationshipDescriptionFactory", ["ListRelationshipInitializerFactory", "ListResourceMapperFactory", "ListResourceSerializerFactory", "Inflector", "ResourceMapperFactory", "ResourceSerializerFactory", "PrimaryResourceTransformerFactory", "EmbeddedRelationshipTransformerFactory", "IndividualFromListTransformerFactory", "CreateResourceTransformerFactory", "ResolvedEndpointFactory", "LoadedDataEndpointFactory", "TemplatedUrlFromUrlFactory", "TemplatedUrlFactory"])(SingleRelationshipDescription) || SingleRelationshipDescription;
+  SingleRelationshipDescription = (0, _SimpleFactoryInjectorJs.SimpleFactory)("ListRelationshipDescriptionFactory", ["ListRelationshipInitializerFactory", "ListResourceMapperFactory", "ListResourceSerializerFactory", "Inflector", "SingleRelationshipDescriptionFactory", "ListResource", "PrimaryResourceTransformerFactory", "EmbeddedRelationshipTransformerFactory", "IndividualFromListTransformerFactory", "CreateResourceTransformerFactory", "ResolvedEndpointFactory", "LoadedDataEndpointFactory", "TemplatedUrlFromUrlFactory", "TemplatedUrlFactory"])(SingleRelationshipDescription) || SingleRelationshipDescription;
   return SingleRelationshipDescription;
 })(_RelationshipDescriptionJs2["default"]);
 

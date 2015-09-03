@@ -51,7 +51,7 @@ var SingleRelationshipDescription = (function (_RelationshipDescription) {
       var url = parent.pathGet(this.linksPath);
       var templatedUrl = this.templatedUrlFromUrlFactory(url, url);
       templatedUrl.addDataPathLink(parent, this.linksPath);
-      var primaryResourceTransformer = this.primaryResourceTransformerFactory(this.mapperFactory, this.serializerFactory, this.ResourceClass);
+      var primaryResourceTransformer = this.primaryResourceTransformerFactory(this);
       return this.resolvedEndpointFactory(transport, templatedUrl, primaryResourceTransformer);
     }
   }]);

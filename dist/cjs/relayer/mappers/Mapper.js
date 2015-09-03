@@ -9,17 +9,37 @@ var _createClass = (function () { function defineProperties(target, props) { for
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Mapper = (function () {
-  function Mapper(transport, response, ResourceClass, mapperFactory, serializerFactory) {
+  function Mapper(transport, response, relationshipDescription) {
+    var useErrors = arguments[3] === undefined ? false : arguments[3];
+
     _classCallCheck(this, Mapper);
 
     this.transport = transport;
     this.response = response;
-    this.ResourceClass = ResourceClass;
-    this.mapperFactory = mapperFactory;
-    this.serializerFactory = serializerFactory;
+    this.relationshipDescription = relationshipDescription;
+    this.useErrors = useErrors;
   }
 
   _createClass(Mapper, [{
+    key: "ResourceClass",
+    get: function () {
+      if (this.useErrors) {
+        return this.relationshipDescription.ResourceClass.errorClass;
+      } else {
+        return this.relationshipDescription.ResourceClass;
+      }
+    }
+  }, {
+    key: "mapperFactory",
+    get: function () {
+      return this.relationshipDescription.mapperFactory;
+    }
+  }, {
+    key: "serializerFactory",
+    get: function () {
+      return this.relationshipDescription.serializerFactory;
+    }
+  }, {
     key: "map",
     value: function map() {
       this.initializeModel();

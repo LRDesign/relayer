@@ -1,10 +1,25 @@
 export default class Mapper {
-  constructor(transport, response, ResourceClass, mapperFactory, serializerFactory) {
+  constructor(transport, response, relationshipDescription, useErrors = false) {
     this.transport = transport;
     this.response = response;
-    this.ResourceClass = ResourceClass;
-    this.mapperFactory = mapperFactory;
-    this.serializerFactory = serializerFactory;
+    this.relationshipDescription = relationshipDescription;
+    this.useErrors = useErrors;
+  }
+
+  get ResourceClass() {
+    if (this.useErrors) {
+      return this.relationshipDescription.ResourceClass.errorClass;
+    } else {
+      return this.relationshipDescription.ResourceClass;
+    }
+  }
+
+  get mapperFactory() {
+    return this.relationshipDescription.mapperFactory;
+  }
+
+  get serializerFactory() {
+    return this.relationshipDescription.serializerFactory;
   }
 
   map() {

@@ -21,13 +21,11 @@ var _ResourceTransformerJs2 = _interopRequireDefault(_ResourceTransformerJs);
 var _SimpleFactoryInjectorJs = require("../SimpleFactoryInjector.js");
 
 var PrimaryResourceTransformer = (function (_ResourceTransformer) {
-  function PrimaryResourceTransformer(primaryResourceMapperFactory, primaryResourceSerializerFactory, ResourceClass) {
+  function PrimaryResourceTransformer(relationshipDescription) {
     _classCallCheck(this, _PrimaryResourceTransformer);
 
     _get(Object.getPrototypeOf(_PrimaryResourceTransformer.prototype), "constructor", this).call(this);
-    this.primaryResourceSerializerFactory = primaryResourceSerializerFactory;
-    this.primaryResourceMapperFactory = primaryResourceMapperFactory;
-    this.ResourceClass = ResourceClass;
+    this.relationshipDescription = relationshipDescription;
   }
 
   _inherits(PrimaryResourceTransformer, _ResourceTransformer);
@@ -35,6 +33,16 @@ var PrimaryResourceTransformer = (function (_ResourceTransformer) {
   var _PrimaryResourceTransformer = PrimaryResourceTransformer;
 
   _createClass(_PrimaryResourceTransformer, [{
+    key: "primaryResourceSerializerFactory",
+    get: function () {
+      return this.relationshipDescription.serializerFactory;
+    }
+  }, {
+    key: "primaryResourceMapperFactory",
+    get: function () {
+      return this.relationshipDescription.mapperFactory;
+    }
+  }, {
     key: "transformRequest",
     value: function transformRequest(endpoint, resource) {
       return this.primaryResourceSerializerFactory(resource).serialize();
@@ -46,9 +54,9 @@ var PrimaryResourceTransformer = (function (_ResourceTransformer) {
 
       return response.then(function (resolvedResponse) {
         endpoint.templatedUrl.etag = resolvedResponse.etag;
-        return _this.primaryResourceMapperFactory(endpoint.transport, resolvedResponse.data, _this.ResourceClass, _this.primaryResourceMapperFactory, _this.primaryResourceSerializerFactory, endpoint).map();
+        return _this.primaryResourceMapperFactory(endpoint.transport, resolvedResponse.data, _this.relationshipDescription, endpoint).map();
       })["catch"](function (resolvedError) {
-        throw _this.primaryResourceMapperFactory(endpoint.transport, resolvedError.data, _this.ResourceClass.errorClass, _this.primaryResourceMapperFactory, _this.primaryResourceSerializerFactory, endpoint).map();
+        throw _this.primaryResourceMapperFactory(endpoint.transport, resolvedError.data, _this.relationshipDescription, endpoint, true).map();
       });
     }
   }]);

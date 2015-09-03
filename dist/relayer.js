@@ -45,6 +45,8 @@ export default class ResourceLayer {
 
   static get Resource() { return Resource; }
 
+  static get ListResource() { return ListResource; }
+
   static get Describe() { return describeResource; }
 
   constructor($provide) {
@@ -68,7 +70,7 @@ export default class ResourceLayer {
       'TemplatedUrlFromUrlFactory',
       'ResolvedEndpointFactory',
       'PrimaryResourceTransformerFactory',
-      'SingleRelationshipDescriptionFactory'
+      'SingleRelationshipDescriptionFactory',
       '$http',
       'InitializedResourceClasses',
       function(urlHelperFactory,
@@ -76,7 +78,7 @@ export default class ResourceLayer {
         templatedUrlFromUrlFactory,
         resolvedEndpointFactory,
         primaryResourceTransformerFactory,
-        singleRelationshipDescriptionFactory
+        singleRelationshipDescriptionFactory,
         $http,
         initializedResourceClasses) {
 
