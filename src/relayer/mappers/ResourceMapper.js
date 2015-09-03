@@ -13,12 +13,13 @@ export default class ResourceMapper extends Mapper {
     primaryResourceTransformerFactory,
     transport,
     response,
-    ResourceClass,
-    mapperFactory,
-    serializerFactory,
-    endpoint = null) {
+    relationshipDescription,
+    endpoint = null, useErrors = false) {
 
-    super(transport, response, ResourceClass, mapperFactory, serializerFactory);
+    super(transport,
+      response,
+      relationshipDescription,
+      useErrors);
 
     this.primaryResourceTransformerFactory = primaryResourceTransformerFactory;
     this.templatedUrlFromUrlFactory = templatedUrlFromUrlFactory;
@@ -36,7 +37,7 @@ export default class ResourceMapper extends Mapper {
   }
 
   get primaryResourceTransformer() {
-    this._primaryResourceTransformer = this._primaryResourceTransformer || this.primaryResourceTransformerFactory(this.mapperFactory, this.serializerFactory, this.ResourceClass)
+    this._primaryResourceTransformer = this._primaryResourceTransformer || this.primaryResourceTransformerFactory(this.relationshipDescription)
     return this._primaryResourceTransformer;
   }
 
@@ -49,8 +50,7 @@ export default class ResourceMapper extends Mapper {
         relationship = this.ResourceClass.relationships[relationshipName];
 
         if (this.mapped.pathGet(relationship.dataPath)) {
-          var subMapper = relationship.mapperFactory(this.transport, this.mapped.pathGet(relationship.dataPath), relationship.ResourceClass,
-            relationship.mapperFactory, relationship.serializerFactory);
+          var subMapper = relationship.mapperFactory(this.transport, this.mapped.pathGet(relationship.dataPath), relationship, this.useErrors);
           this.mapped.relationships[relationshipName] = subMapper.map();
         } else if (this.mapped.pathGet(relationship.linksPath)) {
           var templatedUrl = this.templatedUrlFromUrlFactory(this.mapped.pathGet(relationship.linksPath), this.mapped.pathGet(relationship.linksPath));

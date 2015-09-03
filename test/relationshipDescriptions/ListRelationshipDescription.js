@@ -1,4 +1,5 @@
 import ListRelationshipDescription from "../../src/relayer/relationshipDescriptions/ListRelationshipDescription.js";
+import ListResource from "../../src/relayer/ListResource.js";
 
 describe("ListRelationshipDescription", function() {
   var relationshipInitializerFactory,
@@ -22,7 +23,8 @@ describe("ListRelationshipDescription", function() {
     mockEndpoint,
     resource,
     linkTemplate,
-    listRelationshipDescription;
+    listRelationshipDescription,
+    singleRelationshipDescriptionFactory;
 
   beforeEach(function() {
 
@@ -46,13 +48,13 @@ describe("ListRelationshipDescription", function() {
     singleResourceSerializerFactory = jasmine.createSpy("singleResourceSerializerFactory");
 
     primaryResourceTransformerFactory = jasmine.createSpy("primaryResourceTransformerFactory").and.callFake(
-      function(thisResourceMapperFactory, thisResourceSerializerFactory, thisResourceClass) {
-        return { thisResourceMapperFactory, thisResourceSerializerFactory, thisResourceClass }
+      function(relationship) {
+        return { relationship }
       });
 
     createResourceTransformerFactory = jasmine.createSpy("primaryResourceTransformerFactory").and.callFake(
-      function(thisResourceMapperFactory, thisResourceSerializerFactory, thisResourceClass) {
-        return { thisResourceMapperFactory, thisResourceSerializerFactory, thisResourceClass }
+      function(relationship) {
+        return { relationship }
       });
 
     embeddedRelationshipTransformerFactory = jasmine.createSpy("embeddedRelationshipTransformerFactory").and.callFake(
@@ -121,13 +123,21 @@ describe("ListRelationshipDescription", function() {
     }
     linkTemplate = "awesome";
 
+    singleRelationshipDescriptionFactory = function(name, ResourceClass) {
+      return {
+        ResourceClass: ResourceClass,
+        mapperFactory: singleResourceMapperFactory,
+        serializerFactory: singleResourceSerializerFactory
+      }
+    }
+
     listRelationshipDescription = new ListRelationshipDescription(
       relationshipInitializerFactory,
       resourceMapperFactory,
       resourceSerializerFactory,
       inflector,
-      singleResourceMapperFactory,
-      singleResourceSerializerFactory,
+      singleRelationshipDescriptionFactory,
+      ListResource,
       primaryResourceTransformerFactory,
       embeddedRelationshipTransformerFactory,
       individualFromListTransformerFactory,
@@ -149,8 +159,8 @@ describe("ListRelationshipDescription", function() {
     expect(listRelationshipDescription.mapperFactory).toEqual(resourceMapperFactory);
     expect(listRelationshipDescription.serializerFactory).toEqual(resourceSerializerFactory);
     expect(listRelationshipDescription.inflector).toEqual(inflector);
-    expect(listRelationshipDescription.singleResourceMapperFactory).toEqual(singleResourceMapperFactory);
-    expect(listRelationshipDescription.singleResourceSerializerFactory).toEqual(singleResourceSerializerFactory);
+    expect(listRelationshipDescription.singleRelationshipDescriptionFactory).toEqual(singleRelationshipDescriptionFactory);
+    expect(listRelationshipDescription.ListResource).toEqual(ListResource);
     expect(listRelationshipDescription.primaryResourceTransformerFactory).toEqual(primaryResourceTransformerFactory);
     expect(listRelationshipDescription.embeddedRelationshipTransformerFactory).toEqual(embeddedRelationshipTransformerFactory);
     expect(listRelationshipDescription.individualFromListTransformerFactory).toEqual(individualFromListTransformerFactory);
@@ -261,9 +271,11 @@ describe("ListRelationshipDescription", function() {
         });
         expect(linkedEndpoint.transformers).toEqual(
           {
-            thisResourceMapperFactory: singleResourceMapperFactory,
-            thisResourceSerializerFactory: singleResourceSerializerFactory,
-            thisResourceClass: ResourceClass
+            relationship: {
+              mapperFactory: singleResourceMapperFactory,
+              serializerFactory: singleResourceSerializerFactory,
+              ResourceClass: ResourceClass
+            }
           });
         expect(linkedEndpoint.createTransformers).toBe(null);
       });
@@ -293,9 +305,11 @@ describe("ListRelationshipDescription", function() {
         });
         expect(linkedEndpoint.transformers).toEqual(
           {
-            thisResourceMapperFactory: singleResourceMapperFactory,
-            thisResourceSerializerFactory: singleResourceSerializerFactory,
-            thisResourceClass: ResourceClass
+            relationship: {
+              mapperFactory: singleResourceMapperFactory,
+              serializerFactory: singleResourceSerializerFactory,
+              ResourceClass: ResourceClass
+            }
           });
         expect(linkedEndpoint.createTransformers).toBe(null);
       });
@@ -331,15 +345,15 @@ describe("ListRelationshipDescription", function() {
         });
         expect(linkedEndpoint.transformers).toEqual(
           {
-            thisResourceMapperFactory: resourceMapperFactory,
-            thisResourceSerializerFactory: resourceSerializerFactory,
-            thisResourceClass: ResourceClass
+            relationship: listRelationshipDescription
           });
         expect(linkedEndpoint.createTransformers).toEqual(
           {
-            thisResourceMapperFactory: singleResourceMapperFactory,
-            thisResourceSerializerFactory: singleResourceSerializerFactory,
-            thisResourceClass: ResourceClass
+            relationship: {
+              mapperFactory: singleResourceMapperFactory,
+              serializerFactory: singleResourceSerializerFactory,
+              ResourceClass: ResourceClass
+            }
           });
         expect(linkedEndpoint.new()).toEqual(new ResourceClass());
       });

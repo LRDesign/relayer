@@ -3,13 +3,17 @@ import {SimpleFactory} from "../SimpleFactoryInjector.js"
 
 @SimpleFactory('PrimaryResourceTransformerFactory', [])
 export default class PrimaryResourceTransformer extends ResourceTransformer {
-  constructor(primaryResourceMapperFactory,
-    primaryResourceSerializerFactory,
-    ResourceClass) {
+  constructor(relationshipDescription) {
     super();
-    this.primaryResourceSerializerFactory = primaryResourceSerializerFactory;
-    this.primaryResourceMapperFactory = primaryResourceMapperFactory;
-    this.ResourceClass = ResourceClass;
+    this.relationshipDescription = relationshipDescription;
+  }
+
+  get primaryResourceSerializerFactory() {
+    return this.relationshipDescription.serializerFactory;
+  }
+
+  get primaryResourceMapperFactory() {
+    return this.relationshipDescription.mapperFactory;
   }
 
   transformRequest(endpoint, resource) {
@@ -22,19 +26,16 @@ export default class PrimaryResourceTransformer extends ResourceTransformer {
         endpoint.templatedUrl.etag = resolvedResponse.etag;
         return this.primaryResourceMapperFactory(endpoint.transport,
           resolvedResponse.data,
-          this.ResourceClass,
-          this.primaryResourceMapperFactory,
-          this.primaryResourceSerializerFactory,
+          this.relationshipDescription,
           endpoint).map();
       }
     ).catch(
       (resolvedError) => {
         throw this.primaryResourceMapperFactory(endpoint.transport,
           resolvedError.data,
-          this.ResourceClass.errorClass,
-          this.primaryResourceMapperFactory,
-          this.primaryResourceSerializerFactory,
-          endpoint).map();
+          this.relationshipDescription,
+          endpoint,
+          true).map();
       }
     );
   }

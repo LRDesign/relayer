@@ -15,7 +15,9 @@ describe("MapResourceMapper", function() {
     builtResources,
     transport,
     primaryResourceTransformer,
-    primaryResourceTransformerFactory;
+    primaryResourceTransformerFactory,
+    singleRelationshipFactory,
+    relationship;
 
   beforeEach(function() {
     ResourceClass = function(resource) {
@@ -115,9 +117,22 @@ describe("MapResourceMapper", function() {
       return "goodbye";
     }
 
+
+    singleRelationshipFactory = function(name, thisResourceClass) {
+      return {
+        ResourceClass: thisResourceClass,
+        mapperFactory: resourceMapperFactory,
+        serializerFactory: resourceSerializerFactory
+      }
+    }
+
+    relationship = {
+      ResourceClass: ResourceClass
+    }
+
     transport = {};
 
-    mapResourceMapper = new MapResourceMapper(resourceMapperFactory, resourceSerializerFactory, transport, resources, ResourceClass)
+    mapResourceMapper = new MapResourceMapper(singleRelationshipFactory, transport, resources, relationship)
   });
 
   describe("no url template", function() {

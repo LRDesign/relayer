@@ -15,7 +15,8 @@ describe("ResourceMapper", function() {
     resourceMapperFactory,
     resourceSerializerFactory,
     primaryResourceTransformer,
-    primaryResourceTransformerFactory;
+    primaryResourceTransformerFactory,
+    relationship;
 
   beforeEach(function() {
     ResourceClass = function(resource) {
@@ -103,15 +104,19 @@ describe("ResourceMapper", function() {
       return "goodbye";
     }
 
+    relationship = {
+      ResourceClass: ResourceClass,
+      mapperFactory: resourceMapperFactory,
+      serializerFactory: resourceSerializerFactory
+    }
+
     resourceMapper = new ResourceMapper(templatedUrlFromUrlFactory,
       resourceBuilderFactory,
       primaryResourceBuilderFactory,
       primaryResourceTransformerFactory,
       transport,
       resource,
-      ResourceClass,
-      resourceMapperFactory,
-      resourceSerializerFactory);
+      relationship);
   });
 
   describe("no url template", function() {
@@ -132,7 +137,7 @@ describe("ResourceMapper", function() {
 
 
     it("should setup the primary resource transformer", function() {
-      expect(primaryResourceTransformerFactory).toHaveBeenCalledWith(resourceMapperFactory, resourceSerializerFactory, ResourceClass)
+      expect(primaryResourceTransformerFactory).toHaveBeenCalledWith(relationship)
     })
 
     it("should build the resource with the regular resource builder", function() {
@@ -162,7 +167,7 @@ describe("ResourceMapper", function() {
     });
 
     it("should setup the primary resource transformer", function() {
-      expect(primaryResourceTransformerFactory).toHaveBeenCalledWith(resourceMapperFactory, resourceSerializerFactory, ResourceClass)
+      expect(primaryResourceTransformerFactory).toHaveBeenCalledWith(relationship)
     })
 
     it("should build the resource with the regular resource builder", function() {
