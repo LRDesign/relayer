@@ -5,6 +5,7 @@ describe("CreateResourceTransformer", function() {
   var createResourceTransformer, mockEndpoint, mockTransport, mockResponse, resource,
   primaryResourceMapperFactory, primaryResourceSerializerFactory, ResourceClass, response;
   var mockTemplatedUrlSpy, templatedUrl;
+  var relationship;
 
   beforeEach(function() {
 
@@ -39,10 +40,15 @@ describe("CreateResourceTransformer", function() {
     };
 
     primaryResourceMapperFactory = jasmine.createSpy("primaryResourceMapperFactory").and.callFake(
-      function(thisTransport, thisResponse, ThisResourceClass, thisEndpoint) {
+      function(thisTransport, thisResponse, thisRelationshipDescription, thisEndpoint, useErrors) {
       return {
         map() {
-          return new ThisResourceClass(thisResponse);
+          if (useErrors) {
+            var ErrorClass = thisRelationshipDescription.ResourceClass.errorClass;
+            return new ErrorClass(thisResponse);
+          } else {
+            return new thisRelationshipDescription.ResourceClass(thisResponse);
+          }
         }
       }
     });
@@ -58,9 +64,13 @@ describe("CreateResourceTransformer", function() {
 
     resource = new ResourceClass(mockResponse);
 
-    createResourceTransformer = new CreateResourceTransformer(primaryResourceMapperFactory,
-      primaryResourceSerializerFactory,
-      ResourceClass);
+    relationship = {
+      ResourceClass: ResourceClass,
+      mapperFactory: primaryResourceMapperFactory,
+      serializerFactory: primaryResourceSerializerFactory
+    }
+
+    createResourceTransformer = new CreateResourceTransformer(relationship);
 
   });
 
@@ -87,7 +97,7 @@ describe("CreateResourceTransformer", function() {
         expect(primaryResourceMapperFactory).toHaveBeenCalledWith(
           mockTransport,
           mockResponse.data,
-          ResourceClass);
+          relationship);
       });
 
       it("should set the etag", function() {
@@ -117,7 +127,9 @@ describe("CreateResourceTransformer", function() {
         expect(primaryResourceMapperFactory).toHaveBeenCalledWith(
           mockTransport,
           mockResponse.data,
-          ResourceClass.errorClass);
+          relationship,
+          null,
+          true);
       });
     });
   });

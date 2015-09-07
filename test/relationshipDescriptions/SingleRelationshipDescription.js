@@ -37,8 +37,8 @@ describe("SingleRelationshipDescription", function() {
     }
 
     primaryResourceTransformerFactory = jasmine.createSpy("primaryResourceTransformerFactory").and.callFake(
-      function(thisResourceMapperFactory, thisResourceSerializerFactory, thisResourceClass) {
-        return { thisResourceMapperFactory, thisResourceSerializerFactory, thisResourceClass }
+      function(relationship) {
+        return { relationship }
       });
 
     embeddedRelationshipTransformerFactory = jasmine.createSpy("embeddedRelationshipTransformerFactory").and.callFake(
@@ -165,9 +165,7 @@ describe("SingleRelationshipDescription", function() {
       });
       expect(linkedEndpoint.transformers).toEqual(
         {
-          thisResourceMapperFactory: resourceMapperFactory,
-          thisResourceSerializerFactory: resourceSerializerFactory,
-          thisResourceClass: ResourceClass
+          relationship: singleRelationshipDescription
         });
     });
 

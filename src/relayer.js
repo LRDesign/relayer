@@ -45,6 +45,8 @@ export default class ResourceLayer {
 
   static get Resource() { return Resource; }
 
+  static get ListResource() { return ListResource; }
+
   static get Describe() { return describeResource; }
 
   constructor($provide) {
@@ -68,8 +70,7 @@ export default class ResourceLayer {
       'TemplatedUrlFromUrlFactory',
       'ResolvedEndpointFactory',
       'PrimaryResourceTransformerFactory',
-      'ResourceMapperFactory',
-      'ResourceSerializerFactory',
+      'SingleRelationshipDescriptionFactory',
       '$http',
       'InitializedResourceClasses',
       function(urlHelperFactory,
@@ -77,8 +78,7 @@ export default class ResourceLayer {
         templatedUrlFromUrlFactory,
         resolvedEndpointFactory,
         primaryResourceTransformerFactory,
-        resourceMapperFactory,
-        resourceSerializerFactory,
+        singleRelationshipDescriptionFactory,
         $http,
         initializedResourceClasses) {
 
@@ -86,9 +86,7 @@ export default class ResourceLayer {
         var wellKnownUrl = urlHelper.fullUrlRegEx.exec(baseUrl)[3];
         var transport = transportFactory(urlHelper, $http);
         var templatedUrl = templatedUrlFromUrlFactory(wellKnownUrl, wellKnownUrl);
-        var transformer = primaryResourceTransformerFactory(resourceMapperFactory,
-          resourceSerializerFactory,
-          topLevelResource)
+        var transformer = primaryResourceTransformerFactory(singleRelationshipDescriptionFactory("", topLevelResource))
         var endpoint = resolvedEndpointFactory(transport, templatedUrl, transformer);
         topLevelResource.resourceDescription.applyToEndpoint(endpoint);
         return endpoint;

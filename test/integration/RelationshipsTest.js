@@ -54,6 +54,28 @@ RL.Describe(Character, (desc) => {
   desc.hasOne("book", Book);
 });
 
+class SectionGroups extends RL.Resource {
+}
+
+RL.Describe(SectionGroups, (desc) => {
+  desc.property("total_groups", "");
+  desc.property("sections_per_group", "");
+  var book = desc.hasOne("book", Book);
+  var first = desc.hasList("first", Section);
+  first.ListResourceClass = SectionGroup;
+})
+
+class SectionGroup extends RL.ListResource {
+
+}
+
+RL.Describe(SectionGroup, (desc) => {
+  var next = desc.hasList("next", Section);
+  next.ListResourceClass = SectionGroup;
+  var prev = desc.hasList("prev", Section);
+  prev.ListResourceClass = SectionGroup;
+})
+
 class Book extends RL.Resource {
 }
 
@@ -61,6 +83,8 @@ RL.Describe(Book, (desc) => {
   desc.property("title", "");
   desc.hasList("acts", Act, []);
   desc.hasList("sections", Section, []);
+  desc.hasOne("sectionGroups", SectionGroups);
+
   //desc.hasOne("owner", User, {});
   var characters = desc.hasList("characters", Character, []);
   characters.canCreate = true;
@@ -97,7 +121,7 @@ describe("initialization", function() {
 });
 
 describe("Loading relationships test", function() {
-  var resources, book, act, chapter, chapters, section, paragraph, character, $httpBackend, $rootScope;
+  var resources, book, act, chapter, chapters, section, paragraph, character, sectionGroup, $httpBackend, $rootScope;
 
   beforeEach(function () {
     var injector = new Injector();
@@ -134,6 +158,7 @@ describe("Loading relationships test", function() {
               self: "/books/1",
               acts: "/books/1/acts",
               sections: "/books/1/sections",
+              section_groups: "/books/1/section_groups",
               owner: "/users/2"
             },
             data: {
@@ -297,6 +322,95 @@ describe("Loading relationships test", function() {
             }
           }
         });
+      } else if (params.url == "http://www.example.com/books/1/section_groups") {
+        return Promise.resolve({
+          status: 200,
+          headers() {
+            return {
+              ETag: "999"
+            }
+          },
+          data: {
+            data: {
+              sections_per_group: 2,
+              total_groups: 5
+            },
+            links: {
+              self: "/books/1/section_groups",
+              book: "/book/1",
+              template: "/sections/{id}",
+              section: "/books/1/section_groups/{id}",
+              first: "/books/1/section_groups/1"
+            }
+          }
+        });
+      } else if (params.url == "http://www.example.com/books/1/section_groups/1") {
+        return Promise.resolve({
+          status: 200,
+          headers() {
+            return {
+              ETag: "9999"
+            }
+          },
+          data: {
+            links: {
+              self: "/books/1/section_groups/1",
+              book: "/book/1",
+              template: "/sections/{id}",
+              section: "/books/1/section_groups/{id}",
+              next: "/books/1/section_groups/2",
+              previous: ""
+            },
+            data: [{
+              data: {
+                title: "To Be Or Not To Be",
+                kind: 'dramatic',
+                resolution: 'positive',
+              }
+            },
+            {
+              data: {
+                title: "That is the question",
+                kind: 'dramatic',
+                resolution: 'positive',
+              }
+            }]
+          }
+        });
+      } else if (params.url == "http://www.example.com/books/1/section_groups/2") {
+        return Promise.resolve({
+          status: 200,
+          headers() {
+            return {
+              ETag: "99999"
+            }
+          },
+          data: {
+            links: {
+              self: "/books/1/section_groups/2",
+              book: "/book/1",
+              template: "/sections/{id}",
+              section: "/books/1/section_groups/{id}",
+              next: "/books/1/section_groups/3",
+              previous: "/books/1/section_groups/1"
+            },
+            data: [{
+              data: {
+                title: "Hey man there's a beverage here",
+                kind: 'dramatic',
+                resolution: 'positive',
+              }
+            },
+            {
+              data: {
+                title: "Well done",
+                kind: 'dramatic',
+                resolution: 'positive',
+              }
+            },
+            ]
+          }
+        });
       }
     }
     angular.mock.module(function($provide) {
@@ -386,5 +500,21 @@ describe("Loading relationships test", function() {
         });
       });
     });
+
+    describe("sectionGroups", function() {
+      beforeEach(function(done) {
+        promise = book.sectionGroups().first().load().then((_sectionGroup_) => {
+          return _sectionGroup_.next().load();
+        });
+        promise.then((_sectionGroup_) => {
+          sectionGroup = _sectionGroup_;
+          done();
+        });
+      });
+
+      it("should load the right section group", function() {
+        expect(sectionGroup[0].title).toEqual("Hey man there's a beverage here")
+      })
+    })
   });
 });

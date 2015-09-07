@@ -20,7 +20,8 @@ describe("ListResourceMapper", function() {
   listResourceMapperFactory,
   listResourceSerializerFactory,
   primaryResourceTransformer,
-  primaryResourceTransformerFactory
+  primaryResourceTransformerFactory,
+  relationship
   ;
 
   beforeEach(function() {
@@ -37,7 +38,7 @@ describe("ListResourceMapper", function() {
     manyResourceMapSpy = spyOn(manyResourceMapper, "map").and.callThrough();
 
     manyResourceMapperFactory = jasmine.createSpy("manyResourceMapperFactory ").and.callFake(
-      function(thisTransport, thisData, ThisItemResourceClassourceClass) {
+      function(thisTransport, thisData, thisRelationshipDescription) {
         manyResourceMapper.data = thisData;
         return manyResourceMapper;
       });
@@ -58,6 +59,8 @@ describe("ListResourceMapper", function() {
           return this.data;
         } else if (path == "$.links.template") {
           return "/cheese/{cheese}";
+        } else if (path == "$.links.crackers") {
+          return "/crackers/crackers"
         }
       };
 
@@ -74,7 +77,15 @@ describe("ListResourceMapper", function() {
 
       this.create = function(param) { return Promise.resolve(param); }
 
+      this.crackers = function() { return this.relationships.crackers; }
     };
+
+    ListResource.relationships = {};
+
+    ListResource.relationships["crackers"] = {
+      dataPath: "$.data.crackers",
+      linksPath: "$.links.crackers"
+    }
 
     ItemResourceClass = function() {
       this.awesome = "awesome";
@@ -123,18 +134,21 @@ describe("ListResourceMapper", function() {
       return "goodbye";
     }
 
+    relationship = {
+      ListResourceClass: ListResource,
+      ResourceClass: ItemResourceClass,
+      mapperFactory: listResourceMapperFactory,
+      serializerFactory: listResourceSerializerFactory
+    }
     listResourceMapper = new ListResourceMapper(
       templatedUrlFromUrlFactory,
       resourceBuilderFactory,
       primaryResourceBuilderFactory,
       primaryResourceTransformerFactory,
-      ListResource,
       manyResourceMapperFactory,
       transport,
       data,
-      ItemResourceClass,
-      listResourceMapperFactory,
-      listResourceSerializerFactory);
+      relationship);
   });
 
   describe("it should transform responses into a list", function() {
@@ -143,7 +157,7 @@ describe("ListResourceMapper", function() {
     });
 
     it("should setup the many mapper with the ItemResourceClass", function() {
-      expect(manyResourceMapperFactory).toHaveBeenCalledWith(transport, data, ItemResourceClass);
+      expect(manyResourceMapperFactory).toHaveBeenCalledWith(transport, data, relationship);
     });
 
     it("should build the list with the resource builder", function() {
@@ -160,6 +174,10 @@ describe("ListResourceMapper", function() {
       expect(resultElements).toEqual(resultArray);
     });
 
+    it("should setup relationships for the list", function() {
+      expect(results.resource.relationships["crackers"]).toEqual(templatedUrl)
+    })
+
     it("should setup pass through functions on the array", function() {
       var spy = spyOn(results.resource, 'self').and.callThrough();
 
@@ -171,6 +189,7 @@ describe("ListResourceMapper", function() {
         expect(spy).toHaveBeenCalled();
       });
 
+      expect(results.crackers()).toEqual(templatedUrl);
     });
 
     it("should setup new", function() {
@@ -181,9 +200,8 @@ describe("ListResourceMapper", function() {
       expect(results.resource.data).toEqual(data);
     });
 
-
     it("should setup the primary resource transformer", function() {
-      expect(primaryResourceTransformerFactory).toHaveBeenCalledWith(listResourceMapperFactory, listResourceSerializerFactory, ItemResourceClass)
+      expect(primaryResourceTransformerFactory).toHaveBeenCalledWith(relationship)
     })
 
     it("should build the resource with the regular resource builder", function() {

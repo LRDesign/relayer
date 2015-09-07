@@ -6,8 +6,8 @@ import {SimpleFactory} from "../SimpleFactoryInjector.js";
   'ListResourceMapperFactory',
   'ListResourceSerializerFactory',
   'Inflector',
-  'ResourceMapperFactory',
-  'ResourceSerializerFactory',
+  "SingleRelationshipDescriptionFactory",
+  "ListResource",
   'PrimaryResourceTransformerFactory',
   'EmbeddedRelationshipTransformerFactory',
   'IndividualFromListTransformerFactory',
@@ -21,8 +21,8 @@ export default class SingleRelationshipDescription extends RelationshipDescripti
     resourceMapperFactory,
     resourceSerializerFactory,
     inflector,
-    singleResourceMapperFactory,
-    singleResourceSerializerFactory,
+    singleRelationshipDescriptionFactory,
+    ListResource,
     primaryResourceTransformerFactory,
     embeddedRelationshipTransformerFactory,
     individualFromListTransformerFactory,
@@ -44,8 +44,8 @@ export default class SingleRelationshipDescription extends RelationshipDescripti
       ResourceClass,
       initialValues);
 
-    this.singleResourceMapperFactory = singleResourceMapperFactory;
-    this.singleResourceSerializerFactory = singleResourceSerializerFactory;
+    this.singleRelationshipDescriptionFactory = singleRelationshipDescriptionFactory;
+    this.ListResource = ListResource;
     this.primaryResourceTransformerFactory = primaryResourceTransformerFactory;
     this.embeddedRelationshipTransformerFactory = embeddedRelationshipTransformerFactory;
     this.individualFromListTransformerFactory = individualFromListTransformerFactory;
@@ -56,6 +56,14 @@ export default class SingleRelationshipDescription extends RelationshipDescripti
     this.templatedUrlFactory = templatedUrlFactory;
     this.canCreate = false;
     this._linkTemplatePath = null;
+  }
+
+  get ListResourceClass() {
+    return this._ListResourceClass || this.ListResource;
+  }
+
+  set ListResourceClass(ListResourceClass) {
+    this._ListResourceClass = ListResourceClass
   }
 
   get linkTemplate() {
@@ -90,15 +98,11 @@ export default class SingleRelationshipDescription extends RelationshipDescripti
   }
 
   listResourceTransformer() {
-    return this.primaryResourceTransformerFactory(this.mapperFactory,
-      this.serializerFactory,
-      this.ResourceClass);
+    return this.primaryResourceTransformerFactory(this);
   }
 
   singleResourceTransformer() {
-    return this.primaryResourceTransformerFactory(this.singleResourceMapperFactory,
-      this.singleResourceSerializerFactory,
-      this.ResourceClass);
+    return this.primaryResourceTransformerFactory(this.singleRelationshipDescriptionFactory("", this.ResourceClass));
   }
 
   linkedEndpoint(parent, uriParams) {
@@ -120,9 +124,8 @@ export default class SingleRelationshipDescription extends RelationshipDescripti
       templatedUrl.addDataPathLink(parent, this.linksPath);
       primaryResourceTransformer = this.listResourceTransformer();
       if (this.canCreate) {
-        createTransformer = this.createResourceTransformerFactory(this.singleResourceMapperFactory,
-          this.singleResourceSerializerFactory,
-          this.ResourceClass);
+        createTransformer = this.createResourceTransformerFactory(this.singleRelationshipDescriptionFactory("", this.ResourceClass)
+          );
       }
     }
 
