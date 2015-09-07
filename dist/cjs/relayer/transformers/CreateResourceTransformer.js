@@ -37,11 +37,11 @@ var CreateResourceTransformer = (function (_PrimaryResourceTransformer) {
       var _this = this;
 
       return response.then(function (resolvedResponse) {
-        var resource = _this.primaryResourceMapperFactory(endpoint.transport, resolvedResponse.data, _this.ResourceClass).map();
+        var resource = _this.primaryResourceMapperFactory(endpoint.transport, resolvedResponse.data, _this.relationshipDescription).map();
         resource.templatedUrl.etag = resolvedResponse.etag;
         return resource;
       })["catch"](function (resolvedError) {
-        throw _this.primaryResourceMapperFactory(endpoint.transport, resolvedError.data, _this.ResourceClass.errorClass).map();
+        throw _this.primaryResourceMapperFactory(endpoint.transport, resolvedError.data, _this.relationshipDescription, null, true).map();
       });
     }
   }]);

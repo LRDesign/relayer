@@ -43,17 +43,17 @@ var Resource = (function (_DataWrapper) {
   _createClass(Resource, [{
     key: "url",
     get: function () {
-      return this.templatedUrl.url;
+      return this.templatedUrl && this.templatedUrl.url;
     }
   }, {
     key: "uriTemplate",
     get: function () {
-      return this.templatedUrl.uriTemplate;
+      return this.templatedUrl && this.templatedUrl.uriTemplate;
     }
   }, {
     key: "uriParams",
     get: function () {
-      return this.templatedUrl.uriParams;
+      return this.templatedUrl && this.templatedUrl.uriParams;
     }
   }, {
     key: "create",
@@ -162,7 +162,7 @@ var Resource = (function (_DataWrapper) {
   }, {
     key: "shortLink",
     get: function () {
-      return this.uriParams[Object.keys(this.uriParams)[0]];
+      return this.uriParams && this.uriParams[Object.keys(this.uriParams)[0]];
     }
   }, {
     key: "response",

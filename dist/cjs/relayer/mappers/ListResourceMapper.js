@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; desc = parent = getter = undefined; _again = false; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -21,13 +21,13 @@ var _ResourceMapperJs = require("./ResourceMapper.js");
 var _ResourceMapperJs2 = _interopRequireDefault(_ResourceMapperJs);
 
 var ListResourceMapper = (function (_ResourceMapper) {
-  function ListResourceMapper(templatedUrlFromUrlFactory, resourceBuilderFactory, primaryResourceBuilderFactory, primaryResourceTransformerFactory, ListResource, manyResourceMapperFactory, transport, response, ItemResourceClass, mapperFactory, serializerFactory, endpoint) {
+  function ListResourceMapper(templatedUrlFromUrlFactory, resourceBuilderFactory, primaryResourceBuilderFactory, primaryResourceTransformerFactory, manyResourceMapperFactory, transport, response, relationshipDescription, endpoint) {
+    var useErrors = arguments[9] === undefined ? false : arguments[9];
+
     _classCallCheck(this, _ListResourceMapper);
 
-    _get(Object.getPrototypeOf(_ListResourceMapper.prototype), "constructor", this).call(this, templatedUrlFromUrlFactory, resourceBuilderFactory, primaryResourceBuilderFactory, primaryResourceTransformerFactory, transport, response, ListResource, mapperFactory, serializerFactory);
-    this.ItemResourceClass = ItemResourceClass;
+    _get(Object.getPrototypeOf(_ListResourceMapper.prototype), "constructor", this).call(this, templatedUrlFromUrlFactory, resourceBuilderFactory, primaryResourceBuilderFactory, primaryResourceTransformerFactory, transport, response, relationshipDescription, endpoint, useErrors);
     this.manyResourceMapperFactory = manyResourceMapperFactory;
-    this.endpoint = endpoint;
   }
 
   _inherits(ListResourceMapper, _ResourceMapper);
@@ -35,18 +35,25 @@ var ListResourceMapper = (function (_ResourceMapper) {
   var _ListResourceMapper = ListResourceMapper;
 
   _createClass(_ListResourceMapper, [{
-    key: "primaryResourceTransformer",
+    key: "ResourceClass",
     get: function () {
-      this._primaryResourceTransformer = this._primaryResourceTransformer || this.primaryResourceTransformerFactory(this.mapperFactory, this.serializerFactory, this.ItemResourceClass);
-      return this._primaryResourceTransformer;
+      return this.relationshipDescription.ListResourceClass;
+    }
+  }, {
+    key: "ItemResourceClass",
+    get: function () {
+      return this.relationshipDescription.ResourceClass;
     }
   }, {
     key: "mapNestedRelationships",
     value: function mapNestedRelationships() {
       var _this = this;
 
+      // add mappings for list resource
+      _get(Object.getPrototypeOf(_ListResourceMapper.prototype), "mapNestedRelationships", this).call(this);
+
       this.resource = this.mapped;
-      var manyResourceMapper = this.manyResourceMapperFactory(this.transport, this.resource.pathGet("$.data"), this.ItemResourceClass);
+      var manyResourceMapper = this.manyResourceMapperFactory(this.transport, this.resource.pathGet("$.data"), this.relationshipDescription);
       manyResourceMapper.uriTemplate = this.resource.pathGet("$.links.template");
       this.mapped = manyResourceMapper.map();
       this.mapped.resource = this.resource;
@@ -73,20 +80,31 @@ var ListResourceMapper = (function (_ResourceMapper) {
           return (_resource$self = this.resource.self())[func].apply(_resource$self, [mapped].concat(args));
         };
       });
+      Object.keys(this.resource.relationships).forEach(function (key) {
+        _this.mapped[key] = function () {
+          var _resource2;
+
+          for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+            args[_key3] = arguments[_key3];
+          }
+
+          return (_resource2 = this.resource)[key].apply(_resource2, args);
+        };
+      });
+
       this.mapped.create = function () {
-        var _resource2,
+        var _resource3,
             _this2 = this;
 
-        for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-          args[_key3] = arguments[_key3];
+        for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+          args[_key4] = arguments[_key4];
         }
 
-        return (_resource2 = this.resource).create.apply(_resource2, args).then(function (created) {
+        return (_resource3 = this.resource).create.apply(_resource3, args).then(function (created) {
           _this2.push(created);
           return created;
         });
       };
-
       var ItemResourceClass = this.ItemResourceClass;
       this.mapped["new"] = function () {
         return new ItemResourceClass();
@@ -94,7 +112,7 @@ var ListResourceMapper = (function (_ResourceMapper) {
     }
   }]);
 
-  ListResourceMapper = (0, _SimpleFactoryInjectorJs.SimpleFactory)("ListResourceMapperFactory", ["TemplatedUrlFromUrlFactory", "ResourceBuilderFactory", "PrimaryResourceBuilderFactory", "PrimaryResourceTransformerFactory", "ListResource", "ManyResourceMapperFactory"])(ListResourceMapper) || ListResourceMapper;
+  ListResourceMapper = (0, _SimpleFactoryInjectorJs.SimpleFactory)("ListResourceMapperFactory", ["TemplatedUrlFromUrlFactory", "ResourceBuilderFactory", "PrimaryResourceBuilderFactory", "PrimaryResourceTransformerFactory", "ManyResourceMapperFactory"])(ListResourceMapper) || ListResourceMapper;
   return ListResourceMapper;
 })(_ResourceMapperJs2["default"]);
 

@@ -2265,13 +2265,13 @@ define('relayer/Resource',["./DataWrapper"], function($__0) {
   var $Resource = Resource;
   ($traceurRuntime.createClass)(Resource, {
     get url() {
-      return this.templatedUrl.url;
+      return this.templatedUrl && this.templatedUrl.url;
     },
     get uriTemplate() {
-      return this.templatedUrl.uriTemplate;
+      return this.templatedUrl && this.templatedUrl.uriTemplate;
     },
     get uriParams() {
-      return this.templatedUrl.uriParams;
+      return this.templatedUrl && this.templatedUrl.uriParams;
     },
     create: function(resource, res, rej) {
       if (this.isPersisted) {
@@ -2350,7 +2350,7 @@ define('relayer/Resource',["./DataWrapper"], function($__0) {
       return this._relationships;
     },
     get shortLink() {
-      return this.uriParams[Object.keys(this.uriParams)[0]];
+      return this.uriParams && this.uriParams[Object.keys(this.uriParams)[0]];
     },
     get response() {
       return this._response;
@@ -2870,18 +2870,33 @@ define('relayer/serializers',["./serializers/ResourceSerializer", "./serializers
 
 define('relayer/mappers/Mapper',[], function() {
   
-  var Mapper = function Mapper(transport, response, ResourceClass, mapperFactory, serializerFactory) {
+  var Mapper = function Mapper(transport, response, relationshipDescription) {
+    var useErrors = arguments[3] !== (void 0) ? arguments[3] : false;
     this.transport = transport;
     this.response = response;
-    this.ResourceClass = ResourceClass;
-    this.mapperFactory = mapperFactory;
-    this.serializerFactory = serializerFactory;
+    this.relationshipDescription = relationshipDescription;
+    this.useErrors = useErrors;
   };
-  ($traceurRuntime.createClass)(Mapper, {map: function() {
+  ($traceurRuntime.createClass)(Mapper, {
+    get ResourceClass() {
+      if (this.useErrors) {
+        return this.relationshipDescription.ResourceClass.errorClass;
+      } else {
+        return this.relationshipDescription.ResourceClass;
+      }
+    },
+    get mapperFactory() {
+      return this.relationshipDescription.mapperFactory;
+    },
+    get serializerFactory() {
+      return this.relationshipDescription.serializerFactory;
+    },
+    map: function() {
       this.initializeModel();
       this.mapNestedRelationships();
       return this.mapped;
-    }}, {});
+    }
+  }, {});
   var $__default = Mapper;
   return {
     get default() {
@@ -2899,9 +2914,10 @@ define('relayer/mappers/ResourceMapper',["./Mapper", "../SimpleFactoryInjector"]
     $__2 = {default: $__2};
   var Mapper = $__0.default;
   var SimpleFactory = $__2.SimpleFactory;
-  var ResourceMapper = function ResourceMapper(templatedUrlFromUrlFactory, resourceBuilderFactory, primaryResourceBuilderFactory, primaryResourceTransformerFactory, transport, response, ResourceClass, mapperFactory, serializerFactory) {
-    var endpoint = arguments[9] !== (void 0) ? arguments[9] : null;
-    $traceurRuntime.superConstructor($ResourceMapper).call(this, transport, response, ResourceClass, mapperFactory, serializerFactory);
+  var ResourceMapper = function ResourceMapper(templatedUrlFromUrlFactory, resourceBuilderFactory, primaryResourceBuilderFactory, primaryResourceTransformerFactory, transport, response, relationshipDescription) {
+    var endpoint = arguments[7] !== (void 0) ? arguments[7] : null;
+    var useErrors = arguments[8] !== (void 0) ? arguments[8] : false;
+    $traceurRuntime.superConstructor($ResourceMapper).call(this, transport, response, relationshipDescription, useErrors);
     this.primaryResourceTransformerFactory = primaryResourceTransformerFactory;
     this.templatedUrlFromUrlFactory = templatedUrlFromUrlFactory;
     this.resourceBuilderFactory = resourceBuilderFactory;
@@ -2918,7 +2934,7 @@ define('relayer/mappers/ResourceMapper',["./Mapper", "../SimpleFactoryInjector"]
       }
     },
     get primaryResourceTransformer() {
-      this._primaryResourceTransformer = this._primaryResourceTransformer || this.primaryResourceTransformerFactory(this.mapperFactory, this.serializerFactory, this.ResourceClass);
+      this._primaryResourceTransformer = this._primaryResourceTransformer || this.primaryResourceTransformerFactory(this.relationshipDescription);
       return this._primaryResourceTransformer;
     },
     mapNestedRelationships: function() {
@@ -2928,7 +2944,7 @@ define('relayer/mappers/ResourceMapper',["./Mapper", "../SimpleFactoryInjector"]
         if (typeof this.ResourceClass.relationships[relationshipName] == 'object') {
           relationship = this.ResourceClass.relationships[relationshipName];
           if (this.mapped.pathGet(relationship.dataPath)) {
-            var subMapper = relationship.mapperFactory(this.transport, this.mapped.pathGet(relationship.dataPath), relationship.ResourceClass, relationship.mapperFactory, relationship.serializerFactory);
+            var subMapper = relationship.mapperFactory(this.transport, this.mapped.pathGet(relationship.dataPath), relationship, this.useErrors);
             this.mapped.relationships[relationshipName] = subMapper.map();
           } else if (this.mapped.pathGet(relationship.linksPath)) {
             var templatedUrl = this.templatedUrlFromUrlFactory(this.mapped.pathGet(relationship.linksPath), this.mapped.pathGet(relationship.linksPath));
@@ -2959,10 +2975,10 @@ define('relayer/mappers/ManyResourceMapper',["../SimpleFactoryInjector", "./Mapp
     $__2 = {default: $__2};
   var SimpleFactory = $__0.SimpleFactory;
   var Mapper = $__2.default;
-  var ManyResourceMapper = function ManyResourceMapper(singleResourceMapperFactory, singleResourceSerializerFactory, transport, response, ResourceClass) {
-    $traceurRuntime.superConstructor($ManyResourceMapper).call(this, transport, response, ResourceClass);
-    this.singleResourceMapperFactory = singleResourceMapperFactory;
-    this.singleResourceSerializerFactory = singleResourceSerializerFactory;
+  var ManyResourceMapper = function ManyResourceMapper(singleRelationshipDescriptionFactory, transport, response, relationshipDescription) {
+    var useErrors = arguments[4] !== (void 0) ? arguments[4] : false;
+    $traceurRuntime.superConstructor($ManyResourceMapper).call(this, transport, response, relationshipDescription, useErrors);
+    this.singleRelationshipDescription = singleRelationshipDescriptionFactory("", this.ResourceClass);
   };
   var $ManyResourceMapper = ManyResourceMapper;
   ($traceurRuntime.createClass)(ManyResourceMapper, {
@@ -2972,7 +2988,7 @@ define('relayer/mappers/ManyResourceMapper',["../SimpleFactoryInjector", "./Mapp
     mapNestedRelationships: function() {
       var $__4 = this;
       this.response.forEach((function(response) {
-        var resourceMapper = $__4.singleResourceMapperFactory($__4.transport, response, $__4.ResourceClass, $__4.singleResourceMapperFactory, $__4.singleResourceSerializerFactory);
+        var resourceMapper = $__4.singleRelationshipDescription.mapperFactory($__4.transport, response, $__4.singleRelationshipDescription);
         resourceMapper.uriTemplate = $__4.uriTemplate;
         $__4.mapped.push(resourceMapper.map());
       }));
@@ -2980,7 +2996,7 @@ define('relayer/mappers/ManyResourceMapper',["../SimpleFactoryInjector", "./Mapp
   }, {}, Mapper);
   var $__default = ManyResourceMapper;
   Object.defineProperty(ManyResourceMapper, "annotations", {get: function() {
-      return [new SimpleFactory("ManyResourceMapperFactory", ["ResourceMapperFactory", "ResourceSerializerFactory"])];
+      return [new SimpleFactory("ManyResourceMapperFactory", ["SingleRelationshipDescriptionFactory"])];
     }});
   return {
     get default() {
@@ -2998,22 +3014,24 @@ define('relayer/mappers/ListResourceMapper',["../SimpleFactoryInjector", "./Reso
     $__2 = {default: $__2};
   var SimpleFactory = $__0.SimpleFactory;
   var ResourceMapper = $__2.default;
-  var ListResourceMapper = function ListResourceMapper(templatedUrlFromUrlFactory, resourceBuilderFactory, primaryResourceBuilderFactory, primaryResourceTransformerFactory, ListResource, manyResourceMapperFactory, transport, response, ItemResourceClass, mapperFactory, serializerFactory, endpoint) {
-    $traceurRuntime.superConstructor($ListResourceMapper).call(this, templatedUrlFromUrlFactory, resourceBuilderFactory, primaryResourceBuilderFactory, primaryResourceTransformerFactory, transport, response, ListResource, mapperFactory, serializerFactory);
-    this.ItemResourceClass = ItemResourceClass;
+  var ListResourceMapper = function ListResourceMapper(templatedUrlFromUrlFactory, resourceBuilderFactory, primaryResourceBuilderFactory, primaryResourceTransformerFactory, manyResourceMapperFactory, transport, response, relationshipDescription, endpoint) {
+    var useErrors = arguments[9] !== (void 0) ? arguments[9] : false;
+    $traceurRuntime.superConstructor($ListResourceMapper).call(this, templatedUrlFromUrlFactory, resourceBuilderFactory, primaryResourceBuilderFactory, primaryResourceTransformerFactory, transport, response, relationshipDescription, endpoint, useErrors);
     this.manyResourceMapperFactory = manyResourceMapperFactory;
-    this.endpoint = endpoint;
   };
   var $ListResourceMapper = ListResourceMapper;
   ($traceurRuntime.createClass)(ListResourceMapper, {
-    get primaryResourceTransformer() {
-      this._primaryResourceTransformer = this._primaryResourceTransformer || this.primaryResourceTransformerFactory(this.mapperFactory, this.serializerFactory, this.ItemResourceClass);
-      return this._primaryResourceTransformer;
+    get ResourceClass() {
+      return this.relationshipDescription.ListResourceClass;
+    },
+    get ItemResourceClass() {
+      return this.relationshipDescription.ResourceClass;
     },
     mapNestedRelationships: function() {
       var $__4 = this;
+      $traceurRuntime.superGet(this, $ListResourceMapper.prototype, "mapNestedRelationships").call(this);
       this.resource = this.mapped;
-      var manyResourceMapper = this.manyResourceMapperFactory(this.transport, this.resource.pathGet("$.data"), this.ItemResourceClass);
+      var manyResourceMapper = this.manyResourceMapperFactory(this.transport, this.resource.pathGet("$.data"), this.relationshipDescription);
       manyResourceMapper.uriTemplate = this.resource.pathGet("$.links.template");
       this.mapped = manyResourceMapper.map();
       this.mapped.resource = this.resource;
@@ -3036,6 +3054,15 @@ define('relayer/mappers/ListResourceMapper',["../SimpleFactoryInjector", "./Reso
           return ($__8 = this.resource.self())[func].apply($__8, $traceurRuntime.spread([mapped], args));
         };
       }));
+      Object.keys(this.resource.relationships).forEach((function(key) {
+        $__4.mapped[key] = function() {
+          var $__8;
+          for (var args = [],
+              $__7 = 0; $__7 < arguments.length; $__7++)
+            args[$__7] = arguments[$__7];
+          return ($__8 = this.resource)[key].apply($__8, $traceurRuntime.spread(args));
+        };
+      }));
       this.mapped.create = function() {
         var $__8;
         for (var args = [],
@@ -3055,7 +3082,7 @@ define('relayer/mappers/ListResourceMapper',["../SimpleFactoryInjector", "./Reso
   }, {}, ResourceMapper);
   var $__default = ListResourceMapper;
   Object.defineProperty(ListResourceMapper, "annotations", {get: function() {
-      return [new SimpleFactory('ListResourceMapperFactory', ['TemplatedUrlFromUrlFactory', 'ResourceBuilderFactory', 'PrimaryResourceBuilderFactory', 'PrimaryResourceTransformerFactory', 'ListResource', 'ManyResourceMapperFactory'])];
+      return [new SimpleFactory('ListResourceMapperFactory', ['TemplatedUrlFromUrlFactory', 'ResourceBuilderFactory', 'PrimaryResourceBuilderFactory', 'PrimaryResourceTransformerFactory', 'ManyResourceMapperFactory'])];
     }});
   return {
     get default() {
@@ -3073,10 +3100,10 @@ define('relayer/mappers/MapResourceMapper',["../SimpleFactoryInjector", "./Mappe
     $__2 = {default: $__2};
   var SimpleFactory = $__0.SimpleFactory;
   var Mapper = $__2.default;
-  var MapResourceMapper = function MapResourceMapper(singleResourceMapperFactory, singleResourceSerializerFactory, transport, response, ResourceClass) {
-    $traceurRuntime.superConstructor($MapResourceMapper).call(this, transport, response, ResourceClass);
-    this.singleResourceMapperFactory = singleResourceMapperFactory;
-    this.singleResourceSerializerFactory = singleResourceSerializerFactory;
+  var MapResourceMapper = function MapResourceMapper(singleRelationshipDescriptionFactory, transport, response, relationshipDescription) {
+    var useErrors = arguments[4] !== (void 0) ? arguments[4] : false;
+    $traceurRuntime.superConstructor($MapResourceMapper).call(this, transport, response, relationshipDescription, useErrors);
+    this.singleRelationshipDescription = singleRelationshipDescriptionFactory("", this.ResourceClass);
   };
   var $MapResourceMapper = MapResourceMapper;
   ($traceurRuntime.createClass)(MapResourceMapper, {
@@ -3087,14 +3114,14 @@ define('relayer/mappers/MapResourceMapper',["../SimpleFactoryInjector", "./Mappe
       var $__4 = this;
       Object.keys(this.response).forEach((function(responseKey) {
         var response = $__4.response[responseKey];
-        var singleResourceMapper = $__4.singleResourceMapperFactory($__4.transport, response, $__4.ResourceClass, $__4.singleResourceMapperFactory, $__4.singleResourceSerializerFactory);
+        var singleResourceMapper = $__4.singleRelationshipDescription.mapperFactory($__4.transport, response, $__4.singleRelationshipDescription);
         $__4.mapped[responseKey] = singleResourceMapper.map();
       }));
     }
   }, {}, Mapper);
   var $__default = MapResourceMapper;
   Object.defineProperty(MapResourceMapper, "annotations", {get: function() {
-      return [new SimpleFactory("MapResourceMapperFactory", ["ResourceMapperFactory", "ResourceSerializerFactory"])];
+      return [new SimpleFactory("MapResourceMapperFactory", ["SingleRelationshipDescriptionFactory"])];
     }});
   return {
     get default() {
@@ -3165,14 +3192,18 @@ define('relayer/transformers/PrimaryResourceTransformer',["./ResourceTransformer
     $__2 = {default: $__2};
   var ResourceTransformer = $__0.default;
   var SimpleFactory = $__2.SimpleFactory;
-  var PrimaryResourceTransformer = function PrimaryResourceTransformer(primaryResourceMapperFactory, primaryResourceSerializerFactory, ResourceClass) {
+  var PrimaryResourceTransformer = function PrimaryResourceTransformer(relationshipDescription) {
     $traceurRuntime.superConstructor($PrimaryResourceTransformer).call(this);
-    this.primaryResourceSerializerFactory = primaryResourceSerializerFactory;
-    this.primaryResourceMapperFactory = primaryResourceMapperFactory;
-    this.ResourceClass = ResourceClass;
+    this.relationshipDescription = relationshipDescription;
   };
   var $PrimaryResourceTransformer = PrimaryResourceTransformer;
   ($traceurRuntime.createClass)(PrimaryResourceTransformer, {
+    get primaryResourceSerializerFactory() {
+      return this.relationshipDescription.serializerFactory;
+    },
+    get primaryResourceMapperFactory() {
+      return this.relationshipDescription.mapperFactory;
+    },
     transformRequest: function(endpoint, resource) {
       return this.primaryResourceSerializerFactory(resource).serialize();
     },
@@ -3180,9 +3211,9 @@ define('relayer/transformers/PrimaryResourceTransformer',["./ResourceTransformer
       var $__4 = this;
       return response.then((function(resolvedResponse) {
         endpoint.templatedUrl.etag = resolvedResponse.etag;
-        return $__4.primaryResourceMapperFactory(endpoint.transport, resolvedResponse.data, $__4.ResourceClass, $__4.primaryResourceMapperFactory, $__4.primaryResourceSerializerFactory, endpoint).map();
+        return $__4.primaryResourceMapperFactory(endpoint.transport, resolvedResponse.data, $__4.relationshipDescription, endpoint).map();
       })).catch((function(resolvedError) {
-        throw $__4.primaryResourceMapperFactory(endpoint.transport, resolvedError.data, $__4.ResourceClass.errorClass, $__4.primaryResourceMapperFactory, $__4.primaryResourceSerializerFactory, endpoint).map();
+        throw $__4.primaryResourceMapperFactory(endpoint.transport, resolvedError.data, $__4.relationshipDescription, endpoint, true).map();
       }));
     }
   }, {}, ResourceTransformer);
@@ -3214,11 +3245,11 @@ define('relayer/transformers/CreateResourceTransformer',["./PrimaryResourceTrans
   ($traceurRuntime.createClass)(CreateResourceTransformer, {transformResponse: function(endpoint, response) {
       var $__4 = this;
       return response.then((function(resolvedResponse) {
-        var resource = $__4.primaryResourceMapperFactory(endpoint.transport, resolvedResponse.data, $__4.ResourceClass).map();
+        var resource = $__4.primaryResourceMapperFactory(endpoint.transport, resolvedResponse.data, $__4.relationshipDescription).map();
         resource.templatedUrl.etag = resolvedResponse.etag;
         return resource;
       })).catch((function(resolvedError) {
-        throw $__4.primaryResourceMapperFactory(endpoint.transport, resolvedError.data, $__4.ResourceClass.errorClass).map();
+        throw $__4.primaryResourceMapperFactory(endpoint.transport, resolvedError.data, $__4.relationshipDescription, null, true).map();
       }));
     }}, {}, PrimaryResourceTransformer);
   var $__default = CreateResourceTransformer;
@@ -4037,7 +4068,7 @@ define('relayer/relationshipDescriptions/SingleRelationshipDescription',["./Rela
       var url = parent.pathGet(this.linksPath);
       var templatedUrl = this.templatedUrlFromUrlFactory(url, url);
       templatedUrl.addDataPathLink(parent, this.linksPath);
-      var primaryResourceTransformer = this.primaryResourceTransformerFactory(this.mapperFactory, this.serializerFactory, this.ResourceClass);
+      var primaryResourceTransformer = this.primaryResourceTransformerFactory(this);
       return this.resolvedEndpointFactory(transport, templatedUrl, primaryResourceTransformer);
     }
   }, {}, RelationshipDescription);
@@ -4123,10 +4154,10 @@ define('relayer/relationshipDescriptions/ListRelationshipDescription',["./Relati
     $__2 = {default: $__2};
   var RelationshipDescription = $__0.default;
   var SimpleFactory = $__2.SimpleFactory;
-  var SingleRelationshipDescription = function SingleRelationshipDescription(relationshipInitializerFactory, resourceMapperFactory, resourceSerializerFactory, inflector, singleResourceMapperFactory, singleResourceSerializerFactory, primaryResourceTransformerFactory, embeddedRelationshipTransformerFactory, individualFromListTransformerFactory, createResourceTransformerFactory, resolvedEndpointFactory, loadedDataEndpointFactory, templatedUrlFromUrlFactory, templatedUrlFactory, name, ResourceClass, initialValues) {
+  var SingleRelationshipDescription = function SingleRelationshipDescription(relationshipInitializerFactory, resourceMapperFactory, resourceSerializerFactory, inflector, singleRelationshipDescriptionFactory, ListResource, primaryResourceTransformerFactory, embeddedRelationshipTransformerFactory, individualFromListTransformerFactory, createResourceTransformerFactory, resolvedEndpointFactory, loadedDataEndpointFactory, templatedUrlFromUrlFactory, templatedUrlFactory, name, ResourceClass, initialValues) {
     $traceurRuntime.superConstructor($SingleRelationshipDescription).call(this, relationshipInitializerFactory, resourceMapperFactory, resourceSerializerFactory, inflector, name, ResourceClass, initialValues);
-    this.singleResourceMapperFactory = singleResourceMapperFactory;
-    this.singleResourceSerializerFactory = singleResourceSerializerFactory;
+    this.singleRelationshipDescriptionFactory = singleRelationshipDescriptionFactory;
+    this.ListResource = ListResource;
     this.primaryResourceTransformerFactory = primaryResourceTransformerFactory;
     this.embeddedRelationshipTransformerFactory = embeddedRelationshipTransformerFactory;
     this.individualFromListTransformerFactory = individualFromListTransformerFactory;
@@ -4140,6 +4171,12 @@ define('relayer/relationshipDescriptions/ListRelationshipDescription',["./Relati
   };
   var $SingleRelationshipDescription = SingleRelationshipDescription;
   ($traceurRuntime.createClass)(SingleRelationshipDescription, {
+    get ListResourceClass() {
+      return this._ListResourceClass || this.ListResource;
+    },
+    set ListResourceClass(ListResourceClass) {
+      this._ListResourceClass = ListResourceClass;
+    },
     get linkTemplate() {
       return this._linkTemplatePath;
     },
@@ -4168,10 +4205,10 @@ define('relayer/relationshipDescriptions/ListRelationshipDescription',["./Relati
       return this.loadedDataEndpointFactory(parentEndpoint, parent, transformer);
     },
     listResourceTransformer: function() {
-      return this.primaryResourceTransformerFactory(this.mapperFactory, this.serializerFactory, this.ResourceClass);
+      return this.primaryResourceTransformerFactory(this);
     },
     singleResourceTransformer: function() {
-      return this.primaryResourceTransformerFactory(this.singleResourceMapperFactory, this.singleResourceSerializerFactory, this.ResourceClass);
+      return this.primaryResourceTransformerFactory(this.singleRelationshipDescriptionFactory("", this.ResourceClass));
     },
     linkedEndpoint: function(parent, uriParams) {
       var transport = parent.self().transport;
@@ -4192,7 +4229,7 @@ define('relayer/relationshipDescriptions/ListRelationshipDescription',["./Relati
         templatedUrl.addDataPathLink(parent, this.linksPath);
         primaryResourceTransformer = this.listResourceTransformer();
         if (this.canCreate) {
-          createTransformer = this.createResourceTransformerFactory(this.singleResourceMapperFactory, this.singleResourceSerializerFactory, this.ResourceClass);
+          createTransformer = this.createResourceTransformerFactory(this.singleRelationshipDescriptionFactory("", this.ResourceClass));
         }
       }
       var endpoint = this.resolvedEndpointFactory(transport, templatedUrl, primaryResourceTransformer, createTransformer);
@@ -4215,7 +4252,7 @@ define('relayer/relationshipDescriptions/ListRelationshipDescription',["./Relati
   }, {}, RelationshipDescription);
   var $__default = SingleRelationshipDescription;
   Object.defineProperty(SingleRelationshipDescription, "annotations", {get: function() {
-      return [new SimpleFactory('ListRelationshipDescriptionFactory', ['ListRelationshipInitializerFactory', 'ListResourceMapperFactory', 'ListResourceSerializerFactory', 'Inflector', 'ResourceMapperFactory', 'ResourceSerializerFactory', 'PrimaryResourceTransformerFactory', 'EmbeddedRelationshipTransformerFactory', 'IndividualFromListTransformerFactory', 'CreateResourceTransformerFactory', 'ResolvedEndpointFactory', 'LoadedDataEndpointFactory', 'TemplatedUrlFromUrlFactory', 'TemplatedUrlFactory'])];
+      return [new SimpleFactory('ListRelationshipDescriptionFactory', ['ListRelationshipInitializerFactory', 'ListResourceMapperFactory', 'ListResourceSerializerFactory', 'Inflector', "SingleRelationshipDescriptionFactory", "ListResource", 'PrimaryResourceTransformerFactory', 'EmbeddedRelationshipTransformerFactory', 'IndividualFromListTransformerFactory', 'CreateResourceTransformerFactory', 'ResolvedEndpointFactory', 'LoadedDataEndpointFactory', 'TemplatedUrlFromUrlFactory', 'TemplatedUrlFactory'])];
     }});
   return {
     get default() {
@@ -4755,12 +4792,12 @@ define('relayer',["./relayer/ResourceDescription", "./relayer/Resource", "./rela
         topLevelResource: topLevelResource,
         baseUrl: baseUrl
       };
-      this.$provide.factory(apiName, ['UrlHelperFactory', 'TransportFactory', 'TemplatedUrlFromUrlFactory', 'ResolvedEndpointFactory', 'PrimaryResourceTransformerFactory', 'ResourceMapperFactory', 'ResourceSerializerFactory', '$http', 'InitializedResourceClasses', function(urlHelperFactory, transportFactory, templatedUrlFromUrlFactory, resolvedEndpointFactory, primaryResourceTransformerFactory, resourceMapperFactory, resourceSerializerFactory, $http, initializedResourceClasses) {
+      this.$provide.factory(apiName, ['UrlHelperFactory', 'TransportFactory', 'TemplatedUrlFromUrlFactory', 'ResolvedEndpointFactory', 'PrimaryResourceTransformerFactory', 'SingleRelationshipDescriptionFactory', '$http', 'InitializedResourceClasses', function(urlHelperFactory, transportFactory, templatedUrlFromUrlFactory, resolvedEndpointFactory, primaryResourceTransformerFactory, singleRelationshipDescriptionFactory, $http, initializedResourceClasses) {
         var urlHelper = urlHelperFactory(baseUrl);
         var wellKnownUrl = urlHelper.fullUrlRegEx.exec(baseUrl)[3];
         var transport = transportFactory(urlHelper, $http);
         var templatedUrl = templatedUrlFromUrlFactory(wellKnownUrl, wellKnownUrl);
-        var transformer = primaryResourceTransformerFactory(resourceMapperFactory, resourceSerializerFactory, topLevelResource);
+        var transformer = primaryResourceTransformerFactory(singleRelationshipDescriptionFactory("", topLevelResource));
         var endpoint = resolvedEndpointFactory(transport, templatedUrl, transformer);
         topLevelResource.resourceDescription.applyToEndpoint(endpoint);
         return endpoint;
@@ -4768,6 +4805,9 @@ define('relayer',["./relayer/ResourceDescription", "./relayer/Resource", "./rela
     }}, {
     get Resource() {
       return Resource;
+    },
+    get ListResource() {
+      return ListResource;
     },
     get Describe() {
       return describeResource;

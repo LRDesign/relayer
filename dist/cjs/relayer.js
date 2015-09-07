@@ -109,13 +109,13 @@ var ResourceLayer = (function () {
       this.apis[apiName] = {
         topLevelResource: topLevelResource, baseUrl: baseUrl
       };
-      this.$provide.factory(apiName, ["UrlHelperFactory", "TransportFactory", "TemplatedUrlFromUrlFactory", "ResolvedEndpointFactory", "PrimaryResourceTransformerFactory", "ResourceMapperFactory", "ResourceSerializerFactory", "$http", "InitializedResourceClasses", function (urlHelperFactory, transportFactory, templatedUrlFromUrlFactory, resolvedEndpointFactory, primaryResourceTransformerFactory, resourceMapperFactory, resourceSerializerFactory, $http, initializedResourceClasses) {
+      this.$provide.factory(apiName, ["UrlHelperFactory", "TransportFactory", "TemplatedUrlFromUrlFactory", "ResolvedEndpointFactory", "PrimaryResourceTransformerFactory", "SingleRelationshipDescriptionFactory", "$http", "InitializedResourceClasses", function (urlHelperFactory, transportFactory, templatedUrlFromUrlFactory, resolvedEndpointFactory, primaryResourceTransformerFactory, singleRelationshipDescriptionFactory, $http, initializedResourceClasses) {
 
         var urlHelper = urlHelperFactory(baseUrl);
         var wellKnownUrl = urlHelper.fullUrlRegEx.exec(baseUrl)[3];
         var transport = transportFactory(urlHelper, $http);
         var templatedUrl = templatedUrlFromUrlFactory(wellKnownUrl, wellKnownUrl);
-        var transformer = primaryResourceTransformerFactory(resourceMapperFactory, resourceSerializerFactory, topLevelResource);
+        var transformer = primaryResourceTransformerFactory(singleRelationshipDescriptionFactory("", topLevelResource));
         var endpoint = resolvedEndpointFactory(transport, templatedUrl, transformer);
         topLevelResource.resourceDescription.applyToEndpoint(endpoint);
         return endpoint;
@@ -125,6 +125,11 @@ var ResourceLayer = (function () {
     key: "Resource",
     get: function () {
       return _relayerResourceJs2["default"];
+    }
+  }, {
+    key: "ListResource",
+    get: function () {
+      return _relayerListResourceJs2["default"];
     }
   }, {
     key: "Describe",

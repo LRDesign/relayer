@@ -1,14 +1,13 @@
 import {SimpleFactory} from "../SimpleFactoryInjector.js";
 import Mapper from "./Mapper.js";
 
-@SimpleFactory("MapResourceMapperFactory", ["ResourceMapperFactory", "ResourceSerializerFactory"])
+@SimpleFactory("MapResourceMapperFactory", ["SingleRelationshipDescriptionFactory"])
 export default class MapResourceMapper extends Mapper {
 
-  constructor(singleResourceMapperFactory, singleResourceSerializerFactory,
-    transport, response, ResourceClass) {
-    super(transport, response, ResourceClass);
-    this.singleResourceMapperFactory = singleResourceMapperFactory;
-    this.singleResourceSerializerFactory = singleResourceSerializerFactory;
+  constructor(singleRelationshipDescriptionFactory,
+    transport, response, relationshipDescription, useErrors = false) {
+    super(transport, response, relationshipDescription, useErrors);
+    this.singleRelationshipDescription = singleRelationshipDescriptionFactory("", this.ResourceClass);
   };
 
   initializeModel() {
@@ -18,7 +17,8 @@ export default class MapResourceMapper extends Mapper {
   mapNestedRelationships() {
     Object.keys(this.response).forEach((responseKey) => {
       var response = this.response[responseKey];
-      var singleResourceMapper = this.singleResourceMapperFactory(this.transport, response, this.ResourceClass, this.singleResourceMapperFactory, this.singleResourceSerializerFactory);
+      var singleResourceMapper = this.singleRelationshipDescription.mapperFactory(this.transport,
+        response, this.singleRelationshipDescription);
       this.mapped[responseKey] = singleResourceMapper.map();
     });
   }
