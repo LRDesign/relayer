@@ -40,17 +40,16 @@ export default class Resource extends DataWrapper {
     return this.resourceDescription;
   }
 
-
   get url() {
-    return this.templatedUrl.url;
+    return this.templatedUrl && this.templatedUrl.url;
   }
 
   get uriTemplate() {
-    return this.templatedUrl.uriTemplate;
+    return this.templatedUrl && this.templatedUrl.uriTemplate;
   }
 
   get uriParams() {
-    return this.templatedUrl.uriParams;
+    return this.templatedUrl && this.templatedUrl.uriParams;
   }
 
   create(resource, res, rej) {
@@ -144,7 +143,7 @@ export default class Resource extends DataWrapper {
   }
 
   get shortLink() {
-    return this.uriParams[Object.keys(this.uriParams)[0]];
+    return this.uriParams && this.uriParams[Object.keys(this.uriParams)[0]];
   }
 
   get response() {
