@@ -1,3 +1,8 @@
+0.0.9 09-07-2015
+================
+* Allow customized list resources
+* Add fault tolerance to some resource class methods
+
 0.0.8 08-29-2015
 ================
 * Allow Angular 1.4x
