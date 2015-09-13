@@ -23,6 +23,7 @@ var TemplatedUrl = (function () {
     this._uriTemplate = new UriTemplate(uriTemplate);
     this._uriParams = uriParams;
     this._paths = [];
+    this._url = this._uriTemplate.fillFromObject(this._uriParams);
   }
 
   var _TemplatedUrl = TemplatedUrl;
@@ -40,13 +41,14 @@ var TemplatedUrl = (function () {
   }, {
     key: 'url',
     get: function () {
-      return this._uriTemplate.fillFromObject(this._uriParams);
+      return this._url;
     }
   }, {
     key: '_setUrl',
     value: function _setUrl(url) {
       var uriParams = this._uriTemplate.fromUri(url);
       this._uriParams = uriParams;
+      this._url = url;
     }
   }, {
     key: 'addDataPathLink',

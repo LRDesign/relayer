@@ -2641,6 +2641,7 @@ define('relayer/TemplatedUrl',["./SimpleFactoryInjector"], function($__0) {
     this._uriTemplate = new UriTemplate(uriTemplate);
     this._uriParams = uriParams;
     this._paths = [];
+    this._url = this._uriTemplate.fillFromObject(this._uriParams);
   };
   ($traceurRuntime.createClass)(TemplatedUrl, {
     get uriTemplate() {
@@ -2650,11 +2651,12 @@ define('relayer/TemplatedUrl',["./SimpleFactoryInjector"], function($__0) {
       return this._uriParams;
     },
     get url() {
-      return this._uriTemplate.fillFromObject(this._uriParams);
+      return this._url;
     },
     _setUrl: function(url) {
       var uriParams = this._uriTemplate.fromUri(url);
       this._uriParams = uriParams;
+      this._url = url;
     },
     addDataPathLink: function(resource, path) {
       var overwrite = arguments[2] !== (void 0) ? arguments[2] : true;
