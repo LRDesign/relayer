@@ -2075,10 +2075,10 @@ define('relayer/APIError',["./DataWrapper"], function($__0) {
   var APIError = function APIError(responseData) {
     var $__2;
     $traceurRuntime.superConstructor($APIError).call(this);
-    this._response = responseData.data;
+    this._response = responseData;
     this.unhandled = [];
-    if (this.jsonPaths) {
-      this.unhandled = Object.getOwnPropertyNames(this.jsonPaths).filter(($__2 = this, function(name) {
+    if (this.constructor.properties) {
+      this.unhandled = Object.keys(this.constructor.properties).filter(($__2 = this, function(name) {
         return $__2[name] && $__2[name].message;
       })).map((function(name) {
         return name;
@@ -2137,9 +2137,10 @@ define('relayer/ResourceDescription',["./APIError", "a1atscript", "./SimpleFacto
         var resourceClass = resourceToInitialize.resourceClass;
         var resourceDescription = resourceClass.resourceDescription;
         var errorClass = function(responseData) {
-          APIError.call(this);
+          APIError.call(this, responseData);
         };
         errorClass.relationships = {};
+        errorClass.properties = {};
         errorClass.prototype = Object.create(APIError.prototype);
         errorClass.prototype.constructor = errorClass;
         resourceDescription.applyToResource(resourceClass.prototype);
@@ -2362,6 +2363,12 @@ define('relayer/Resource',["./DataWrapper"], function($__0) {
       }
       return this._relationships;
     },
+    get properties() {
+      if (!this.hasOwnProperty("_properties")) {
+        this._properties = Object.create(this._properties || {});
+      }
+      return this._properties;
+    },
     description: function(resourceDescriptionFactory) {
       var parent = Object.getPrototypeOf(this);
       if (parent !== $Resource && parent.description) {
@@ -2529,7 +2536,7 @@ define('relayer/endpoints/ResolvedEndpoint',["./Endpoint", "../SimpleFactoryInje
       }), request);
     },
     _remove: function() {
-      return this.transport.remove(this.templatedUrl.url);
+      return this.transport.delete(this.templatedUrl.url);
     }
   }, {}, Endpoint);
   var $__default = ResolvedEndpoint;
@@ -3780,6 +3787,7 @@ define('relayer/decorators/JsonPropertyDecorator',["./ResourceDecorator", "../Si
   var $JsonPropertyDecorator = JsonPropertyDecorator;
   ($traceurRuntime.createClass)(JsonPropertyDecorator, {
     recordApply: function(target) {
+      target.constructor.properties[this.name] = this.path;
       if (!(target.hasOwnProperty(this.name))) {
         var afterSet = this.options.afterSet;
         var path = this.path;

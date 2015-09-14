@@ -41,6 +41,7 @@ var JsonPropertyDecorator = (function (_ResourceDecorator) {
   _createClass(_JsonPropertyDecorator, [{
     key: "recordApply",
     value: function recordApply(target) {
+      target.constructor.properties[this.name] = this.path;
       if (!target.hasOwnProperty(this.name)) {
         var afterSet = this.options.afterSet;
         var path = this.path;

@@ -178,6 +178,14 @@ var Resource = (function (_DataWrapper) {
       return this._relationships;
     }
   }, {
+    key: "properties",
+    get: function () {
+      if (!this.hasOwnProperty("_properties")) {
+        this._properties = Object.create(this._properties || {});
+      }
+      return this._properties;
+    }
+  }, {
     key: "description",
     value: function description(resourceDescriptionFactory) {
       var parent = Object.getPrototypeOf(this);

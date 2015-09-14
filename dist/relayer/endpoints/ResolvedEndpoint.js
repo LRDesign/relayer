@@ -50,6 +50,6 @@ export default class ResolvedEndpoint extends Endpoint {
   }
 
   _remove() {
-    return this.transport.remove(this.templatedUrl.url);
+    return this.transport.delete(this.templatedUrl.url);
   }
 }

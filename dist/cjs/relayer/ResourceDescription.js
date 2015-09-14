@@ -53,9 +53,10 @@ var InitializedResourceClasses = (function () {
         var resourceClass = resourceToInitialize.resourceClass;
         var resourceDescription = resourceClass.resourceDescription;
         var errorClass = function errorClass(responseData) {
-          _APIErrorJs2["default"].call(this);
+          _APIErrorJs2["default"].call(this, responseData);
         };
         errorClass.relationships = {};
+        errorClass.properties = {};
         errorClass.prototype = Object.create(_APIErrorJs2["default"].prototype);
         errorClass.prototype.constructor = errorClass;
         resourceDescription.applyToResource(resourceClass.prototype);

@@ -93,7 +93,7 @@ var ResolvedEndpoint = (function (_Endpoint) {
   }, {
     key: "_remove",
     value: function _remove() {
-      return this.transport.remove(this.templatedUrl.url);
+      return this.transport["delete"](this.templatedUrl.url);
     }
   }]);
 
