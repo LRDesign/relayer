@@ -43,7 +43,7 @@ describe("Endpoint", function() {
         return Promise.resolve(mockData)
       },
 
-      remove(url){
+      delete(url){
         return Promise.resolve({});
       }
     };
@@ -162,7 +162,7 @@ describe("Endpoint", function() {
     describe("remove", function() {
 
       beforeEach(function(done) {
-        transportSpy = spyOn(transport, "remove").and.callThrough();
+        transportSpy = spyOn(transport, "delete").and.callThrough();
         resolvedEndpoint.remove((result) => {
           done();
         });
