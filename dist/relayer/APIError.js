@@ -6,8 +6,8 @@ export default class APIError extends DataWrapper {
     super();
     this._response = responseData.data;
     this.unhandled = [];
-    if(this.jsonPaths){
-      this.unhandled = Object.getOwnPropertyNames(this.jsonPaths).filter((name) => {
+    if(this.constructor.properties){
+      this.unhandled = Object.getOwnPropertyNames(this.constructor.properties).filter((name) => {
         return this[name] && this[name].message;
       }).map((name) => {
         return name;

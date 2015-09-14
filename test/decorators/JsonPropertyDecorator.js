@@ -11,7 +11,8 @@ describe("JsonPropertyDecorator", function() {
     mockEndpoint,
     resource,
     jsonPropertyDecorator,
-    loadedEndpoint;
+    loadedEndpoint,
+    ResourceClass;
 
   beforeEach(function() {
 
@@ -40,27 +41,31 @@ describe("JsonPropertyDecorator", function() {
       }
     }
 
-    resource = {
-      _awesome: "Festering",
-      self() {
+    ResourceClass = function() {
+      this._awesome = "Festering";
+      this.self = function() {
         return mockEndpoint;
-      },
-      setInitialValue(path, value) {
+      };
+      this.setInitialValue = function(path, value) {
         this.initialValues = this.initialValues || {};
         this.initialValues[path] = value;
-      },
-      pathGet(path) {
+      };
+      this.pathGet = function(path) {
         if (path == '$.data.awesome') {
           return this._awesome;
         }
-      },
-      pathSet(path, value) {
+      }
+      this.pathSet = function(path, value) {
         if (path == '$.data.awesome' ) {
           this._awesome = value;
           return this._awesome;
         }
       }
     }
+
+    ResourceClass.properties = {};
+
+    resource = new ResourceClass();
 
     mockEndpoint = {
       load() {
@@ -81,6 +86,10 @@ describe("JsonPropertyDecorator", function() {
     beforeEach(function() {
       jsonPropertyDecorator.resourceApply(resource);
     });
+
+    it("should set properties for the constructor", function() {
+      expect(ResourceClass.properties).toEqual({"awesome": "$.data.awesome"})
+    })
 
     it("should set an initial value", function() {
       expect(resource.initialValues[path]).toEqual("cheese");
@@ -105,6 +114,10 @@ describe("JsonPropertyDecorator", function() {
     beforeEach(function() {
       jsonPropertyDecorator.errorsApply(resource);
     });
+
+    it("should set properties for the constructor", function() {
+      expect(ResourceClass.properties).toEqual({"awesome": "$.data.awesome"})
+    })
 
     it("should not set an initial value", function() {
       expect(resource.initialValues).toBe(undefined);

@@ -25,6 +25,13 @@ export default class Resource extends DataWrapper {
     return this._relationships;
   }
 
+  static get properties() {
+    if (!this.hasOwnProperty("_properties")) {
+      this._properties = Object.create(this._properties || {})
+    }
+    return this._properties;
+  }
+
   static description(resourceDescriptionFactory) {
     var parent = Object.getPrototypeOf(this);
     if (parent !== Resource && parent.description) {
