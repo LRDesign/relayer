@@ -11,6 +11,7 @@ class PrimaryResource {
 describe("PrimaryResourceBuilder", function() {
   var primaryResourceBuilder, mockEndpoint, mockTemplatedUrl, mockResponse, resource;
   var mockTemplatedUrlSpy;
+  var services;
 
   beforeEach(function() {
 
@@ -20,19 +21,21 @@ describe("PrimaryResourceBuilder", function() {
       url: "/awesome/awesome",
       addDataPathLink(resource, path) {
       }
-    }
+    };
 
     mockTemplatedUrlSpy = spyOn(mockTemplatedUrl, "addDataPathLink").and.callThrough();
 
     mockResponse = {
       bilbo: "baggins"
-    }
+    };
 
     mockEndpoint = {
       templatedUrl: mockTemplatedUrl
-    }
+    };
 
-    primaryResourceBuilder = new PrimaryResourceBuilder(mockResponse, PrimaryResource);
+    services = {};
+
+    primaryResourceBuilder = new PrimaryResourceBuilder(services, mockResponse, PrimaryResource);
   });
 
   describe("build", function() {

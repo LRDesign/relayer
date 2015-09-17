@@ -63,8 +63,6 @@ export default class SingleRelationshipDescription extends RelationshipDescripti
   }
 
   linkedEndpoint(parent, uriParams) {
-
-    var transport = parent.self().transport;
     var url, templatedUrl, primaryResourceTransformer, createTransformer;
 
     var ResourceClass = this.ResourceClass;
@@ -87,7 +85,7 @@ export default class SingleRelationshipDescription extends RelationshipDescripti
       }
     }
 
-    var endpoint = this.resolvedEndpointFactory(transport, templatedUrl, primaryResourceTransformer, createTransformer);
+    var endpoint = this.resolvedEndpointFactory(templatedUrl, primaryResourceTransformer, createTransformer);
 
     if (createTransformer) {
       endpoint.new = function() {

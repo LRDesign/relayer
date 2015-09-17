@@ -19,7 +19,6 @@ export default class SingleRelationshipDescription extends RelationshipDescripti
   }
 
   linkedEndpoint(parent, uriParams) {
-    var transport = parent.self().transport;
     var url = parent.pathGet(this.linksPath);
     var templatedUrl = this.templatedUrlFromUrlFactory(url, url);
     templatedUrl.addDataPathLink(parent, this.linksPath);
@@ -28,7 +27,7 @@ export default class SingleRelationshipDescription extends RelationshipDescripti
       this.serializerFactory,
       this.ResourceClass
     );
-    return this.resolvedEndpointFactory(transport, templatedUrl, primaryResourceTransformer);
+    return this.resolvedEndpointFactory(templatedUrl, primaryResourceTransformer);
   }
 
 }

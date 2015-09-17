@@ -3,7 +3,6 @@ import ResourceMapper from "./ResourceMapper.js";
 export default class ListResourceMapper extends ResourceMapper {
   constructor(
     services,
-    transport,
     response,
     ItemResourceClass,
     endpoint = null
@@ -11,12 +10,13 @@ export default class ListResourceMapper extends ResourceMapper {
 
     super(
       services,
-      transport,
       response,
-      serializerFactory
+      services.ListResource // simply import?
     );
 
-    this.manyResourceMapperFactory = services.manyResourceMapperFactory;
+    this.ItemResourceClass = ItemResourceClass;
+    this.mapperFactory = services.manyResourceMapperFactory;
+    this.serializerFactory = services.manyResourceSerializerFactory;
     this.endpoint = endpoint;
   }
 
@@ -29,13 +29,17 @@ export default class ListResourceMapper extends ResourceMapper {
   mappedRetreiveFn(name) {
     var mapped = this.mapped;
     return function(...args) {
-      return this.resource.self()[func](mapped,...args);
+      return this.resource.self()[name](mapped,...args);
     };
   }
 
   mapNestedRelationships() {
     this.resource = this.mapped;
-    var manyResourceMapper = this.manyResourceMapperFactory(this.transport, this.resource.pathGet("$.data"), this.ItemResourceClass);
+    var manyResourceMapper = this.mapperFactory(
+      this.transport,
+      this.resource.pathGet("$.data"),
+      this.ItemResourceClass
+    );
     manyResourceMapper.uriTemplate = this.resource.pathGet("$.links.template");
     this.mapped = manyResourceMapper.map();
     this.mapped.resource = this.resource;

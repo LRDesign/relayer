@@ -1,36 +1,28 @@
-var thenFactory;
+export default function wrapThenable(buildThenable) {
+  return class RelayerPromise {
+    static resolve(value) {
+      return new RelayerPromise((res, rej) => res(value));
+    }
 
-if(typeof Promise !== "undefined" && typeof Promise.then !== "undefined"){
-  thenFactory = (resolver) => { return new Promise(resolver); };
-}
+    static reject(value) {
+      return new RelayerPromise((res, rej) => rej(value));
+    }
 
-export function setThenFactory(thenFac){
-  thenFactory = thenFac;
-}
+    constructor(resolver) {
+      //this.internalPromise = RelayerPromiseFactory.$q(resolver);
+      this.internalPromise = buildThenable(resolver);
+    }
 
-export default class RelayerPromise {
-  static resolve(value) {
-    return new RelayerPromise((res, rej) => res(value));
-  }
+    then(onFulfilled, onRejected, progressBack) {
+      return this.internalPromise.then(onFulfilled, onRejected, progressBack);
+    }
 
-  static reject(value) {
-    return new RelayerPromise((res, rej) => rej(value));
+    catch(callback) {
+      return this.internalPromise.catch(callback);
+    }
+
+    finally(callback, progressBack) {
+      return this.internalPromise.finally(callback, progressBack);
+    }
   };
-
-  constructor(resolver) {
-    //this.internalPromise = RelayerPromiseFactory.$q(resolver);
-    this.internalPromise = thenFactory(resolver);
-  }
-
-  then(onFulfilled, onRejected, progressBack) {
-    return this.internalPromise.then(onFulfilled, onRejected, progressBack);
-  }
-
-  catch(callback) {
-    return this.internalPromise.catch(callback);
-  }
-
-  finally(callback, progressBack) {
-    return this.internalPromise.finally(callback, progressBack);
-  }
 }

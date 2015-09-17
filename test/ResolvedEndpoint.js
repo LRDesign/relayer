@@ -2,18 +2,19 @@ import ResolvedEndpoint from "../src/relayer/endpoints/ResolvedEndpoint.js";
 
 describe("Endpoint", function() {
 
-  var resolvedEndpoint,
-    promiseEndpoint,
-    templatedUrl,
-    transport,
-    transportSpy,
-    resourceTransformer,
-    createResourceTransformer,
-    resourceTransformerResponseSpy,
-    resourceTransformerRequestSpy,
-    mockData,
-    mockDataSpy,
-    resultData;
+  var services,
+  resolvedEndpoint,
+  promiseEndpoint,
+  templatedUrl,
+  transport,
+  transportSpy,
+  resourceTransformer,
+  createResourceTransformer,
+  resourceTransformerResponseSpy,
+  resourceTransformerRequestSpy,
+  mockData,
+  mockDataSpy,
+  resultData;
 
   beforeEach(function() {
 
@@ -32,15 +33,15 @@ describe("Endpoint", function() {
     transport = {
 
       get(url){
-        return Promise.resolve(mockData)
+        return Promise.resolve(mockData);
       },
 
       put(url, data) {
-        return Promise.resolve(mockData)
+        return Promise.resolve(mockData);
       },
 
       post(url, data){
-        return Promise.resolve(mockData)
+        return Promise.resolve(mockData);
       },
 
       remove(url){
@@ -59,24 +60,34 @@ describe("Endpoint", function() {
         return request;
       }
 
-    }
+    };
 
     createResourceTransformer = {
       transformResponse: function(endpoint, response) {
         return response.then(
           (data) => data
-        )
+        );
       },
 
       transformRequest: function(endpoint, request) {
         return request;
       }
 
-    }
+    };
     resourceTransformerRequestSpy = spyOn(resourceTransformer, "transformRequest").and.callThrough();
     resourceTransformerResponseSpy = spyOn(resourceTransformer, "transformResponse").and.callThrough();
 
-    resolvedEndpoint = new ResolvedEndpoint(Promise, transport, templatedUrl, resourceTransformer, createResourceTransformer)
+    services = {
+      transport,
+      Promise
+    };
+
+    resolvedEndpoint = new ResolvedEndpoint(
+      services,
+      templatedUrl,
+      resourceTransformer,
+      createResourceTransformer
+    );
 
   });
 

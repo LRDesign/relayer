@@ -5,7 +5,7 @@ export default class ListRelationshipInitializer extends RelationshipInitializer
 
     super(services, ResourceClass, initialValues);
 
-    this.manyRelationshipInitializer = services.manyRelationshipInitializer;
+    this.manyRelationshipInitializer = services.manyRelationshipInitializerFactory(ResourceClass, initialValues);
     this.ListResourceFac = services.ListResourceFactory;
   }
 

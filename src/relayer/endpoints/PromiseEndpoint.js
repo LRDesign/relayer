@@ -1,8 +1,8 @@
-import Endpoint from "./Endpoint.js"
+import Endpoint from "./Endpoint.js";
 
 export default class PromiseEndpoint extends Endpoint {
-  constructor(promiseFunction) {
-    super();
+  constructor(services, promiseFunction) {
+    super(services);
     this.endpointPromise = promiseFunction;
   }
 

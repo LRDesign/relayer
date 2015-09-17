@@ -1,10 +1,9 @@
 import Mapper from "./Mapper.js";
 
 export default class ManyResourceMapper extends Mapper {
-  constructor( services, transport, response, ResourceClass) {
-    super(transport, response, ResourceClass);
-    this.singleResourceMapperFactory = services.resourceMapperFactory;
-    this.singleResourceSerializerFactory = services.resourceSerializerFactory;
+  constructor( services, response, ResourceClass) {
+    super(services, response, ResourceClass);
+    this.resourceMapperFactory = services.resourceMapperFactory; //XXX redundant
   }
 
   initializeModel() {
@@ -13,9 +12,7 @@ export default class ManyResourceMapper extends Mapper {
 
   mapNestedRelationships() {
     this.response.forEach((response) => {
-      var resourceMapper = this.singleResourceMapperFactory(this.transport, response, this.ResourceClass,
-        this.singleResourceMapperFactory,
-        this.singleResourceSerializerFactory);
+      var resourceMapper = this.resourceMapperFactory(response, this.ResourceClass);
       resourceMapper.uriTemplate = this.uriTemplate;
       this.mapped.push(resourceMapper.map());
     });

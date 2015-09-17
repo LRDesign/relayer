@@ -1,4 +1,4 @@
-import JsonPropertyDecorator from "../../src/relayer/decorators/JsonPropertyDecorator.js"
+import JsonPropertyDecorator from "../../src/relayer/decorators/JsonPropertyDecorator.js";
 
 describe("JsonPropertyDecorator", function() {
   var loadedDataEndpointFactory,
@@ -27,7 +27,7 @@ describe("JsonPropertyDecorator", function() {
 
     promiseEndpointFactory = jasmine.createSpy("promiseEndpointFactory").and.callFake(
       function(endpointPromise) {
-        return { endpointPromise }
+        return { endpointPromise };
       });
 
     name = "awesome";
@@ -38,7 +38,7 @@ describe("JsonPropertyDecorator", function() {
       afterSet() {
         this.setStuff = true;
       }
-    }
+    };
 
     resource = {
       _awesome: "Festering",
@@ -60,17 +60,16 @@ describe("JsonPropertyDecorator", function() {
           return this._awesome;
         }
       }
-    }
+    };
 
     mockEndpoint = {
       load() {
         return Promise.resolve(resource);
       }
-    }
+    };
 
-    jsonPropertyDecorator = new JsonPropertyDecorator(loadedDataEndpointFactory,
-      embeddedPropertyTransformerFactory,
-      promiseEndpointFactory,
+    jsonPropertyDecorator = new JsonPropertyDecorator(
+      { loadedDataEndpointFactory, embeddedPropertyTransformerFactory, promiseEndpointFactory},
       name,
       path,
       value,
@@ -87,7 +86,7 @@ describe("JsonPropertyDecorator", function() {
     });
 
     it("should setup a getter", function() {
-      expect(resource.awesome).toEqual("Festering")
+      expect(resource.awesome).toEqual("Festering");
     });
 
     it("should setup a setter", function() {
@@ -111,7 +110,7 @@ describe("JsonPropertyDecorator", function() {
     });
 
     it("should setup a getter", function() {
-      expect(resource.awesome).toEqual("Festering")
+      expect(resource.awesome).toEqual("Festering");
     });
 
     it("should setup a setter", function() {
@@ -137,7 +136,7 @@ describe("JsonPropertyDecorator", function() {
     it("should return the right values", function() {
       expect(loadedEndpoint.endpoint).toEqual(mockEndpoint);
       expect(loadedEndpoint.resource).toEqual(resource);
-      expect(loadedEndpoint.transformers).toEqual([{path: '$.data.awesome'}])
+      expect(loadedEndpoint.transformers).toEqual([{path: '$.data.awesome'}]);
     });
 
   });

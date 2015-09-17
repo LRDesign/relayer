@@ -1,25 +1,26 @@
 import ResourceMapper from "../../src/relayer/mappers/ResourceMapper.js";
 
 describe("ResourceMapper", function() {
-  var ResourceClass,
-    resource,
-    resourceMapper,
-    resourceBuilderFactory,
-    primaryResourceBuilderFactory,
-    templatedUrl,
-    templatedUrlFromUrlFactory,
-    templatedUrlDataPathSpy,
-    builtResource,
-    mockEndpoint,
-    transport,
-    resourceMapperFactory,
-    resourceSerializerFactory;
+  var services,
+  transport,
+  ResourceClass,
+  resource,
+  resourceMapper,
+  resourceBuilderFactory,
+  primaryResourceBuilderFactory,
+  templatedUrl,
+  templatedUrlFromUrlFactory,
+  templatedUrlDataPathSpy,
+  builtResource,
+  mockEndpoint,
+  resourceMapperFactory,
+  resourceSerializerFactory;
 
   beforeEach(function() {
     ResourceClass = function(resource) {
       this.pathGet = function(path) {
         if (path == "$.links.self") {
-          return "/cheese/gouda"
+          return "/cheese/gouda";
         } else if (path == "$.data.cheese") {
           return {
             type: "gouda"
@@ -27,7 +28,7 @@ describe("ResourceMapper", function() {
         } else if (path == "$.links.awesome") {
           return "/awesome";
         }
-      }
+      };
       this.response = resource;
     };
 
@@ -48,7 +49,7 @@ describe("ResourceMapper", function() {
         dataPath: "$.data.awesome",
         linksPath: "$.links.awesome"
       }
-    }
+    };
 
     templatedUrl = {
       addDataPathLink(path) {
@@ -65,14 +66,14 @@ describe("ResourceMapper", function() {
 
     mockEndpoint = {};
 
-    resourceBuilderFactory = jasmine.createSpy("resourceBuilderFactory").and.callFake(function(thisTransport, thisResponse, thisMapperFactory, thisSerializerFactory, ThisResourceClass) {
+    resourceBuilderFactory = jasmine.createSpy("resourceBuilderFactory").and.callFake(function(thisResponse, thisMapperFactory, thisSerializerFactory, ThisResourceClass) {
       return {
         build(uriTemplate) {
           var thisResource = new ThisResourceClass(thisResponse);
           thisResource.uriTemplate = uriTemplate;
           return thisResource;
         }
-      }
+      };
     });
 
     primaryResourceBuilderFactory = jasmine.createSpy("primaryResourceBuilderFactory").and.callFake(function(thisResponse, ThisResourceClass) {
@@ -82,27 +83,33 @@ describe("ResourceMapper", function() {
           thisResource.endpoint = endpoint;
           return thisResource;
         }
-      }
+      };
     });
 
     transport = {};
 
     resourceMapperFactory = function() {
       return "hello";
-    }
+    };
 
     resourceSerializerFactory = function() {
       return "goodbye";
-    }
+    };
 
-    resourceMapper = new ResourceMapper(templatedUrlFromUrlFactory,
+    services = {
+      transport,
+      templatedUrlFromUrlFactory,
       resourceBuilderFactory,
       primaryResourceBuilderFactory,
-      transport,
-      resource,
-      ResourceClass,
       resourceMapperFactory,
-      resourceSerializerFactory);
+      resourceSerializerFactory
+    };
+
+    resourceMapper = new ResourceMapper(
+      services,
+      resource,
+      ResourceClass
+    );
   });
 
   describe("no url template", function() {
@@ -122,11 +129,10 @@ describe("ResourceMapper", function() {
     });
 
     it("should build the resource with the regular resource builder", function() {
-      expect(resourceBuilderFactory).toHaveBeenCalledWith(transport,
-        resource,
-        resourceMapperFactory,
-        resourceSerializerFactory,
-        ResourceClass);
+      expect(resourceBuilderFactory).toHaveBeenCalledWith(resource,
+                                                          resourceMapperFactory,
+                                                          resourceSerializerFactory,
+                                                          ResourceClass);
     });
   });
 
@@ -149,12 +155,11 @@ describe("ResourceMapper", function() {
     });
 
     it("should build the resource with the regular resource builder", function() {
-      expect(resourceBuilderFactory).toHaveBeenCalledWith(transport,
-        resource,
-        resourceMapperFactory,
-        resourceSerializerFactory,
-        ResourceClass);
-    })
+      expect(resourceBuilderFactory).toHaveBeenCalledWith( resource,
+                                                          resourceMapperFactory,
+                                                          resourceSerializerFactory,
+                                                          ResourceClass);
+    });
   });
 
   describe("with endpoint", function() {

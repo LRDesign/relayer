@@ -1,7 +1,8 @@
 import SingleRelationshipDescription from "../../src/relayer/relationshipDescriptions/SingleRelationshipDescription.js";
 
 describe("SingleRelationshipDescription", function() {
-  var relationshipInitializerFactory,
+  var services,
+  relationshipInitializerFactory,
     resourceMapperFactory,
     resourceSerializerFactory,
     inflector,
@@ -23,7 +24,7 @@ describe("SingleRelationshipDescription", function() {
 
     relationshipInitializerFactory = jasmine.createSpy("relationshipInitializerFactory").and.callFake(
       function (thisResourceClass, thisInitialValues) {
-        return { thisResourceClass, thisInitialValues }
+        return { thisResourceClass, thisInitialValues };
       });
 
     resourceMapperFactory = jasmine.createSpy("resourceMapperFactory");
@@ -34,21 +35,21 @@ describe("SingleRelationshipDescription", function() {
       underscore: function(name) {
         return name;
       }
-    }
+    };
 
     primaryResourceTransformerFactory = jasmine.createSpy("primaryResourceTransformerFactory").and.callFake(
       function(thisResourceMapperFactory, thisResourceSerializerFactory, thisResourceClass) {
-        return { thisResourceMapperFactory, thisResourceSerializerFactory, thisResourceClass }
+        return { thisResourceMapperFactory, thisResourceSerializerFactory, thisResourceClass };
       });
 
     embeddedRelationshipTransformerFactory = jasmine.createSpy("embeddedRelationshipTransformerFactory").and.callFake(
       function(name) {
-        return { name }
+        return { name };
       });
 
     resolvedEndpointFactory = jasmine.createSpy("resolvedEndpointFactory").and.callFake(
-      function(transport, templatedUrl, transformers, createTransformers) {
-        return {transport, templatedUrl, transformers, createTransformers}
+      function(templatedUrl, transformers, createTransformers) {
+        return {templatedUrl, transformers, createTransformers};
       });
 
     loadedDataEndpointFactory = jasmine.createSpy("loadedDataEndpointFactory").and.callFake(
@@ -60,24 +61,24 @@ describe("SingleRelationshipDescription", function() {
       function(uriTemplate, url) {
         return { uriTemplate, url,
           addDataPathLink(resource, path) {
-            this.dataPath = { resource, path }
+            this.dataPath = { resource, path };
           }
-        }
+        };
       });
 
     name = "awesome";
 
     ResourceClass = function() {
-      this.awesome = 'festering'
-    }
+      this.awesome = 'festering';
+    };
 
     initialValues = { awesome: "cheese" };
 
-    mockTransport = { http: "sucks" }
+    mockTransport = { http: "sucks" };
 
     mockEndpoint = {
       transport: mockTransport
-    }
+    };
 
     resource = {
       self() {
@@ -88,8 +89,10 @@ describe("SingleRelationshipDescription", function() {
           return "/awesome";
         }
       }
-    }
-    singleRelationshipDescription = new SingleRelationshipDescription(
+    };
+
+    services = {
+      transport: mockTransport,
       relationshipInitializerFactory,
       resourceMapperFactory,
       resourceSerializerFactory,
@@ -98,10 +101,15 @@ describe("SingleRelationshipDescription", function() {
       embeddedRelationshipTransformerFactory,
       resolvedEndpointFactory,
       loadedDataEndpointFactory,
-      templatedUrlFromUrlFactory,
+      templatedUrlFromUrlFactory
+    };
+
+    singleRelationshipDescription = new SingleRelationshipDescription(
+      services,
       name,
       ResourceClass,
-      initialValues);
+      initialValues
+    );
   });
 
   it("should have the right initial values", function() {
@@ -128,7 +136,7 @@ describe("SingleRelationshipDescription", function() {
     var embeddedEndpoint;
 
     beforeEach(function() {
-      embeddedEndpoint = singleRelationshipDescription.embeddedEndpoint(resource)
+      embeddedEndpoint = singleRelationshipDescription.embeddedEndpoint(resource);
     });
 
     it("should have the right values", function() {
@@ -149,11 +157,10 @@ describe("SingleRelationshipDescription", function() {
   describe("linkedEndpoint", function() {
     var linkedEndpoint;
     beforeEach(function() {
-      linkedEndpoint = singleRelationshipDescription.linkedEndpoint(resource)
+      linkedEndpoint = singleRelationshipDescription.linkedEndpoint(resource);
     });
 
     it("should have the right values", function() {
-      expect(linkedEndpoint.transport).toEqual(mockTransport);
       expect(linkedEndpoint.templatedUrl).toEqual({
         uriTemplate: "/awesome",
         url: "/awesome",
@@ -173,7 +180,8 @@ describe("SingleRelationshipDescription", function() {
 
     it("should setup the templated url", function() {
       expect(templatedUrlFromUrlFactory).toHaveBeenCalled();
-    })
+    });
+
     it("should setup the right transformer", function() {
       expect(primaryResourceTransformerFactory).toHaveBeenCalled();
     });

@@ -1,5 +1,5 @@
 export default class PrimaryResourceBuilder {
-  constructor(response, ResourceClass) {
+  constructor(services, response, ResourceClass) {
     this.response = response;
     this.ResourceClass = ResourceClass;
   }

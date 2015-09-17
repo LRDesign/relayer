@@ -1,8 +1,8 @@
 import ResourceTransformer from "./ResourceTransformer.js";
 
 export default class SingleFromManyTransformer extends ResourceTransformer {
-  constructor(relationshipName, property) {
-    super();
+  constructor(services, relationshipName, property) {
+    super(services);
     this.property = property;
     this.relationshipName = relationshipName;
   }

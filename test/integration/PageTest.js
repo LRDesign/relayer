@@ -1,23 +1,27 @@
 import RL from "../../src/relayer.js";
 import {Module, Injector, Config} from "a1atscript";
 
-class Page extends RL.Resource {
 
-  static layouts = {
-    "one_column": {
-      "label": "One Column",
-      "template": {
-        "main": { type: "text/html" },
-      }
-    },
-    "two_column": {
-      "label": "Two Column",
-      "template": {
-        "columnOne": { type: "text/html" },
-        "columnTwo": { type: "text/html" }
-      }
+var pageLayouts = {
+  "one_column": {
+    "label": "One Column",
+    "template": {
+      "main": { type: "text/html" },
     }
-  };
+  },
+  "two_column": {
+    "label": "Two Column",
+    "template": {
+      "columnOne": { type: "text/html" },
+      "columnTwo": { type: "text/html" }
+    }
+  }
+};
+
+class Page extends RL.Resource {
+  static get layouts() {
+    return pageLayouts;
+  }
 
   static get layoutKinds() {
     if (!Page._layoutKinds) {
@@ -87,7 +91,7 @@ class Page extends RL.Resource {
 }
 
 RL.Describe(Page, (desc) => {
-  desc.property("layout", "one_column", { afterSet() { this.setupContents() } });
+  desc.property("layout", "one_column", { afterSet() { this.setupContents(); } });
   desc.property("title", "");
   desc.property("keywords", "");
   desc.property("description", "");
@@ -95,13 +99,13 @@ RL.Describe(Page, (desc) => {
   desc.property("publishEnd", "");
   desc.property("urlSlug", "");
   var contents = desc.hasMap("contents",
-    Content,
-    {
-      styles: { type: "text/css" },
-      headline: { type: "text/html"}
-    }
-  );
-  contents.async = false;
+                             Content,
+                             {
+                               styles: { type: "text/css" },
+                               headline: { type: "text/html"}
+                             }
+                            );
+                            contents.async = false;
 });
 
 class Content extends RL.Resource {
@@ -117,23 +121,24 @@ class Resources extends RL.Resource {
 
 RL.Describe(Resources, (desc) => {
   var pages = desc.hasList("pages",
-    Page,
-    [])
-  pages.linkTemplate = "page";
-  pages.canCreate = true;
+                           Page,
+                           []);
+                           pages.linkTemplate = "page";
+                           pages.canCreate = true;
 });
 
 // this is horrible -- no easy way to get Babel and Traceur to compile the same config block
 class AppConfig {
   @Config("relayerProvider")
   setupResources(relayerProvider) {
-    relayerProvider.createApi("resources", Resources, "http://www.example.com/resources")
+    console.log("integration/PageTest.js:134", "Resources.resourceDescription", Resources.resourceDescription);
+    relayerProvider.createApi("resources", Resources, "http://www.example.com/resources");
   }
 }
 
 var AppModule = new Module("AppModule", [RL, AppConfig.prototype]);
 
-describe("Page test", function() {
+ddescribe("Page test", function() {
 
   var mockHttp, resources, $rootScope;
 
@@ -183,7 +188,7 @@ describe("Page test", function() {
           pages: "/pages",
           page: "/pages/{url_slug}"
         }
-      }
+      };
     }
 
     mockHttp = function(Promise, params) {
@@ -193,7 +198,7 @@ describe("Page test", function() {
           headers() {
             return {
               ETag: "1348"
-            }
+            };
           },
           data: resourcesData()
         });
@@ -203,7 +208,7 @@ describe("Page test", function() {
           headers() {
             return {
               ETag: "4567"
-            }
+            };
           },
           data: pageData()
         });
@@ -220,7 +225,7 @@ describe("Page test", function() {
           headers() {
             return {
               location: "http://www.example.com/pages/awesome"
-            }
+            };
           }
         });
       } else if (params.method == "PUT") {
@@ -230,7 +235,7 @@ describe("Page test", function() {
             headers() {
               return {
                 ETag: "3423"
-              }
+              };
             },
             data: pageData()
           });
@@ -242,14 +247,14 @@ describe("Page test", function() {
       } else if (params.method == "DELETE") {
         return Promise.resolve({});
       }
-    }
+    };
     var injector = new Injector();
     injector.instantiate(AppModule);
     angular.mock.module('AppModule');
     angular.mock.module(function($provide) {
-      $provide.factory("$http", function(RelayerPromise) {
+      $provide.factory("$http", function($q) {
         return function(params) {
-          return mockHttp(RelayerPromise, params);
+          return mockHttp($q, params);
         };
       });
     });
@@ -257,7 +262,7 @@ describe("Page test", function() {
       resources = _resources_;
       $rootScope = _$rootScope_;
     });
-  })
+  });
 
   describe('created in the client', function() {
     var page;

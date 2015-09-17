@@ -1,19 +1,20 @@
 export default class TopLevelResourceBuilder {
-  constructor( services, transport, urlHelper, topLevelResource) {
-    this.transport = transport;
-    this.urlHelper = urlHelper;
-    this.wellKnownUrl = urlHelper.fullUrlRegEx.exec(baseUrl)[3];
-    this.templatedUrl = templatedUrlFromUrlFactory(wellKnownUrl, wellKnownUrl);
-    this.transformer = primaryResourceTransformerFactory(
+  constructor( services, topLevelResource) {
+    this.transport = services.transport;
+    this.urlHelper = services.urlHelper;
+    this.wellKnownUrl = this.urlHelper.fullUrlRegEx.exec(services.baseUrl)[3];
+    this.templatedUrl = services.templatedUrlFromUrlFactory(this.wellKnownUrl, this.wellKnownUrl);
+    this.transformer = services.primaryResourceTransformerFactory(
       services.resourceMapperFactory,
       services.resourceSerializerFactory,
       topLevelResource
     );
-    this.endpoint = resolvedEndpointFactory(transport, templatedUrl, transformer);
-    topLevelResource.resourceDescription.applyToEndpoint(endpoint);
+    this._endpoint = services.resolvedEndpointFactory(this.templatedUrl, this.transformer);
+    console.log("relayer/TopLevelResource.js:13", "topLevelResource.resourceDescription", topLevelResource.resourceDescription);
+    topLevelResource.resourceDescription.applyToEndpoint(this._endpoint);
   }
 
   get endpoint() {
-    return this.endpoint;
+    return this._endpoint;
   }
 }

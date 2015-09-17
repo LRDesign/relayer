@@ -3,15 +3,12 @@ import Mapper from "./Mapper.js";
 export default class ResourceMapper extends Mapper {
   constructor(
     services,
-    transport,
     response,
     ResourceClass,
-    mapperFactory,
-    serializerFactory,
     endpoint = null
   ) {
 
-    super(services, transport, response, ResourceClass, mapperFactory, serializerFactory); //XXX factories as args?
+    super(services, response, ResourceClass);
 
     this.templatedUrlFromUrlFactory = services.templatedUrlFromUrlFactory;
     this.resourceBuilderFactory = services.resourceBuilderFactory;
@@ -23,7 +20,7 @@ export default class ResourceMapper extends Mapper {
     if (this.endpoint) {
       this.mapped = this.primaryResourceBuilderFactory(this.response, this.ResourceClass).build(this.endpoint);
     } else {
-      this.mapped = this.resourceBuilderFactory(this.transport, this.response, this.mapperFactory, this.serializerFactory, this.ResourceClass).build(this.uriTemplate);
+      this.mapped = this.resourceBuilderFactory(this.response, this.mapperFactory, this.serializerFactory, this.ResourceClass).build(this.uriTemplate);
     }
   }
 
@@ -36,7 +33,7 @@ export default class ResourceMapper extends Mapper {
         relationship = this.ResourceClass.relationships[relationshipName];
 
         if (this.mapped.pathGet(relationship.dataPath)) {
-          var subMapper = relationship.mapperFactory(this.transport, this.mapped.pathGet(relationship.dataPath), relationship.ResourceClass,
+          var subMapper = relationship.mapperFactory(this.mapped.pathGet(relationship.dataPath), relationship.ResourceClass,
             relationship.mapperFactory, relationship.serializerFactory);
           this.mapped.relationships[relationshipName] = subMapper.map();
         } else if (this.mapped.pathGet(relationship.linksPath)) {

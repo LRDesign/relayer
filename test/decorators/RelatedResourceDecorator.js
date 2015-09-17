@@ -2,7 +2,8 @@ import RelatedResourceDecorator from "../../src/relayer/decorators/RelatedResour
 import {TemplatedUrl} from "../../src/relayer/TemplatedUrl.js";
 
 describe("RelatedResourceDecorator", function() {
-  var promiseEndpointFactory,
+  var services,
+  promiseEndpointFactory,
   relationshipUtilities,
   name,
   relationship,
@@ -21,7 +22,7 @@ describe("RelatedResourceDecorator", function() {
 
     promiseEndpointFactory = jasmine.createSpy("promiseEndpointFactory").and.callFake(
       function(endpointPromise) {
-        return { endpointPromise }
+        return { endpointPromise };
       });
 
     name = "awesome";
@@ -30,7 +31,7 @@ describe("RelatedResourceDecorator", function() {
       applyToEndpoint(endpoint) {
         endpoint.applied = true;
       }
-    }
+    };
 
     OtherResourceClass = function() {
       this.isPersisted = true;
@@ -40,13 +41,13 @@ describe("RelatedResourceDecorator", function() {
       this.self = function() {
         return mockEndpoint;
       };
-    }
+    };
 
     OtherResourceClass.relationships = {};
 
     ResourceClass = {
       resourceDescription: resourceDescription
-    }
+    };
 
     relationship = {
       ResourceClass: ResourceClass,
@@ -58,7 +59,7 @@ describe("RelatedResourceDecorator", function() {
       },
       decorateEndpoint(endpoint, uriParams) {
       }
-    }
+    };
 
     linkedEndpointSpy = spyOn(relationship, "linkedEndpoint").and.callThrough();
     embeddedEndpointSpy = spyOn(relationship, "embeddedEndpoint").and.callThrough();
@@ -69,32 +70,38 @@ describe("RelatedResourceDecorator", function() {
       load() {
         return Promise.resolve(resource);
       }
-    }
+    };
 
     relationshipUtilities = {
       addMethods(target, resource, name) {
         target.awesome = "set it awesome";
       }
-    }
+    };
 
-    relatedResourceDecorator = new RelatedResourceDecorator(promiseEndpointFactory,
-      relationshipUtilities,
+    services = {
+      promiseEndpointFactory
+    };
+
+    relatedResourceDecorator = new RelatedResourceDecorator(
+      services,
       name,
-      relationship);
+      relationship,
+      relationshipUtilities
+    );
   });
 
   describe("resource", function() {
     describe("async", function() {
       beforeEach(function() {
         relationship.async = true;
-      })
+      });
       describe("embedded", function() {
         beforeEach(function() {
           relatedResourceDecorator.resourceApply(resource);
         });
 
         it("should record the relationship", function() {
-          expect(OtherResourceClass.relationships["awesome"]).toEqual(relationship)
+          expect(OtherResourceClass.relationships["awesome"]).toEqual(relationship);
         });
 
         it("should setup the right endpoint", function() {
@@ -103,12 +110,12 @@ describe("RelatedResourceDecorator", function() {
             uriParams: "cheese",
             applied: true,
             awesome: "set it awesome"
-          })
+          });
         });
 
         it("should setup utility methods", function() {
-          expect(resource.awesome)
-        })
+          expect(resource.awesome);
+        });
       });
       describe("linked", function() {
         beforeEach(function() {
@@ -117,7 +124,7 @@ describe("RelatedResourceDecorator", function() {
         });
 
         it("should record the relationship", function() {
-          expect(OtherResourceClass.relationships["awesome"]).toEqual(relationship)
+          expect(OtherResourceClass.relationships["awesome"]).toEqual(relationship);
         });
 
         it("should setup the right endpoint", function() {
@@ -126,13 +133,13 @@ describe("RelatedResourceDecorator", function() {
             uriParams: "cheese",
             applied: true,
             awesome: "set it awesome"
-          })
+          });
         });
 
         it("the endpoint should be linked", function() {
           resource.awesome("cheese");
           expect(linkedEndpointSpy).toHaveBeenCalled();
-        })
+        });
 
       });
       describe("missing", function() {
@@ -145,7 +152,7 @@ describe("RelatedResourceDecorator", function() {
           });
 
           it("should record the relationship", function() {
-            expect(OtherResourceClass.relationships["awesome"]).toEqual(relationship)
+            expect(OtherResourceClass.relationships["awesome"]).toEqual(relationship);
           });
 
 
@@ -198,7 +205,7 @@ describe("RelatedResourceDecorator", function() {
         });
 
         it("should record the relationship", function() {
-          expect(OtherResourceClass.relationships["awesome"]).toEqual(relationship)
+          expect(OtherResourceClass.relationships["awesome"]).toEqual(relationship);
         });
 
         it("should return the relationship", function() {
@@ -214,13 +221,13 @@ describe("RelatedResourceDecorator", function() {
         });
 
         it("should record the relationship", function() {
-          expect(OtherResourceClass.relationships["awesome"]).toEqual(relationship)
+          expect(OtherResourceClass.relationships["awesome"]).toEqual(relationship);
         });
 
         it("should raise an error", function() {
           var error;
           try {
-            resource.awesome("error")
+            resource.awesome("error");
           }
           catch(err) {
             error = err;
@@ -252,7 +259,7 @@ describe("RelatedResourceDecorator", function() {
       it("should raise an error", function() {
         var error;
         try {
-          resource.awesome("error")
+          resource.awesome("error");
         }
         catch(err) {
           error = err;

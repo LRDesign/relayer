@@ -1,4 +1,4 @@
-import RelayerPromiseFactory from "../src/relayer/Promise.js";
+import wrapPromise from "../src/relayer/Promise.js";
 
 describe("Relayer Promise", function() {
   var relayerPromise, RelayerPromise, promiseImplementation, finalResults;
@@ -7,7 +7,7 @@ describe("Relayer Promise", function() {
       return new Promise(...params);
     };
 
-    RelayerPromise = RelayerPromiseFactory.factory(promiseImplementation);
+    RelayerPromise = wrapPromise((...args) => new promiseImplementation(...args));
   });
 
   describe("constructor style", function() {

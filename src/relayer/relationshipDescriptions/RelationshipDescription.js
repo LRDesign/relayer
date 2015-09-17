@@ -1,5 +1,5 @@
 export default class RelationshipDescription {
-  constructor( name, ResourceClass, initialValues) {
+  constructor( services, name, ResourceClass, initialValues) {
     this.name = name;
     this.ResourceClass = ResourceClass;
     this.initialValues = initialValues;

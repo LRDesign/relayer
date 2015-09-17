@@ -4,7 +4,8 @@ export function TemplatedUrlFactory(template, params = {}) {
 
 export class TemplatedUrl {
 
-  constructor(uriTemplate, uriParams = {}) {
+  constructor(services, uriTemplate, uriParams = {}) {
+    console.log(uriTemplate);
     this._uriTemplate = new UriTemplate(uriTemplate);
     this._uriParams = uriParams;
     this._paths = [];
@@ -56,8 +57,8 @@ export function templatedUrlFromUrlFactory(template, url){
 }
 
 export class TemplatedUrlFromUrl extends TemplatedUrl {
-  constructor(uriTemplate, url) {
-    super(uriTemplate);
+  constructor(services, uriTemplate, url) {
+    super(services, uriTemplate);
     super._setUrl(url);
   }
 }

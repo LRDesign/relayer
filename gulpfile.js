@@ -4,6 +4,7 @@ var rename_ = require('gulp-rename');
 var bump = require('gulp-bump');
 var gulp = require('gulp');
 var karma = require('karma').server;
+var karmaRunner = require('karma').runner;
 var xingTraceurTask = require('xing-traceur').rawTask;
 
 var TRACEUR_OPTIONS = require('./config').traceur;
@@ -18,12 +19,12 @@ gulp.task('testPrep', function(done) {
   var files = [{
     dest: PATH.BUILD + "test-main.js",
     src: [PATH.TEST]
-  }]
+  }];
   var options = {
     sourceMaps: true,
     traceurOptions: TRACEUR_OPTIONS,
     moduleMaps: require('./moduleMaps')
-  }
+  };
   xingTraceurTask(options, files, function(result) {
     done(!result);
   });
@@ -38,6 +39,7 @@ gulp.task('test', ['testPrep'], function (done) {
     singleRun: true
   }, done);
 });
+
 
 
 /**

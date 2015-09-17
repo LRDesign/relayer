@@ -1,35 +1,34 @@
 import ListRelationshipDescription from "../../src/relayer/relationshipDescriptions/ListRelationshipDescription.js";
 
 describe("ListRelationshipDescription", function() {
-  var relationshipInitializerFactory,
-    resourceMapperFactory,
-    resourceSerializerFactory,
-    inflector,
-    singleResourceMapperFactory,
-    singleResourceSerializerFactory,
-    primaryResourceTransformerFactory,
-    embeddedRelationshipTransformerFactory,
-    individualFromListTransformerFactory,
-    createResourceTransformerFactory,
-    resolvedEndpointFactory,
-    loadedDataEndpointFactory,
-    templatedUrlFromUrlFactory,
-    templatedUrlFactory,
-    name,
-    ResourceClass,
-    initialValues,
-    mockTransport,
-    mockEndpoint,
-    resource,
-    linkTemplate,
-    listRelationshipDescription;
+  var services,
+  relationshipInitializerFactory,
+  resourceMapperFactory,
+  resourceSerializerFactory,
+  inflector,
+  primaryResourceTransformerFactory,
+  embeddedRelationshipTransformerFactory,
+  individualFromListTransformerFactory,
+  createResourceTransformerFactory,
+  resolvedEndpointFactory,
+  loadedDataEndpointFactory,
+  templatedUrlFromUrlFactory,
+  templatedUrlFactory,
+  name,
+  ResourceClass,
+  initialValues,
+  mockTransport,
+  mockEndpoint,
+  resource,
+  linkTemplate,
+  listRelationshipDescription;
 
   beforeEach(function() {
 
     relationshipInitializerFactory = jasmine.createSpy("relationshipInitializerFactory").and.callFake(
       function (thisResourceClass, thisInitialValues) {
-        return { thisResourceClass, thisInitialValues }
-      });
+      return { thisResourceClass, thisInitialValues };
+    });
 
     resourceMapperFactory = jasmine.createSpy("resourceMapperFactory");
 
@@ -39,73 +38,73 @@ describe("ListRelationshipDescription", function() {
       underscore: function(name) {
         return name;
       }
-    }
+    };
 
-    singleResourceMapperFactory = jasmine.createSpy("singleResourceMapperFactory");
+    //singleResourceMapperFactory = jasmine.createSpy("singleResourceMapperFactory");
 
-    singleResourceSerializerFactory = jasmine.createSpy("singleResourceSerializerFactory");
+    //singleResourceSerializerFactory = jasmine.createSpy("singleResourceSerializerFactory");
 
     primaryResourceTransformerFactory = jasmine.createSpy("primaryResourceTransformerFactory").and.callFake(
       function(thisResourceMapperFactory, thisResourceSerializerFactory, thisResourceClass) {
-        return { thisResourceMapperFactory, thisResourceSerializerFactory, thisResourceClass }
-      });
+      return { thisResourceMapperFactory, thisResourceSerializerFactory, thisResourceClass };
+    });
 
     createResourceTransformerFactory = jasmine.createSpy("primaryResourceTransformerFactory").and.callFake(
       function(thisResourceMapperFactory, thisResourceSerializerFactory, thisResourceClass) {
-        return { thisResourceMapperFactory, thisResourceSerializerFactory, thisResourceClass }
-      });
+      return { thisResourceMapperFactory, thisResourceSerializerFactory, thisResourceClass };
+    });
 
     embeddedRelationshipTransformerFactory = jasmine.createSpy("embeddedRelationshipTransformerFactory").and.callFake(
       function(name) {
-        return { name }
-      });
+      return { name };
+    });
 
     individualFromListTransformerFactory = jasmine.createSpy("individualFromListTransformerFactory").and.callFake(
       function(relationshipName, uriParams) {
-        return {relationshipName, uriParams}
-      });
+      return {relationshipName, uriParams};
+    });
 
     resolvedEndpointFactory = jasmine.createSpy("resolvedEndpointFactory").and.callFake(
-      function(transport, templatedUrl, transformers, createTransformers) {
-        return {transport, templatedUrl, transformers, createTransformers}
-      });
+      function(templatedUrl, transformers, createTransformers) {
+      return {templatedUrl, transformers, createTransformers};
+    });
 
     loadedDataEndpointFactory = jasmine.createSpy("loadedDataEndpointFactory").and.callFake(
       function(endpoint, resource, transformers) {
-        return { endpoint, resource, transformers};
-      });
+      return { endpoint, resource, transformers};
+    });
 
     templatedUrlFromUrlFactory = jasmine.createSpy("templatedUrlFromUrlFactory").and.callFake(
       function(uriTemplate, url) {
-        return { uriTemplate, url,
-          addDataPathLink(resource, path) {
-            this.dataPath = { resource, path }
-          }
+      return { uriTemplate, url,
+        addDataPathLink(resource, path) {
+          this.dataPath = { resource, path };
         }
-      });
+      };
+    });
 
     templatedUrlFactory = jasmine.createSpy("templatedUrlFactory").and.callFake(
       function(uriTemplate, uriParams) {
-        return { uriTemplate, uriParams }
-      });
+      return { uriTemplate, uriParams };
+    });
 
     name = "awesomes";
 
     ResourceClass = function() {
-      this.awesome = 'festering'
-    }
+      this.awesome = 'festering';
+    };
 
     ResourceClass.paramsFromShortLink = function(uriParams) {
       return {uriParams};
-    }
+    };
 
     initialValues = { awesome: "cheese" };
 
-    mockTransport = { http: "sucks" }
+    mockTransport = { http: "sucks" };
 
     mockEndpoint = {
       transport: mockTransport
-    }
+    };
 
     resource = {
       self() {
@@ -118,16 +117,15 @@ describe("ListRelationshipDescription", function() {
           return "/awesomes/{id}";
         }
       }
-    }
+    };
     linkTemplate = "awesome";
 
-    listRelationshipDescription = new ListRelationshipDescription(
+    services = {
+      transport: mockTransport,
       relationshipInitializerFactory,
       resourceMapperFactory,
       resourceSerializerFactory,
       inflector,
-      singleResourceMapperFactory,
-      singleResourceSerializerFactory,
       primaryResourceTransformerFactory,
       embeddedRelationshipTransformerFactory,
       individualFromListTransformerFactory,
@@ -136,9 +134,14 @@ describe("ListRelationshipDescription", function() {
       loadedDataEndpointFactory,
       templatedUrlFromUrlFactory,
       templatedUrlFactory,
+    };
+
+    listRelationshipDescription = new ListRelationshipDescription(
+      services,
       name,
       ResourceClass,
-      initialValues);
+      initialValues
+    );
     listRelationshipDescription.linkTemplate = linkTemplate;
   });
 
@@ -146,26 +149,26 @@ describe("ListRelationshipDescription", function() {
     expect(listRelationshipDescription.initializer).toEqual({
       thisResourceClass: ResourceClass,
       thisInitialValues: initialValues});
-    expect(listRelationshipDescription.mapperFactory).toEqual(resourceMapperFactory);
-    expect(listRelationshipDescription.serializerFactory).toEqual(resourceSerializerFactory);
-    expect(listRelationshipDescription.inflector).toEqual(inflector);
-    expect(listRelationshipDescription.singleResourceMapperFactory).toEqual(singleResourceMapperFactory);
-    expect(listRelationshipDescription.singleResourceSerializerFactory).toEqual(singleResourceSerializerFactory);
-    expect(listRelationshipDescription.primaryResourceTransformerFactory).toEqual(primaryResourceTransformerFactory);
-    expect(listRelationshipDescription.embeddedRelationshipTransformerFactory).toEqual(embeddedRelationshipTransformerFactory);
-    expect(listRelationshipDescription.individualFromListTransformerFactory).toEqual(individualFromListTransformerFactory);
-    expect(listRelationshipDescription.resolvedEndpointFactory).toEqual(resolvedEndpointFactory);
-    expect(listRelationshipDescription.loadedDataEndpointFactory).toEqual(loadedDataEndpointFactory);
-    expect(listRelationshipDescription.templatedUrlFromUrlFactory).toEqual(templatedUrlFromUrlFactory);
-    expect(listRelationshipDescription.templatedUrlFactory).toEqual(templatedUrlFactory);
-    expect(listRelationshipDescription.name).toEqual(name);
-    expect(listRelationshipDescription.ResourceClass).toEqual(ResourceClass);
-    expect(listRelationshipDescription.initialValues).toEqual(initialValues);
-    expect(listRelationshipDescription.async).toBe(true);
-    expect(listRelationshipDescription.canCreate).toBe(false);
-    expect(listRelationshipDescription._linkTemplatePath).toBe("$.links.awesome");
-    expect(listRelationshipDescription.linksPath).toEqual("$.links.awesomes");
-    expect(listRelationshipDescription.dataPath).toEqual("$.data.awesomes");
+      expect(listRelationshipDescription.mapperFactory).toEqual(resourceMapperFactory);
+      expect(listRelationshipDescription.serializerFactory).toEqual(resourceSerializerFactory);
+      expect(listRelationshipDescription.inflector).toEqual(inflector);
+      expect(listRelationshipDescription.singleResourceMapperFactory).toEqual(resourceMapperFactory);
+      expect(listRelationshipDescription.singleResourceSerializerFactory).toEqual(resourceSerializerFactory);
+      expect(listRelationshipDescription.primaryResourceTransformerFactory).toEqual(primaryResourceTransformerFactory);
+      expect(listRelationshipDescription.embeddedRelationshipTransformerFactory).toEqual(embeddedRelationshipTransformerFactory);
+      expect(listRelationshipDescription.individualFromListTransformerFactory).toEqual(individualFromListTransformerFactory);
+      expect(listRelationshipDescription.resolvedEndpointFactory).toEqual(resolvedEndpointFactory);
+      expect(listRelationshipDescription.loadedDataEndpointFactory).toEqual(loadedDataEndpointFactory);
+      expect(listRelationshipDescription.templatedUrlFromUrlFactory).toEqual(templatedUrlFromUrlFactory);
+      expect(listRelationshipDescription.templatedUrlFactory).toEqual(templatedUrlFactory);
+      expect(listRelationshipDescription.name).toEqual(name);
+      expect(listRelationshipDescription.ResourceClass).toEqual(ResourceClass);
+      expect(listRelationshipDescription.initialValues).toEqual(initialValues);
+      expect(listRelationshipDescription.async).toBe(true);
+      expect(listRelationshipDescription.canCreate).toBe(false);
+      expect(listRelationshipDescription._linkTemplatePath).toBe("$.links.awesome");
+      expect(listRelationshipDescription.linksPath).toEqual("$.links.awesomes");
+      expect(listRelationshipDescription.dataPath).toEqual("$.data.awesomes");
 
   });
 
@@ -174,7 +177,7 @@ describe("ListRelationshipDescription", function() {
 
     describe("with string uriParams", function() {
       beforeEach(function() {
-        embeddedEndpoint = listRelationshipDescription.embeddedEndpoint(resource, "id")
+        embeddedEndpoint = listRelationshipDescription.embeddedEndpoint(resource, "id");
       });
 
       it("should have the right values", function() {
@@ -182,11 +185,11 @@ describe("ListRelationshipDescription", function() {
         expect(embeddedEndpoint.resource).toEqual(resource);
         expect(embeddedEndpoint.transformers).toEqual(
           {
-            relationshipName: "awesomes",
-            uriParams: {
-              uriParams: "id"
-            }
-          });
+          relationshipName: "awesomes",
+          uriParams: {
+            uriParams: "id"
+          }
+        });
       });
 
       it("should setup the right transformer", function() {
@@ -200,7 +203,7 @@ describe("ListRelationshipDescription", function() {
 
     describe("with object uriParams", function() {
       beforeEach(function() {
-        embeddedEndpoint = listRelationshipDescription.embeddedEndpoint(resource, {id: "id"})
+        embeddedEndpoint = listRelationshipDescription.embeddedEndpoint(resource, {id: "id"});
       });
 
       it("should have the right values", function() {
@@ -208,11 +211,11 @@ describe("ListRelationshipDescription", function() {
         expect(embeddedEndpoint.resource).toEqual(resource);
         expect(embeddedEndpoint.transformers).toEqual(
           {
-            relationshipName: "awesomes",
-            uriParams: {
-              id: "id"
-            }
-          });
+          relationshipName: "awesomes",
+          uriParams: {
+            id: "id"
+          }
+        });
       });
 
       it("should setup the right transformer", function() {
@@ -226,7 +229,7 @@ describe("ListRelationshipDescription", function() {
 
     describe("with no uriParams", function() {
       beforeEach(function() {
-        embeddedEndpoint = listRelationshipDescription.embeddedEndpoint(resource)
+        embeddedEndpoint = listRelationshipDescription.embeddedEndpoint(resource);
       });
 
       it("should have the right values", function() {
@@ -250,27 +253,26 @@ describe("ListRelationshipDescription", function() {
 
     describe("with string uriParams", function() {
       beforeEach(function() {
-        linkedEndpoint = listRelationshipDescription.linkedEndpoint(resource, "id")
+        linkedEndpoint = listRelationshipDescription.linkedEndpoint(resource, "id");
       });
 
       it("should have the right values", function() {
-        expect(linkedEndpoint.transport).toEqual(mockTransport);
         expect(linkedEndpoint.templatedUrl).toEqual({
           uriTemplate: '/awesomes/{id}',
           uriParams: {uriParams: "id"}
         });
         expect(linkedEndpoint.transformers).toEqual(
           {
-            thisResourceMapperFactory: singleResourceMapperFactory,
-            thisResourceSerializerFactory: singleResourceSerializerFactory,
-            thisResourceClass: ResourceClass
-          });
+          thisResourceMapperFactory: resourceMapperFactory,
+          thisResourceSerializerFactory: resourceSerializerFactory,
+          thisResourceClass: ResourceClass
+        });
         expect(linkedEndpoint.createTransformers).toBe(null);
       });
 
       it("should setup the templated url", function() {
         expect(templatedUrlFactory).toHaveBeenCalled();
-      })
+      });
       it("should setup the right transformer", function() {
         expect(primaryResourceTransformerFactory).toHaveBeenCalled();
       });
@@ -282,27 +284,26 @@ describe("ListRelationshipDescription", function() {
 
     describe("with object uriParams", function() {
       beforeEach(function() {
-        linkedEndpoint = listRelationshipDescription.linkedEndpoint(resource, {id: "id"})
+        linkedEndpoint = listRelationshipDescription.linkedEndpoint(resource, {id: "id"});
       });
 
       it("should have the right values", function() {
-        expect(linkedEndpoint.transport).toEqual(mockTransport);
         expect(linkedEndpoint.templatedUrl).toEqual({
           uriTemplate: '/awesomes/{id}',
           uriParams: {id: "id"}
         });
         expect(linkedEndpoint.transformers).toEqual(
           {
-            thisResourceMapperFactory: singleResourceMapperFactory,
-            thisResourceSerializerFactory: singleResourceSerializerFactory,
-            thisResourceClass: ResourceClass
-          });
+          thisResourceMapperFactory: resourceMapperFactory,
+          thisResourceSerializerFactory: resourceSerializerFactory,
+          thisResourceClass: ResourceClass
+        });
         expect(linkedEndpoint.createTransformers).toBe(null);
       });
 
       it("should setup the templated url", function() {
         expect(templatedUrlFactory).toHaveBeenCalled();
-      })
+      });
       it("should setup the right transformer", function() {
         expect(primaryResourceTransformerFactory).toHaveBeenCalled();
       });
@@ -315,11 +316,10 @@ describe("ListRelationshipDescription", function() {
     describe("with no uriParams", function() {
       beforeEach(function() {
         listRelationshipDescription.canCreate = true;
-        linkedEndpoint = listRelationshipDescription.linkedEndpoint(resource)
+        linkedEndpoint = listRelationshipDescription.linkedEndpoint(resource);
       });
 
       it("should have the right values", function() {
-        expect(linkedEndpoint.transport).toEqual(mockTransport);
         expect(linkedEndpoint.templatedUrl).toEqual({
           uriTemplate: "/awesomes",
           url: "/awesomes",
@@ -331,22 +331,22 @@ describe("ListRelationshipDescription", function() {
         });
         expect(linkedEndpoint.transformers).toEqual(
           {
-            thisResourceMapperFactory: resourceMapperFactory,
-            thisResourceSerializerFactory: resourceSerializerFactory,
-            thisResourceClass: ResourceClass
-          });
+          thisResourceMapperFactory: resourceMapperFactory,
+          thisResourceSerializerFactory: resourceSerializerFactory,
+          thisResourceClass: ResourceClass
+        });
         expect(linkedEndpoint.createTransformers).toEqual(
           {
-            thisResourceMapperFactory: singleResourceMapperFactory,
-            thisResourceSerializerFactory: singleResourceSerializerFactory,
-            thisResourceClass: ResourceClass
-          });
+          thisResourceMapperFactory: resourceMapperFactory,
+          thisResourceSerializerFactory: resourceSerializerFactory,
+          thisResourceClass: ResourceClass
+        });
         expect(linkedEndpoint.new()).toEqual(new ResourceClass());
       });
 
       it("should setup the templated url", function() {
         expect(templatedUrlFromUrlFactory).toHaveBeenCalled();
-      })
+      });
       it("should setup the right transformer", function() {
         expect(primaryResourceTransformerFactory).toHaveBeenCalled();
       });

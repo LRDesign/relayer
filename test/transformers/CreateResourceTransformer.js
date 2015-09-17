@@ -1,66 +1,30 @@
 import CreateResourceTransformer from "../../src/relayer/transformers/CreateResourceTransformer.js";
-
+import standardMocks from "../../test_support/standardMocks.js";
 
 describe("CreateResourceTransformer", function() {
-  var createResourceTransformer, mockEndpoint, mockTransport, mockResponse, resource,
-  primaryResourceMapperFactory, primaryResourceSerializerFactory, ResourceClass, response;
-  var mockTemplatedUrlSpy, templatedUrl;
+  var createResourceTransformer, mockResponse, resource, response;
+  var mocks;
 
   beforeEach(function() {
-
-
     mockResponse = {
       data: {
         bilbo: "baggins"
       },
       etag: "123"
-    }
-
-    mockTransport = {
-
-    }
-
-    templatedUrl = {
-
-    }
-
-    mockEndpoint = {
-      transport: mockTransport,
-      templatedUrl: templatedUrl
-    }
-
-    ResourceClass = function(thisResponse) {
-      this.response = thisResponse;
-      this.templatedUrl = templatedUrl;
     };
 
-    ResourceClass.errorClass = function(thisResponse) {
-      this.error = thisResponse;
-    };
 
-    primaryResourceMapperFactory = jasmine.createSpy("primaryResourceMapperFactory").and.callFake(
-      function(thisTransport, thisResponse, ThisResourceClass, thisEndpoint) {
-      return {
-        map() {
-          return new ThisResourceClass(thisResponse);
-        }
-      }
-    });
+    mocks = standardMocks(jasmine);
 
-    primaryResourceSerializerFactory = jasmine.createSpy("primaryResourceSerializerFactory").and.callFake(
-      function(thisResource) {
-      return {
-        serialize() {
-          return thisResource.response;
-        }
-      }
-    });
+    mocks.endpoint = mocks.endpoint;
 
-    resource = new ResourceClass(mockResponse);
+    resource = new mocks.ResourceClass(mockResponse);
 
-    createResourceTransformer = new CreateResourceTransformer(primaryResourceMapperFactory,
-      primaryResourceSerializerFactory,
-      ResourceClass);
+    createResourceTransformer = new CreateResourceTransformer(mocks.services,
+                                                              mocks.ResourceClass,
+                                                              mocks.primaryResourceMapperFactory,
+                                                              mocks.primaryResourceSerializerFactory
+                                                             );
 
   });
 
@@ -68,15 +32,20 @@ describe("CreateResourceTransformer", function() {
     describe("on success", function() {
       beforeEach(function(done) {
         var promise = Promise.resolve(mockResponse);
-        resource = createResourceTransformer.transformResponse(mockEndpoint, promise);
-        resource.then((finalResource) => {
+        resource = createResourceTransformer.transformResponse(mocks.endpoint, promise);
+        resource.then(
+          (finalResource) => {
           resource = finalResource;
+          done();
+        },
+        (err) => {
+          expect(err.stack).toBe(NaN);
           done();
         });
       });
 
       it("should build a resource of the given class", function() {
-        expect(resource).toEqual(jasmine.any(ResourceClass));
+        expect(resource).toEqual(jasmine.any(mocks.ResourceClass));
       });
 
       it("should build a resource with the right parameters and data", function() {
@@ -84,21 +53,20 @@ describe("CreateResourceTransformer", function() {
       });
 
       it("should call the mapper with the right parameters", function() {
-        expect(primaryResourceMapperFactory).toHaveBeenCalledWith(
-          mockTransport,
+        expect(mocks.primaryResourceMapperFactory).toHaveBeenCalledWith(
           mockResponse.data,
-          ResourceClass);
+          mocks.ResourceClass);
       });
 
       it("should set the etag", function() {
-        expect(templatedUrl.etag).toEqual("123");
+        expect(mocks.templatedUrl.etag).toEqual("123");
       });
     });
 
     describe("on error", function() {
       beforeEach(function(done) {
         var promise = Promise.reject(mockResponse);
-        resource = createResourceTransformer.transformResponse(mockEndpoint, promise);
+        resource = createResourceTransformer.transformResponse(mocks.endpoint, promise);
         resource.catch((finalResource) => {
           resource = finalResource;
           done();
@@ -106,7 +74,7 @@ describe("CreateResourceTransformer", function() {
       });
 
       it("should build a resource of the given class", function() {
-        expect(resource).toEqual(jasmine.any(ResourceClass.errorClass));
+        expect(resource).toEqual(jasmine.any(mocks.ResourceClass.errorClass));
       });
 
       it("should build a resource with the right parameters and data", function() {
@@ -114,17 +82,16 @@ describe("CreateResourceTransformer", function() {
       });
 
       it("should call the mapper with the right parameters", function() {
-        expect(primaryResourceMapperFactory).toHaveBeenCalledWith(
-          mockTransport,
+        expect(mocks.primaryResourceMapperFactory).toHaveBeenCalledWith(
           mockResponse.data,
-          ResourceClass.errorClass);
+          mocks.ResourceClass.errorClass);
       });
     });
   });
 
   describe("transformRequest", function() {
     beforeEach(function() {
-      response = createResourceTransformer.transformRequest(mockEndpoint, resource);
+      response = createResourceTransformer.transformRequest(mocks.endpoint, resource);
     });
 
     it("should extract the response from the resource", function() {
@@ -132,7 +99,7 @@ describe("CreateResourceTransformer", function() {
     });
 
     it("should call the serializer", function() {
-      expect(primaryResourceSerializerFactory).toHaveBeenCalledWith(resource);
+      expect(mocks.primaryResourceSerializerFactory).toHaveBeenCalledWith(resource);
     });
   });
 });

@@ -1,6 +1,6 @@
 export default class ResourceBuilder {
-  constructor( services, transport, response, mapperFactory, serializerFactory, ResourceClass) {
-    this.transport = transport;
+  constructor( services, response, ResourceClass) {
+    this.transport = services.transport;
     this.ResourceClass = ResourceClass;
 
     this.templatedUrlFromUrlFactory        = services.templatedUrlFromUrlFactory;
@@ -10,8 +10,8 @@ export default class ResourceBuilder {
 
     this.response = response;
 
-    this.mapperFactory = mapperFactory;
-    this.serializerFactory = serializerFactory;
+    this.mapperFactory = services.mapperFactory;
+    this.serializerFactory = services.serializerFactory;
   }
 
   build(uriTemplate = null) {
@@ -25,8 +25,8 @@ export default class ResourceBuilder {
       resource.templatedUrl.addDataPathLink(resource, "$.links.self");
       var resourceTransformer = this.primaryResourceTransformerFactory(this.mapperFactory, this.serializerFactory, this.ResourceClass);
       var createResourceTransformer = this.throwErrorTransformerFactory();
-      var endpoint = this.resolvedEndpointFactory(this.transport, resource.templatedUrl, resourceTransformer, createResourceTransformer);
-      resource.self = function() { return endpoint; }
+      var endpoint = this.resolvedEndpointFactory(resource.templatedUrl, resourceTransformer, createResourceTransformer);
+      resource.self = function() { return endpoint; };
     }
     return resource;
   }

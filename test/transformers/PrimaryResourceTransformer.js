@@ -1,4 +1,5 @@
 import PrimaryResourceTransformer from "../../src/relayer/transformers/PrimaryResourceTransformer.js";
+import {allDone} from "../../test_support/promises.js";
 
 class PrimaryResource {
   constructor(response) {
@@ -11,7 +12,7 @@ class PrimaryResource {
 describe("PrimaryResourceTransformer", function() {
   var primaryResourceTransformer, mockEndpoint, mockTransport, mockResponse, resource,
   primaryResourceMapperFactory, primaryResourceSerializerFactory, ResourceClass, response;
-  var mockTemplatedUrlSpy, templatedUrl;
+  var mockTemplatedUrlSpy, templatedUrl, mockServices;
 
   beforeEach(function() {
 
@@ -21,20 +22,20 @@ describe("PrimaryResourceTransformer", function() {
         bilbo: "baggins"
       },
       etag: "123"
-    }
+    };
 
     mockTransport = {
 
-    }
+    };
 
     templatedUrl = {
 
-    }
+    };
 
     mockEndpoint = {
       transport: mockTransport,
       templatedUrl: templatedUrl
-    }
+    };
 
     ResourceClass = function(thisResponse) {
       this.response = thisResponse;
@@ -45,12 +46,12 @@ describe("PrimaryResourceTransformer", function() {
     };
 
     primaryResourceMapperFactory = jasmine.createSpy("primaryResourceMapperFactory").and.callFake(
-      function(thisTransport, thisResponse, ThisResourceClass, thisEndpoint) {
+      function(thisResponse, ThisResourceClass, thisEndpoint) {
       return {
         map() {
           return new ThisResourceClass(thisResponse);
         }
-      }
+      };
     });
 
     primaryResourceSerializerFactory = jasmine.createSpy("primaryResourceSerializerFactory").and.callFake(
@@ -59,14 +60,20 @@ describe("PrimaryResourceTransformer", function() {
         serialize() {
           return thisResource.response;
         }
-      }
+      };
     });
 
     resource = new ResourceClass(mockResponse);
 
-    primaryResourceTransformer = new PrimaryResourceTransformer(primaryResourceMapperFactory,
-      primaryResourceSerializerFactory,
-      ResourceClass);
+    mockServices = {
+      transport: mockTransport
+    };
+
+    primaryResourceTransformer = new PrimaryResourceTransformer(mockServices,
+                                                                ResourceClass,
+                                                                primaryResourceMapperFactory,
+                                                                primaryResourceSerializerFactory
+                                                               );
 
   });
 
@@ -74,10 +81,8 @@ describe("PrimaryResourceTransformer", function() {
     describe("on success", function() {
       beforeEach(function(done) {
         var promise = Promise.resolve(mockResponse);
-        resource = primaryResourceTransformer.transformResponse(mockEndpoint, promise);
-        resource.then((finalResource) => {
+        allDone(done, primaryResourceTransformer.transformResponse(mockEndpoint, promise), (finalResource) => {
           resource = finalResource;
-          done();
         });
       });
 
@@ -91,7 +96,6 @@ describe("PrimaryResourceTransformer", function() {
 
       it("should call the mapper with the right parameters", function() {
         expect(primaryResourceMapperFactory).toHaveBeenCalledWith(
-          mockTransport,
           mockResponse.data,
           ResourceClass,
           primaryResourceMapperFactory,
@@ -124,7 +128,6 @@ describe("PrimaryResourceTransformer", function() {
 
       it("should call the mapper with the right parameters", function() {
         expect(primaryResourceMapperFactory).toHaveBeenCalledWith(
-          mockTransport,
           mockResponse.data,
           ResourceClass.errorClass,
           primaryResourceMapperFactory,

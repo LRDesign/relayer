@@ -1,8 +1,8 @@
 import ResourceTransformer from "./ResourceTransformer.js";
 
 export default class PrimaryResourceTransformer extends ResourceTransformer {
-  constructor(ResourceClass, primaryResourceMapperFactory, primaryResourceSerializerFactory) {
-    super();
+  constructor(services, ResourceClass, primaryResourceMapperFactory, primaryResourceSerializerFactory) {
+    super(services);
     this.ResourceClass = ResourceClass;
     this.primaryResourceSerializerFactory = primaryResourceSerializerFactory;
     this.primaryResourceMapperFactory = primaryResourceMapperFactory;
@@ -16,7 +16,7 @@ export default class PrimaryResourceTransformer extends ResourceTransformer {
     return response.then(
       (resolvedResponse) => {
         endpoint.templatedUrl.etag = resolvedResponse.etag;
-        return this.primaryResourceMapperFactory(endpoint.transport,
+        return this.primaryResourceMapperFactory(
           resolvedResponse.data,
           this.ResourceClass,
           this.primaryResourceMapperFactory,
@@ -25,7 +25,7 @@ export default class PrimaryResourceTransformer extends ResourceTransformer {
       }
     ).catch(
       (resolvedError) => {
-        throw this.primaryResourceMapperFactory(endpoint.transport,
+        throw this.primaryResourceMapperFactory(
           resolvedError.data,
           this.ResourceClass.errorClass,
           this.primaryResourceMapperFactory,

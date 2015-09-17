@@ -1,21 +1,23 @@
 import LoadedDataEndpoint from "../src/relayer/endpoints/LoadedDataEndpoint.js";
 import ResolvedEndpoint from "../src/relayer/endpoints/ResolvedEndpoint.js";
+import {allDone} from "../test_support/promises.js";
 
 describe("LoadedDataEndpoint", function() {
 
-  var loadedDataEndpoint,
-    resolvedEndpoint,
-    templatedUrl,
-    transport,
-    transportSpy,
-    initialResourceTransformer,
-    dataResourceTransformer,
-    createResourceTransformer,
-    resourceTransformerResponseSpy,
-    resourceTransformerRequestSpy,
-    mockData,
-    mockDataSpy,
-    resultData;
+  var services,
+  loadedDataEndpoint,
+  resolvedEndpoint,
+  templatedUrl,
+  transport,
+  transportSpy,
+  initialResourceTransformer,
+  dataResourceTransformer,
+  createResourceTransformer,
+  resourceTransformerResponseSpy,
+  resourceTransformerRequestSpy,
+  mockData,
+  mockDataSpy,
+  resultData;
 
   beforeEach(function() {
 
@@ -34,15 +36,15 @@ describe("LoadedDataEndpoint", function() {
     transport = {
 
       get(url){
-        return Promise.resolve(mockData)
+        return Promise.resolve(mockData);
       },
 
       put(url, data) {
-        return Promise.resolve({data: mockData})
+        return Promise.resolve({data: mockData});
       },
 
       post(url, data){
-        return Promise.resolve(mockData)
+        return Promise.resolve(mockData);
       },
 
       remove(url){
@@ -54,10 +56,10 @@ describe("LoadedDataEndpoint", function() {
       transformResponse: function(endpoint, response) {
         return response.then(
           (data) => {
-            return {
-              wrapped: data.data
-            };
-          }
+          return {
+            wrapped: data.data
+          };
+        }
         );
       },
 
@@ -65,24 +67,24 @@ describe("LoadedDataEndpoint", function() {
         return request.wrapped;
       }
 
-    }
+    };
 
     createResourceTransformer = {
       transformResponse: function(endpoint, response) {
         return response.then(
           (data) => data
-        )
+        );
       },
 
       transformRequest: function(endpoint, request) {
         return request;
       }
 
-    }
+    };
 
     dataResourceTransformer = {
       transformResponse: function(endpoint, response) {
-        return response.then((data) => data.wrapped.page)
+        return response.then((data) => data.wrapped.page);
       },
 
       transformRequest: function(endpoint, request) {
@@ -91,14 +93,30 @@ describe("LoadedDataEndpoint", function() {
           wrapped: mockData
         };
       }
-    }
+    };
 
 
     resourceTransformerRequestSpy = spyOn(dataResourceTransformer, "transformRequest").and.callThrough();
     resourceTransformerResponseSpy = spyOn(dataResourceTransformer, "transformResponse").and.callThrough();
 
-    resolvedEndpoint = new ResolvedEndpoint(Promise, transport, templatedUrl, initialResourceTransformer, createResourceTransformer)
-    loadedDataEndpoint = new LoadedDataEndpoint(Promise, resolvedEndpoint, { wrapped: mockData }, dataResourceTransformer)
+    services = {
+      transport,
+      Promise
+    };
+
+    resolvedEndpoint = new ResolvedEndpoint(
+      services,
+      templatedUrl,
+      initialResourceTransformer,
+      createResourceTransformer
+    );
+
+    loadedDataEndpoint = new LoadedDataEndpoint(
+      services,
+      resolvedEndpoint,
+      { wrapped: mockData },
+      dataResourceTransformer
+    );
 
   });
 
@@ -109,17 +127,14 @@ describe("LoadedDataEndpoint", function() {
       expect(loadedDataEndpoint.resourceTransformers).toEqual([
         initialResourceTransformer,
         dataResourceTransformer
-        ]);
+      ]);
     });
   });
 
   describe("load", function() {
     beforeEach(function(done) {
       transportSpy = spyOn(transport, "get").and.callThrough();
-      loadedDataEndpoint.load((result) => {
-        resultData = result;
-        done();
-      });
+      allDone(done, loadedDataEndpoint.load(), (result) => { resultData = result; });
     });
 
     it("should NOT load data from the server at the endpoint url", function() {
@@ -139,9 +154,8 @@ describe("LoadedDataEndpoint", function() {
 
     beforeEach(function(done) {
       transportSpy = spyOn(transport, "put").and.callThrough();
-      loadedDataEndpoint.update("cheese").then((result) => {
+      allDone(done, loadedDataEndpoint.update("cheese"), (result) => {
         resultData = result;
-        done();
       });
     });
 

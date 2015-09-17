@@ -1,10 +1,9 @@
-import Mapper from "./Mapper.js";
+import ResourceMapper from "./ResourceMapper.js";
 
-export default class MapResourceMapper extends Mapper {
-  constructor( services, transport, response, ResourceClass) {
-    super(services, transport, response, ResourceClass);
-    this.singleResourceMapperFactory = services.resourceMapperFactory;
-    this.singleResourceSerializerFactory = services.resourceSerializerFactory;
+export default class MapResourceMapper extends ResourceMapper {
+  constructor( services, response, ResourceClass) {
+    super(services, response, ResourceClass);
+    this.resourceMapperFactory = services.resourceMapperFactory;
   }
 
   initializeModel() {
@@ -15,10 +14,7 @@ export default class MapResourceMapper extends Mapper {
     Object.keys(this.response).forEach((responseKey) => {
       var response = this.response[responseKey];
       var singleResourceMapper =
-        this.singleResourceMapperFactory(this.transport, response,
-                                         this.ResourceClass,
-                                         this.singleResourceMapperFactory,
-                                         this.singleResourceSerializerFactory);
+        this.resourceMapperFactory(response, this.ResourceClass);
       this.mapped[responseKey] = singleResourceMapper.map();
     });
   }

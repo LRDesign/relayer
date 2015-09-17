@@ -211,4 +211,18 @@ a. Do not submit features that do not have tests
 b. Title your commits with "[Fix]" or "[Feature]" to help clarify what they are and update the changelog with these notes
 c. Feel free to reach out on Gitter if you are considering a major feature before you implement.
 
+### JDL suggests...
+
+Start tmux, split a window into two panes. In the larger pane:
+
+```
+karma start
+```
+
+in the smaller pane:
+
+```
+find src test test_support -type f ! -regex '.*\.sw.$' | entr gulp testPrep
+```
+
 # That's it. Enjoy!

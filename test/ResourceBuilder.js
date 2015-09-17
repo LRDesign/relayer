@@ -1,30 +1,31 @@
 import ResourceBuilder from "../src/relayer/ResourceBuilder.js";
 
 describe("ResourceBuilder", function() {
-  var ResourceClass,
-    resource,
-    resolvedEndpointFactory,
-    resolvedEndpoint,
-    templatedUrlFromUrlFactory,
-    primaryResourceTransformerFactory,
-    throwErrorTransformerFactory,
-    templatedUrl,
-    templatedUrlDataPathSpy,
-    mapperFactory,
-    serializerFactory,
-    primaryResourceTransformer,
-    throwErrorTransformer,
-    resourceBuilder,
-    builtResource,
-    transport;
+  var services,
+  ResourceClass,
+  resource,
+  resolvedEndpointFactory,
+  resolvedEndpoint,
+  templatedUrlFromUrlFactory,
+  primaryResourceTransformerFactory,
+  throwErrorTransformerFactory,
+  templatedUrl,
+  templatedUrlDataPathSpy,
+  mapperFactory,
+  serializerFactory,
+  primaryResourceTransformer,
+  throwErrorTransformer,
+  resourceBuilder,
+  builtResource,
+  transport;
 
   beforeEach(function() {
     ResourceClass = function(resource) {
       this.pathGet = function(path) {
         if (path == "$.links.self") {
-          return "/cheese/gouda"
+          return "/cheese/gouda";
         }
-      }
+      };
       this.response = resource;
     };
 
@@ -63,21 +64,27 @@ describe("ResourceBuilder", function() {
 
     mapperFactory = function() {
       return "hello";
-    }
+    };
 
     serializerFactory = function() {
       return "goodbye";
-    }
+    };
 
-    resourceBuilder = new ResourceBuilder(templatedUrlFromUrlFactory,
+    services = {
+      transport,
+      templatedUrlFromUrlFactory,
       resolvedEndpointFactory,
       primaryResourceTransformerFactory,
-      throwErrorTransformerFactory,
-      transport,
-      resource,
       mapperFactory,
       serializerFactory,
-      ResourceClass);
+      throwErrorTransformerFactory
+    };
+
+    resourceBuilder = new ResourceBuilder(
+      services,
+      resource,
+      ResourceClass
+    );
   });
 
   describe("no url template", function() {
@@ -98,16 +105,15 @@ describe("ResourceBuilder", function() {
 
     it("should setup the transformers", function() {
       expect(primaryResourceTransformerFactory).toHaveBeenCalledWith(mapperFactory,
-        serializerFactory,
-        ResourceClass);
-      expect(throwErrorTransformerFactory).toHaveBeenCalled();
+                                                                     serializerFactory,
+                                                                     ResourceClass);
+                                                                     expect(throwErrorTransformerFactory).toHaveBeenCalled();
     });
 
     it("should setup the endpoint properly", function() {
-      expect(resolvedEndpointFactory).toHaveBeenCalledWith(transport,
-        templatedUrl,
-        primaryResourceTransformer,
-        throwErrorTransformer);
+      expect(resolvedEndpointFactory).toHaveBeenCalledWith( templatedUrl,
+                                                           primaryResourceTransformer,
+                                                           throwErrorTransformer);
     });
   });
 
@@ -133,12 +139,11 @@ describe("ResourceBuilder", function() {
         mapperFactory,
         serializerFactory,
         ResourceClass);
-      expect(throwErrorTransformerFactory).toHaveBeenCalled();
+        expect(throwErrorTransformerFactory).toHaveBeenCalled();
     });
 
     it("should setup the endpoint properly", function() {
       expect(resolvedEndpointFactory).toHaveBeenCalledWith(
-        transport,
         templatedUrl,
         primaryResourceTransformer,
         throwErrorTransformer);

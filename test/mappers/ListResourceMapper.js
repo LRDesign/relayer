@@ -1,9 +1,9 @@
-import ListResourceMapper from "../../src/relayer/mappers/ListResourceMapper.js"
+import ListResourceMapper from "../../src/relayer/mappers/ListResourceMapper.js";
 
 describe("ListResourceMapper", function() {
-  var listResourceFactory,
+  var services,
+  listResourceFactory,
   manyResourceMapper,
-  manyResourceMapperFactory,
   manyResourceMapSpy,
   data,
   uriTemplate,
@@ -17,8 +17,8 @@ describe("ListResourceMapper", function() {
   primaryResourceBuilderFactory,
   results,
   transport,
-  listResourceMapperFactory,
-  listResourceSerializerFactory;
+  manyResourceMapperFactory,
+  manyResourceSerializerFactory;
 
   beforeEach(function() {
     manyResourceMapper = {
@@ -34,7 +34,7 @@ describe("ListResourceMapper", function() {
     manyResourceMapSpy = spyOn(manyResourceMapper, "map").and.callThrough();
 
     manyResourceMapperFactory = jasmine.createSpy("manyResourceMapperFactory ").and.callFake(
-      function(thisTransport, thisData, ThisItemResourceClassourceClass) {
+      function(thisTransport, thisData, ThisItemResourceClass) {
         manyResourceMapper.data = thisData;
         return manyResourceMapper;
       });
@@ -69,7 +69,7 @@ describe("ListResourceMapper", function() {
         self[func] = function() { return func; };
       });
 
-      this.create = function(param) { return Promise.resolve(param); }
+      this.create = function(param) { return Promise.resolve(param); };
 
     };
 
@@ -86,13 +86,13 @@ describe("ListResourceMapper", function() {
 
     templatedUrlFromUrlFactory = jasmine.createSpy("templatedUrlFromUrlFactory").and.returnValue(templatedUrl);
 
-    resourceBuilderFactory = jasmine.createSpy("resourceBuilderFactory").and.callFake(function(transport, thisResponse, mapperFactory, serializerFactory, ThisResourceClass) {
+    resourceBuilderFactory = jasmine.createSpy("resourceBuilderFactory").and.callFake(function(thisResponse, mapperFactory, serializerFactory, ThisResourceClass) {
       return {
         build() {
           var thisResource = new ThisResourceClass(thisResponse);
           return thisResource;
         }
-      }
+      };
     });
 
     primaryResourceBuilderFactory = jasmine.createSpy("primaryResourceBuilderFactory").and.callFake(function(thisResponse, ThisResourceClass) {
@@ -101,30 +101,30 @@ describe("ListResourceMapper", function() {
           var thisResource = new ThisResourceClass(thisResponse);
           return thisResource;
         }
-      }
+      };
     });
 
     transport = {};
 
-    listResourceMapperFactory = function() {
-      return "hello";
-    }
-
-    listResourceSerializerFactory = function() {
+    manyResourceSerializerFactory = function() {
       return "goodbye";
-    }
+    };
 
-    listResourceMapper = new ListResourceMapper(
+    services = {
+      transport,
       templatedUrlFromUrlFactory,
       resourceBuilderFactory,
       primaryResourceBuilderFactory,
       ListResource,
       manyResourceMapperFactory,
-      transport,
+      manyResourceSerializerFactory
+    };
+
+    listResourceMapper = new ListResourceMapper(
+      services,
       data,
-      ItemResourceClass,
-      listResourceMapperFactory,
-      listResourceSerializerFactory);
+      ItemResourceClass
+    );
   });
 
   describe("it should transform responses into a list", function() {
@@ -144,7 +144,7 @@ describe("ListResourceMapper", function() {
       var resultArray = data.map((elem) => {
         return {
           response: elem
-        }
+        };
       });
       var resultElements = Array.from(results);
       expect(resultElements).toEqual(resultArray);
@@ -173,10 +173,9 @@ describe("ListResourceMapper", function() {
 
     it("should build the resource with the regular resource builder", function() {
       expect(resourceBuilderFactory).toHaveBeenCalledWith(
-        transport,
         data,
-        listResourceMapperFactory,
-        listResourceSerializerFactory,
+        manyResourceMapperFactory,
+        manyResourceSerializerFactory,
         ListResource);
     });
 
@@ -188,7 +187,7 @@ describe("ListResourceMapper", function() {
       });
 
       it("should add to the array", function() {
-        expect(results.length).toEqual(length+1)
+        expect(results.length).toEqual(length+1);
       });
     });
   });

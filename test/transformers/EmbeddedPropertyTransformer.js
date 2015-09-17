@@ -1,4 +1,4 @@
-import EmbeddedPropertyTransformer from "../../src/relayer/transformers/EmbeddedPropertyTransformer.js"
+import EmbeddedPropertyTransformer from "../../src/relayer/transformers/EmbeddedPropertyTransformer.js";
 
 describe("EmbeddedPropertyTransformer", function() {
   var mockDataWrapperFactory, mockData, mockRequest, mockResponse, mockError, mockEndpoint, embeddedPropertyTransformer, resolvedResponse, resolvedError, transformedRequest;
@@ -23,12 +23,12 @@ describe("EmbeddedPropertyTransformer", function() {
 
     mockData = {
         cheese: "gouda"
-    }
+    };
 
     mockEndpoint = {
       data: mockData,
       resource: mockDataWrapperFactory(mockData)
-    }
+    };
 
     mockError = Promise.reject({
       data: {
@@ -52,11 +52,11 @@ describe("EmbeddedPropertyTransformer", function() {
 
   describe("transform request", function() {
     beforeEach(function() {
-      transformedRequest = embeddedPropertyTransformer.transformRequest(mockEndpoint, mockRequest)
+      transformedRequest = embeddedPropertyTransformer.transformRequest(mockEndpoint, mockRequest);
     });
 
     it("should transform the request", function() {
-      expect(transformedRequest).toEqual({data: {cheese: "swiss"}, pathGet: jasmine.any(Function), pathSet: jasmine.any(Function)})
+      expect(transformedRequest).toEqual({data: {cheese: "swiss"}, pathGet: jasmine.any(Function), pathSet: jasmine.any(Function)});
     });
 
     it("should alter the endpoint's data", function() {
@@ -81,9 +81,9 @@ describe("EmbeddedPropertyTransformer", function() {
       });
 
       it("should save the resource to reference later", function() {
-        expect(mockEndpoint.resource).toEqual({data: {cheese: "gouda"}, pathGet: jasmine.any(Function), pathSet: jasmine.any(Function)})
+        expect(mockEndpoint.resource).toEqual({data: {cheese: "gouda"}, pathGet: jasmine.any(Function), pathSet: jasmine.any(Function)});
       });
-    })
+    });
 
     describe("on error", function() {
       beforeEach(function(done) {

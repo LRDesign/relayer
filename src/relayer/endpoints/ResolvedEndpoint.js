@@ -1,16 +1,16 @@
 import Endpoint from "./Endpoint.js";
-import PromiseWrapper from "../Promise.js";
 
 export default class ResolvedEndpoint extends Endpoint {
   constructor(
-    transport,
+    services,
     templatedUrl,
     resourceTransformers = [],
-    createResourceTransformers = [],
-    Promise = PromiseWrapper
+    createResourceTransformers = []
   ) {
-    super();
-    this.transport = transport;
+    super(services);
+
+
+    this.transport = services.transport;
     this.templatedUrl = templatedUrl;
     if (Array.isArray(resourceTransformers)) {
       this.resourceTransformers = resourceTransformers;
@@ -22,7 +22,7 @@ export default class ResolvedEndpoint extends Endpoint {
     } else {
       this.createResourceTransformers = [createResourceTransformers];
     }
-    this.endpointPromise = () => { return Promise.resolve(this); };
+    this.endpointPromise = () => { return services.Promise.resolve(this); };
   }
 
   _load() {

@@ -1,5 +1,5 @@
 export default class Endpoint {
-  constructor() {
+  constructor(services) {
   }
 
   create(resource, res, rej){
@@ -17,7 +17,7 @@ export default class Endpoint {
       if (endpoint._update) {
         return endpoint._update(resource);
       } else {
-        return endpoint.update(resource)
+        return endpoint.update(resource);
       }
     }).then(res, rej);
   }

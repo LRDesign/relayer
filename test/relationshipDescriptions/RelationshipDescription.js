@@ -1,7 +1,8 @@
 import RelationshipDescription from "../../src/relayer/relationshipDescriptions/RelationshipDescription.js";
 
 describe("RelationshipDescription", function() {
-  var relationshipInitializerFactory,
+  var services,
+    relationshipInitializerFactory,
     resourceMapperFactory,
     resourceSerializerFactory,
     inflector,
@@ -15,7 +16,7 @@ describe("RelationshipDescription", function() {
 
     relationshipInitializerFactory = jasmine.createSpy("relationshipInitializerFactory").and.callFake(
       function (thisResourceClass, thisInitialValues) {
-        return { thisResourceClass, thisInitialValues }
+        return { thisResourceClass, thisInitialValues };
       });
 
     resourceMapperFactory = jasmine.createSpy("resourceMapperFactory");
@@ -26,21 +27,25 @@ describe("RelationshipDescription", function() {
       underscore: function(name) {
         return name;
       }
-    }
+    };
 
     name = "awesome";
 
     ResourceClass = function() {
-      this.awesome = 'festering'
-    }
+      this.awesome = 'festering';
+    };
 
     initialValues = { awesome: "cheese" };
 
-    relationshipDescription = new RelationshipDescription(
+    services = {
       relationshipInitializerFactory,
       resourceMapperFactory,
       resourceSerializerFactory,
-      inflector,
+      inflector
+    };
+
+    relationshipDescription = new RelationshipDescription(
+      services,
       name,
       ResourceClass,
       initialValues);

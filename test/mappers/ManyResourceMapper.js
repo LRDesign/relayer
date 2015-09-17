@@ -2,24 +2,25 @@ import ManyResourceMapper from "../../src/relayer/mappers/ManyResourceMapper.js"
 import ResourceMapper from "../../src/relayer/mappers/ResourceMapper.js";
 
 describe("ManyResourceMapper", function() {
-  var ResourceClass,
-    resources,
-    templatedUrlFromUrlFactory,
-    templatedUrl,
-    templatedUrlDataPathSpy,
-    resourceBuilderFactory,
-    primaryResourceBuilderFactory,
-    resourceMapperFactory,
-    resourceSerializerFactory,
-    manyResourceMapper,
-    builtResources,
-    transport;
+  var services,
+  ResourceClass,
+  resources,
+  templatedUrlFromUrlFactory,
+  templatedUrl,
+  templatedUrlDataPathSpy,
+  resourceBuilderFactory,
+  primaryResourceBuilderFactory,
+  resourceMapperFactory,
+  resourceSerializerFactory,
+  manyResourceMapper,
+  builtResources,
+  transport;
 
   beforeEach(function() {
     ResourceClass = function(resource) {
       this.pathGet = function(path) {
         if (path == "$.links.self") {
-          return "/cheese/gouda"
+          return "/cheese/gouda";
         } else if (path == "$.data.cheese") {
           return {
             type: "gouda"
@@ -27,7 +28,7 @@ describe("ManyResourceMapper", function() {
         } else if (path == "$.links.awesome") {
           return "/awesome";
         }
-      }
+      };
       this.response = resource;
     };
 
@@ -48,7 +49,7 @@ describe("ManyResourceMapper", function() {
         dataPath: "$.data.awesome",
         linksPath: "$.links.awesome"
       }
-    }
+    };
 
     templatedUrl = {
       addDataPathLink(path) {
@@ -59,14 +60,14 @@ describe("ManyResourceMapper", function() {
 
     templatedUrlFromUrlFactory = jasmine.createSpy("templatedUrlFromUrlFactory").and.returnValue(templatedUrl);
 
-    resourceBuilderFactory = jasmine.createSpy("resourceBuilderFactory").and.callFake(function(thisTransport, thisResponse, thisMapperFactory, thisSerializerFactory, ThisResourceClass) {
+    resourceBuilderFactory = jasmine.createSpy("resourceBuilderFactory").and.callFake(function(thisResponse, thisMapperFactory, thisSerializerFactory, ThisResourceClass) {
       return {
         build(uriTemplate) {
           var resource = new ThisResourceClass(thisResponse);
           resource.uriTemplate = uriTemplate;
           return resource;
         }
-      }
+      };
     });
 
     primaryResourceBuilderFactory = jasmine.createSpy("primaryResourceBuilderFactory").and.callFake(function(thisResponse, ThisResourceClass) {
@@ -76,7 +77,7 @@ describe("ManyResourceMapper", function() {
           resource.endpoint = endpoint;
           return resource;
         }
-      }
+      };
     });
 
     resources = new Array(10);
@@ -86,23 +87,29 @@ describe("ManyResourceMapper", function() {
 
     transport = {};
 
-    resourceMapperFactory = function(thisTransport, response, ThisResourceClass, thisMapperFactory, thisSerializerFactory) {
-      return new ResourceMapper(templatedUrlFromUrlFactory,
-        resourceBuilderFactory,
-        primaryResourceBuilderFactory,
-        thisTransport,
+    resourceMapperFactory = function(response, ThisResourceClass, thisMapperFactory, thisSerializerFactory) {
+      return new ResourceMapper(
+        services,
         response,
         ThisResourceClass,
         thisMapperFactory,
         thisSerializerFactory
-        );
-    }
+      );
+    };
 
     resourceSerializerFactory = function() {
       return "goodbye";
-    }
+    };
 
-    manyResourceMapper = new ManyResourceMapper(resourceMapperFactory, resourceSerializerFactory, transport, resources, ResourceClass)
+    services = {
+      templatedUrlFromUrlFactory,
+      resourceBuilderFactory,
+      primaryResourceBuilderFactory,
+      resourceMapperFactory,
+      resourceSerializerFactory
+    };
+
+    manyResourceMapper = new ManyResourceMapper(services, resources, ResourceClass);
   });
 
   describe("no url template", function() {

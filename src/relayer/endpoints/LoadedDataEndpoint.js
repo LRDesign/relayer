@@ -1,20 +1,21 @@
 import ResolvedEndpoint from "./ResolvedEndpoint.js";
-import Promise from "../Promise.js";
 
 export default class LoadedDataEndpoint extends ResolvedEndpoint {
   constructor(
+    services,
     resolvedEndpoint,
     resource,
     resourceTransformers = [],
-    createResourceTransformers = [],
-    thisPromise = Promise
+    createResourceTransformers = []
   ) {
-    super(Promise, resolvedEndpoint.transport,
+    super(
+      services,
       resolvedEndpoint.templatedUrl,
       resolvedEndpoint.resourceTransformers.concat(resourceTransformers),
-      resolvedEndpoint.createResourceTransformers.concat(createResourceTransformers));
+      resolvedEndpoint.createResourceTransformers.concat(createResourceTransformers)
+    );
     this.resource = resource;
-    this.Promise = thisPromise;
+    this.Promise = services.Promise;
     this.data = resolvedEndpoint._transformRequest(resolvedEndpoint.resourceTransformers, resource);
   }
 
