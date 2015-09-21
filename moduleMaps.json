@@ -1,4 +1,5 @@
 {
   "a1atscript": "../node_modules/a1atscript/dist/a1atscript.js",
-  "xing-inflector": "../node_modules/xing-inflector/dist/xing-inflector.js"
+  "xing-inflector": "../node_modules/xing-inflector/dist/xing-inflector.js",
+  "xing-promise": "../node_modules/xing-promise/dist/xing-promise.js"
 }
