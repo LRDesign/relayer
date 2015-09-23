@@ -1,8 +1,9 @@
+// XXX should just be a function?
 export default class TopLevelResourceBuilder {
-  constructor( services, topLevelResource) {
-    this.transport = services.transport;
-    this.urlHelper = services.urlHelper;
-    this.wellKnownUrl = this.urlHelper.fullUrlRegEx.exec(services.baseUrl)[3];
+  constructor( services, api, topLevelResource) {
+    this.transport = api.transport;
+    this.urlHelper = api.urlHelper;
+    this.wellKnownUrl = this.urlHelper.fullUrlRegEx.exec(this.urlHelper.baseUrl)[3];
     this.templatedUrl = services.templatedUrlFromUrlFactory(this.wellKnownUrl, this.wellKnownUrl);
     this.transformer = services.primaryResourceTransformerFactory(
       services.resourceMapperFactory,
@@ -10,7 +11,6 @@ export default class TopLevelResourceBuilder {
       topLevelResource
     );
     this._endpoint = services.resolvedEndpointFactory(this.templatedUrl, this.transformer);
-    console.log("relayer/TopLevelResource.js:13", "topLevelResource.resourceDescription", topLevelResource.resourceDescription);
     topLevelResource.resourceDescription.applyToEndpoint(this._endpoint);
   }
 

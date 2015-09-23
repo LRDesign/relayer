@@ -2,16 +2,12 @@ import ResourceDecorator from "./ResourceDecorator.js";
 
 
 export default class JsonPropertyDecorator extends ResourceDecorator {
-  constructor( services, name, path, value, options = {} ){
-    super(services, name);
+  constructor( description, name, path, value, options = {} ){
+    super(description, name);
 
     this.path = path;
     this.options = options;
     this.value = value;
-
-    this.loadedDataEndpointFactory = services.loadedDataEndpointFactory;
-    this.embeddedPropertyTransformerFactory = services.embeddedPropertyTransformerFactory;
-    this.promiseEndpointFactory = services.promiseEndpointFactory;
   }
 
   recordApply(target){
@@ -50,13 +46,12 @@ export default class JsonPropertyDecorator extends ResourceDecorator {
   get endpointFn() {
 
     if(!this._endpointFn){
-
       var path = this.path;
-      var promiseEndpointFactory = this.promiseEndpointFactory;
-      var loadedDataEndpointFactory = this.loadedDataEndpointFactory;
-      var embeddedPropertyTransformerFactory = this.embeddedPropertyTransformerFactory;
       this._endpointFn = function(uriParams = {}){
         // 'this' in here = Endpoint
+        var promiseEndpointFactory = this.services.promiseEndpointFactory;
+        var loadedDataEndpointFactory = this.services.loadedDataEndpointFactory;
+        var embeddedPropertyTransformerFactory = this.services.embeddedPropertyTransformerFactory;
 
         var newPromise = () => {
           return this.load().then((resource) => {

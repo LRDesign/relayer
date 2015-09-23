@@ -1,6 +1,6 @@
 import RelationshipDescription from "../../src/relayer/relationshipDescriptions/RelationshipDescription.js";
 
-describe("RelationshipDescription", function() {
+ddescribe("RelationshipDescription", function() {
   var services,
     relationshipInitializerFactory,
     resourceMapperFactory,

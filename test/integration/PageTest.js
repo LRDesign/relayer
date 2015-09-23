@@ -138,7 +138,7 @@ class AppConfig {
 
 var AppModule = new Module("AppModule", [RL, AppConfig.prototype]);
 
-ddescribe("Page test", function() {
+xdescribe("Page test", function() {
 
   var mockHttp, resources, $rootScope;
 

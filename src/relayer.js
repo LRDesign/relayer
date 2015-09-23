@@ -1,20 +1,36 @@
-import {AsModule, Provider}    from "a1atscript";
-import {describeResource}      from "./relayer/ResourceInitializer.js";
-import Resource                from "./relayer/Resource.js";
-import Transport               from "./relayer/Transport.js";
-import UrlHelper               from "./relayer/UrlHelper.js";
-import Services                from "./relayer/ServiceLocator.js";
-import TopLevelResourceBuilder from "./relayer/TopLevelResource.js";
+import {AsModule, Provider}      from "a1atscript";
+import {ResourceDescriptionTool} from "./relayer/ResourceInitializer.js";
+import Resource                  from "./relayer/Resource.js";
+import Transport                 from "./relayer/Transport.js";
+import UrlHelper                 from "./relayer/UrlHelper.js";
+import Services                  from "./relayer/ServiceLocator.js";
+import TopLevelResourceBuilder   from "./relayer/TopLevelResource.js";
+import ResourceDescription       from "./relayer/ResourceDescription.js";
+import Inflector                 from "xing-inflector";
+
+var theServices = new Services();
+
+function buildResourceDescription(){
+  return new ResourceDescription(new Inflector());
+}
+var theDescriber = new ResourceDescriptionTool(buildResourceDescription);
 
 @AsModule('relayer', [])
-@Provider('relayer', ['$provide'])
+@Provider('relayer', ['$provide', '$q'])
 export default class ResourceLayer {
+  static get services() { return theServices; }
 
   static get Resource() { return Resource; }
 
-  static get Describe() { return describeResource; }
+  static Describe(resourceClass, defineFn) {
+    return theDescriber.initializeClass(resourceClass, defineFn);
+  }
 
-  constructor($provide) {
+  constructor($provide, $q) {
+    // Maybe the promise wrapping goes on transport?
+    ResourceLayer.services.thenableBuilder = function(resolver) {
+      return $q(resolver);
+    };
     this.apis = {};
     this.$provide = $provide;
     this.$get = ['$injector', ($injector) => {
@@ -33,16 +49,12 @@ export default class ResourceLayer {
     };
     this.$provide.factory(apiName, [ '$http', '$q',
       function( $http, $q ) {
-        console.log("src/relayer.js:36", "topLevelResource", topLevelResource);
-        var services = new Services();
-        services.thenableBuilder = function(resolver) {
-          return $q(resolver);
-        };
+        var urlHelper = new UrlHelper(baseUrl);
 
-        services.baseUrl = baseUrl;
-        services.transport = new Transport(services.urlHelper, $http); // XXX maybe should be "AngularTransport"
+        var apiLocator = new APILocator(ResourceLayer.services);
+        apiLocator.transport = new Transport(urlHelper, $http);
 
-        return new TopLevelResourceBuilder(services, topLevelResource).endpoint;
+        return new TopLevelResourceBuilder(apiLocator, topLevelResource).endpoint;
       }
     ]);
   }

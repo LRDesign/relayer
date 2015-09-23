@@ -1,6 +1,6 @@
 export default class Mapper {
-  constructor(services, response, ResourceClass) {
-    this.transport = services.transport;
+  constructor(services, transport, response, ResourceClass) {
+    this.transport = transport;
     this.response = response;
     this.ResourceClass = ResourceClass;
 

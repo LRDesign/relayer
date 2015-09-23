@@ -3,6 +3,7 @@ import Mapper from "./Mapper.js";
 export default class ResourceMapper extends Mapper {
   constructor(
     services,
+    transport,
     response,
     ResourceClass,
     endpoint = null
@@ -33,7 +34,7 @@ export default class ResourceMapper extends Mapper {
         relationship = this.ResourceClass.relationships[relationshipName];
 
         if (this.mapped.pathGet(relationship.dataPath)) {
-          var subMapper = relationship.mapperFactory(this.mapped.pathGet(relationship.dataPath), relationship.ResourceClass,
+          var subMapper = relationship.mapperFactory(this.transport, this.mapped.pathGet(relationship.dataPath), relationship.ResourceClass,
             relationship.mapperFactory, relationship.serializerFactory);
           this.mapped.relationships[relationshipName] = subMapper.map();
         } else if (this.mapped.pathGet(relationship.linksPath)) {

@@ -1,5 +1,6 @@
 export default class Endpoint {
   constructor(services) {
+    this.services = services;
   }
 
   create(resource, res, rej){

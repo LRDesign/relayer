@@ -4,10 +4,9 @@ import RelationshipUtilities from "../RelationshipUtilities.js";
 
 export default class RelatedResourceDecorator extends ResourceDecorator {
 
-  constructor(services, name, relationship, relationshipUtilities = new RelationshipUtilities()) {
-    super(services, name);
+  constructor(description, name, relationship, relationshipUtilities = new RelationshipUtilities()) {
+    super(description, name);
 
-    this.promiseEndpointFactory = services.promiseEndpointFactory;
     this.relationshipUtilities = relationshipUtilities; //XXX to services?
     this.relationship = relationship;
   }
@@ -16,17 +15,17 @@ export default class RelatedResourceDecorator extends ResourceDecorator {
     if(!this._resourceFn) {
       var name = this.name;
       var relationship = this.relationship;
-      var promiseEndpointFactory = this.promiseEndpointFactory;
       var relationshipUtilities = this.relationshipUtilities;
       this._resourceFn = function(uriParams, recursiveCall = false) {
+        var promiseEndpointFactory = this.services.promiseEndpointFactory;
         if (relationship.async && this.isPersisted) {
           var endpoint;
           if (!this.relationships[name]) {
-            if (recursiveCall == false) {
+            if (recursiveCall === false) {
               endpoint = promiseEndpointFactory(() => {
                 return this.self().load().then((resource) => {
                   return resource[name](uriParams, true);
-                })
+                });
               });
             } else {
               throw "Error: Unable to find relationship, even on canonical resource";
@@ -50,7 +49,7 @@ export default class RelatedResourceDecorator extends ResourceDecorator {
             }
           }
         }
-      }
+      };
     }
 
     return this._resourceFn;
@@ -63,7 +62,7 @@ export default class RelatedResourceDecorator extends ResourceDecorator {
       var relationship = this.relationship;
       this._errorFn = function(uriParams) {
         if (this.relationships[name] instanceof TemplatedUrl) {
-          throw "Error: non-async relationships must be embedded"
+          throw "Error: non-async relationships must be embedded";
         } else {
           if (uriParams) {
             return this.relationships[name][uriParams];
@@ -83,10 +82,10 @@ export default class RelatedResourceDecorator extends ResourceDecorator {
       var name = this.name;
       var description = this.relationship.ResourceClass.resourceDescription;
       var relationship = this.relationship;
-      var promiseEndpointFactory = this.promiseEndpointFactory;
       this._endpointFn = function(uriParams = {}){
         // 'this' in here = Endpoint
 
+        var promiseEndpointFactory = this.services.promiseEndpointFactory;
         var newPromise = () => {
           return this.load().then((resource) => {
             if (relationship.async) {
@@ -97,7 +96,7 @@ export default class RelatedResourceDecorator extends ResourceDecorator {
               return endpoint;
             }
           });
-        }
+        };
 
         var newEndpoint = promiseEndpointFactory(newPromise);
 

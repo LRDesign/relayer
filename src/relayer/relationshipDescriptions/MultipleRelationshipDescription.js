@@ -1,23 +1,19 @@
 import RelationshipDescription from "./RelationshipDescription.js";
 
 export default class MultipleRelationshipDescription extends RelationshipDescription {
-  constructor( services, name, ResourceClass, initialValues) {
-    super( services, name, ResourceClass, initialValues );
-
-    this.embeddedRelationshipTransformerFactory = services.embeddedRelationshipTransformerFactory;
-    this.singleFromManyTransformerFactory       = services.singleFromManyTransformerFactory;
-    this.loadedDataEndpointFactory              = services.loadedDataEndpointFactory;
-  }
-
   embeddedEndpoint(parent, uriParams) {
+    var embeddedRelationshipTransformerFactory = parent.services.embeddedRelationshipTransformerFactory;
+    var singleFromManyTransformerFactory       = parent.services.singleFromManyTransformerFactory;
+    var loadedDataEndpointFactory              = parent.services.loadedDataEndpointFactory;
+
     var parentEndpoint = parent.self();
     var transformer;
     if (typeof uriParams == 'string') {
-      transformer = this.singleFromManyTransformerFactory(this.name, uriParams);
+      transformer = singleFromManyTransformerFactory(this.name, uriParams);
     } else {
-      transformer = this.embeddedRelationshipTransformerFactory(this.name);
+      transformer = embeddedRelationshipTransformerFactory(this.name);
     }
-    return this.loadedDataEndpointFactory(parentEndpoint, parent, transformer);
+    return loadedDataEndpointFactory(parentEndpoint, parent, transformer);
   }
 
   linkedEndpoint(parent, uriParams) {

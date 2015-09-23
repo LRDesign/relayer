@@ -1,6 +1,7 @@
 export default class ResourceBuilder {
   constructor( services, response, ResourceClass) {
-    this.transport = services.transport;
+    this.transport     = services.transport;
+    this.services      = services;
     this.ResourceClass = ResourceClass;
 
     this.templatedUrlFromUrlFactory        = services.templatedUrlFromUrlFactory;
@@ -15,7 +16,7 @@ export default class ResourceBuilder {
   }
 
   build(uriTemplate = null) {
-    var resource = new this.ResourceClass(this.response);
+    var resource = new this.ResourceClass(this.services, this.response);
     if (resource.pathGet("$.links.self")) {
       if (uriTemplate) {
         resource.templatedUrl = this.templatedUrlFromUrlFactory(uriTemplate, resource.pathGet("$.links.self"));

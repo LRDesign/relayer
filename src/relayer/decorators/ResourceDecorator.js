@@ -1,5 +1,5 @@
 export default class ResourceDecorator {
-  constructor(services, name){
+  constructor(description, name){
     this.name = name;
   }
 

@@ -1,13 +1,10 @@
 export default class RelationshipDescription {
-  constructor( services, name, ResourceClass, initialValues) {
+  constructor( description, name, ResourceClass, initialValues) {
     this.name = name;
     this.ResourceClass = ResourceClass;
     this.initialValues = initialValues;
 
-    this.initializer = services.relationshipInitializerFactory(ResourceClass, initialValues);
-    this.mapperFactory = services.resourceMapperFactory;
-    this.serializerFactory = services.resourceSerializerFactory;
-    this.inflector = services.inflector;
+    this.inflector = description.inflector;
 
     this.async = true;
     if (initialValues === undefined) {
@@ -35,6 +32,9 @@ export default class RelationshipDescription {
   set dataPath(dataPath) {
     this._dataPath = dataPath;
     return this._dataPath;
+  }
+
+  initializer(services) {
   }
 
   decorateEndpoint(endpoint, uriParams) {

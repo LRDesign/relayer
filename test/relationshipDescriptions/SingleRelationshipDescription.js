@@ -80,17 +80,6 @@ describe("SingleRelationshipDescription", function() {
       transport: mockTransport
     };
 
-    resource = {
-      self() {
-        return mockEndpoint;
-      },
-      pathGet(path) {
-        if (path == "$.links.awesome") {
-          return "/awesome";
-        }
-      }
-    };
-
     services = {
       transport: mockTransport,
       relationshipInitializerFactory,
@@ -104,6 +93,18 @@ describe("SingleRelationshipDescription", function() {
       templatedUrlFromUrlFactory
     };
 
+    resource = {
+      self() {
+        return mockEndpoint;
+      },
+      pathGet(path) {
+        if (path == "$.links.awesome") {
+          return "/awesome";
+        }
+      },
+      services
+    };
+
     singleRelationshipDescription = new SingleRelationshipDescription(
       services,
       name,
@@ -113,17 +114,7 @@ describe("SingleRelationshipDescription", function() {
   });
 
   it("should have the right initial values", function() {
-    expect(singleRelationshipDescription.initializer).toEqual({
-      thisResourceClass: ResourceClass,
-      thisInitialValues: initialValues});
-    expect(singleRelationshipDescription.mapperFactory).toEqual(resourceMapperFactory);
-    expect(singleRelationshipDescription.serializerFactory).toEqual(resourceSerializerFactory);
     expect(singleRelationshipDescription.inflector).toEqual(inflector);
-    expect(singleRelationshipDescription.primaryResourceTransformerFactory).toEqual(primaryResourceTransformerFactory);
-    expect(singleRelationshipDescription.embeddedRelationshipTransformerFactory).toEqual(embeddedRelationshipTransformerFactory);
-    expect(singleRelationshipDescription.resolvedEndpointFactory).toEqual(resolvedEndpointFactory);
-    expect(singleRelationshipDescription.loadedDataEndpointFactory).toEqual(loadedDataEndpointFactory);
-    expect(singleRelationshipDescription.templatedUrlFromUrlFactory).toEqual(templatedUrlFromUrlFactory);
     expect(singleRelationshipDescription.name).toEqual(name);
     expect(singleRelationshipDescription.ResourceClass).toEqual(ResourceClass);
     expect(singleRelationshipDescription.initialValues).toEqual(initialValues);
@@ -170,12 +161,12 @@ describe("SingleRelationshipDescription", function() {
           path: "$.links.awesome"
         }
       });
-      expect(linkedEndpoint.transformers).toEqual(
-        {
-          thisResourceMapperFactory: resourceMapperFactory,
-          thisResourceSerializerFactory: resourceSerializerFactory,
-          thisResourceClass: ResourceClass
-        });
+
+      expect(linkedEndpoint.transformers).toEqual({
+        thisResourceMapperFactory: resourceMapperFactory,
+        thisResourceSerializerFactory: resourceSerializerFactory,
+        thisResourceClass: ResourceClass
+      });
     });
 
     it("should setup the templated url", function() {

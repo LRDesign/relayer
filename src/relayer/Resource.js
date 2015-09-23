@@ -7,20 +7,21 @@ var paths = {
 };
 
 export default class Resource extends DataWrapper {
-  constructor(responseData) {
+  constructor(services, responseData) {
     super(responseData);
     if (!responseData) {
       this.emptyData();
     }
-    this.errorReason = null;
-    this.templatedUrl = null
-    this.resolved = false;
-    this._dirty = false;
+    this.services     = services;
+    this.errorReason  = null;
+    this.templatedUrl = null;
+    this.resolved     = false;
+    this._dirty       = false;
   }
 
   static get relationships() {
     if (!this.hasOwnProperty("_relationships")) {
-      this._relationships = Object.create(this._relationships || {})
+      this._relationships = Object.create(this._relationships || {});
     }
     return this._relationships;
   }
@@ -55,7 +56,7 @@ export default class Resource extends DataWrapper {
 
   create(resource, res, rej) {
     if (this.isPersisted) {
-      return this.self().create(resource, res, rej)
+      return this.self().create(resource, res, rej);
     }
   }
 
@@ -120,14 +121,14 @@ export default class Resource extends DataWrapper {
 
   emptyData(){
 
-    this._response = { data: {}, links: {} }
+    this._response = { data: {}, links: {} };
     this.initialValues.forEach((initialValue) => {
       this.pathBuild(initialValue.path, initialValue.value);
     });
     Object.keys(this.constructor.relationships).forEach((relationshipName) => {
-      var relationshipDescription = this.constructor.relationships[relationshipName]
+      var relationshipDescription = this.constructor.relationships[relationshipName];
       if (relationshipDescription.initializeOnCreate) {
-        var relationship = relationshipDescription.initializer.initialize();
+        var relationship = relationshipDescription.initializer(this.services).initialize();
         this.relationships[relationshipName] = relationship;
       }
     });

@@ -1,4 +1,5 @@
 import Inflector                           from "xing-inflector";
+import Locator                             from "./Locator.js";
 import ListResource                        from "./ListResource.js";
 import {TemplatedUrl, TemplatedUrlFromUrl} from "./TemplatedUrl.js";
 import ResourceBuilder                     from "./ResourceBuilder.js";
@@ -10,117 +11,47 @@ import UrlHelper                           from "./UrlHelper.js";
 
 import * as Mappers from "./mappers.js";
 import * as Serializers from "./serializers.js";
-import * as Decs from "./decorators.js";
-import * as RelDescs from "./relationshipDescriptions.js";
 import * as Endpoints from "./endpoints.js";
 import * as Initializers from "./initializers.js";
 import * as Transformers from "./transformers.js";
 
-export default class ServiceLocator {
+export default class ServiceLocator extends Locator {
   constructor() {
-    this.memos = {};
+    super();
     this._buildThenable = ((resolver) => new Promise(resolver));
   }
 
-  // tools
-  injectSelf(buildClass, ...args){
-    return new buildClass(this, ...args);
-  }
-
-  memoize(name, builder) {
-    if(!this.memos[name]) {
-      this.memos[name] = builder();
-    }
-    return this.memos[name];
-  }
-
-  mustHave(name) {
-    if(this.memos[name]){
-      return this.memos[name];
-    } else {
-      throw new Error(`Configuration error: ${name} not set on Relayer ServiceLocator`);
-    }
-  }
-
-  remember(name, value) {
-    this.memos[name] = value;
-  }
-
-  forget(name){
-    this.memos[name] = null;
-  }
-
-  set baseUrl(url){
-    this.remember("baseUrl", url);
-  }
-
-  get baseUrl() {
-    return this.mustHave("baseUrl");
-  }
-
-  set transport(value) {
-    this.remember("transport", value);
-  }
-
-  get transport() {
-    return this.mustHave("transport");
-  }
-
-  get thenableBuilder() {
-    return this._buildThenable;
-  }
-
-  set thenableBuilder(builder) {
-    this._buildThenable = builder;
-    this.forget("promise");
-    return builder;
-  }
-
   get inflector() { return this.memoize("inflector", () => new Inflector()); }
-  get urlHelper() { return this.memoize("urlHelper", () => new UrlHelper(this.baseUrl)); }
   get Promise()   { return this.memoize("promise",   () => wrapPromise(this._thenable)); }
 
-  ListResourceFactory(...args)                     { return this.injectSelf(ListResource, ...args); }
+  get ListResourceFactory()                    { return (...args) => this.injectSelf(ListResource, ...args); }
+  get templatedUrlFactory()                    { return (...args) => this.injectSelf(TemplatedUrl, ...args); }
+  get templatedUrlFromUrlFactory()             { return (...args) => this.injectSelf(TemplatedUrlFromUrl, ...args); }
 
-  templatedUrlFactory (...args)                    { return this.injectSelf(TemplatedUrl, ...args); }
-  templatedUrlFromUrlFactory (...args)             {
-    console.log(args);
-    return this.injectSelf(TemplatedUrlFromUrl, ...args); }
+  get resourceBuilderFactory()                 { return (...args) => this.injectSelf(ResourceBuilder, ...args); }
+  get primaryResourceBuilderFactory()          { return (...args) => this.injectSelf(PrimaryResourceBuilder, ...args); }
 
-  resourceBuilderFactory (...args)                 { return this.injectSelf(ResourceBuilder, ...args); }
-  primaryResourceBuilderFactory (...args)          { return this.injectSelf(PrimaryResourceBuilder, ...args); }
+  get resourceDescriptionFactory()             { return (...args) => this.injectSelf(ResourceDescription, ...args); }
 
-  resourceDescriptionFactory (...args)             { return this.injectSelf(ResourceDescription, ...args); }
+  get manyRelationshipInitializerFactory()     { return (...args) => this.injectSelf(Initializers.ManyRelationshipInitializer, ...args); }
+  get singleRelationshipInitializerFactory()   { return (...args) => this.injectSelf(Initializers.SingleRelationshipInitializer, ...args); }
+  get relationshipInitializerFactory()         { return (...args) => this.injectSelf(Initializers.RelationshipInitializer, ...args); }
 
-  manyRelationshipInitializerFactory(...args)      { return this.injectSelf(Initializers.ManyRelationshipInitializer, ...args); }
-  singleRelationshipInitializerFactory(...args)    { return this.injectSelf(Initializers.SingleRelationshipInitializer, ...args); }
-  relationshipInitializerFactory (...args)         { return this.injectSelf(Initializers.RelationshipInitializer, ...args); }
+  get resourceMapperFactory()                  { return (...args) => this.injectSelf(Mappers.ResourceMapper, ...args); }
+  get manyResourceMapperFactory()              { return (...args) => this.injectSelf(Mappers.ManyResourceMapper, ...args); }
 
-  resourceMapperFactory (...args)                  { return this.injectSelf(Mappers.ResourceMapper, ...args); }
-  manyResourceMapperFactory(...args)               { return this.injectSelf(Mappers.ManyResourceMapper, ...args); }
+  get resourceSerializerFactory()              { return (...args) => this.injectSelf(Serializers.ResourceSerializer, ...args); }
+  get manyResourceSerializerFactory()          { return (...args) => this.injectSelf(Serializers.ManyResourceSerializer, ...args); }
 
-  resourceSerializerFactory (...args)              { return this.injectSelf(Serializers.ResourceSerializer, ...args); }
-  manyResourceSerializerFactory (...args)          { return this.injectSelf(Serializers.ManyResourceSerializer, ...args); }
+  get resolvedEndpointFactory()                { return (...args) => this.injectSelf(Endpoints.ResolvedEndpoint, ...args); }
+  get promiseEndpointFactory()                 { return (...args) => this.injectSelf(Endpoints.PromiseEndpoint, ...args); }
+  get loadedDataEndpointFactory()              { return (...args) => this.injectSelf(Endpoints.LoadedDataEndpoint, ...args); }
 
-  jsonPropertyDecoratorFactory (...args)           { return this.injectSelf(Decs.JsonPropertyDecorator, ...args); }
-  relatedResourceDecoratorFactory (...args)        { return this.injectSelf(Decs.RelatedResourceDecorator, ...args); }
-
-  singleRelationshipDescriptionFactory (...args)   { return this.injectSelf(RelDescs.SingleRelationshipDescription, ...args); }
-  manyRelationshipDescriptionFactory (...args)     { return this.injectSelf(RelDescs.ManyRelationshipDescription, ...args); }
-  listRelationshipDescriptionFactory (...args)     { return this.injectSelf(RelDescs.ListRelationshipDescription, ...args); }
-  mapRelationshipDescriptionFactory (...args)      { return this.injectSelf(RelDescs.MapRelationshipDescription, ...args); }
-
-  resolvedEndpointFactory (...args)                { return this.injectSelf(Endpoints.ResolvedEndpoint, ...args); }
-  promiseEndpointFactory (...args)                 { return this.injectSelf(Endpoints.PromiseEndpoint, ...args); }
-  loadedDataEndpointFactory (...args)              { return this.injectSelf(Endpoints.LoadedDataEndpoint, ...args); }
-
-  primaryResourceTransformerFactory (...args)      { return this.injectSelf(Transformers.PrimaryResourceTransformer, ...args); }
-  throwErrorTransformerFactory (...args)           { return this.injectSelf(Transformers.ThrowErrorTransformer, ...args); }
-  embeddedPropertyTransformerFactory (...args)     { return this.injectSelf(Transformers.EmbeddedPropertyTransformer, ...args); }
-  embeddedRelationshipTransformerFactory (...args) { return this.injectSelf(Transformers.EmbeddedRelationshipTransformer, ...args); }
-  individualFromListTransformerFactory (...args)   { return this.injectSelf(Transformers.IndividualFromListTransformer, ...args); }
-  createResourceTransformerFactory (...args)       { return this.injectSelf(Transformers.CreateResourceTransformer, ...args); }
-  singleFromManyTransformerFactory (...args)       { return this.injectSelf(Transformers.SingleFromManyTransformer, ...args); }
-
-
+  get primaryResourceTransformerFactory()      { return (...args) => this.injectSelf(Transformers.PrimaryResourceTransformer, ...args); }
+  get throwErrorTransformerFactory()           { return (...args) => this.injectSelf(Transformers.ThrowErrorTransformer, ...args); }
+  get embeddedPropertyTransformerFactory()     { return (...args) => this.injectSelf(Transformers.EmbeddedPropertyTransformer, ...args); }
+  get embeddedRelationshipTransformerFactory() { return (...args) => this.injectSelf(Transformers.EmbeddedRelationshipTransformer, ...args); }
+  get individualFromListTransformerFactory()   { return (...args) => this.injectSelf(Transformers.IndividualFromListTransformer, ...args); }
+  get createResourceTransformerFactory()       { return (...args) => this.injectSelf(Transformers.CreateResourceTransformer, ...args); }
+  get singleFromManyTransformerFactory()       { return (...args) => this.injectSelf(Transformers.SingleFromManyTransformer, ...args); }
 }
