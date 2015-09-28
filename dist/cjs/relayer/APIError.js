@@ -25,10 +25,10 @@ var APIError = (function (_DataWrapper) {
     _classCallCheck(this, APIError);
 
     _get(Object.getPrototypeOf(APIError.prototype), "constructor", this).call(this);
-    this._response = responseData.data;
+    this._response = responseData;
     this.unhandled = [];
-    if (this.jsonPaths) {
-      this.unhandled = Object.getOwnPropertyNames(this.jsonPaths).filter(function (name) {
+    if (this.constructor.properties) {
+      this.unhandled = Object.keys(this.constructor.properties).filter(function (name) {
         return _this[name] && _this[name].message;
       }).map(function (name) {
         return name;

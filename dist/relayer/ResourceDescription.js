@@ -29,9 +29,10 @@ export class InitializedResourceClasses {
       var resourceClass = resourceToInitialize.resourceClass;
       var resourceDescription = resourceClass.resourceDescription;
       var errorClass = function (responseData) {
-        APIError.call(this);
+        APIError.call(this, responseData);
       }
       errorClass.relationships = {};
+      errorClass.properties = {};
       errorClass.prototype = Object.create(APIError.prototype);
       errorClass.prototype.constructor = errorClass;
       resourceDescription.applyToResource(resourceClass.prototype);

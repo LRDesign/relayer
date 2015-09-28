@@ -1,3 +1,10 @@
+0.1.0 09-28-2015
+================
+* Fix error responses
+* Fix delete action
+* denormalize url since it's referenced so often
+* Add a few checks to prevent JS errors on new resources
+
 0.0.9 09-07-2015
 ================
 * Allow customized list resources
