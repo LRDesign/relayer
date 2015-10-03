@@ -1,7 +1,7 @@
 import PrimaryResourceBuilder from "../src/relayer/PrimaryResourceBuilder.js";
 
 class PrimaryResource {
-  constructor(response) {
+  constructor(services, response) {
     this.transport = null;
     this.templatedUrl = null;
     this.response = response;

@@ -1,4 +1,4 @@
-import {TemplatedUrl, TemplatedUrlFromUrl} from "../src/relayer/TemplatedUrl.js"
+import {TemplatedUrl, TemplatedUrlFromUrl} from "../src/relayer/TemplatedUrl.js";
 
 describe("TemplatedUrl", function() {
   var templatedUrl;
@@ -19,8 +19,8 @@ describe("TemplatedUrl", function() {
       });
 
       it("should have the right url", function() {
-        expect(templatedUrl.url).toEqual("/cheese/4")
-      })
+        expect(templatedUrl.url).toEqual("/cheese/4");
+      });
     });
 
   });
@@ -41,8 +41,8 @@ describe("TemplatedUrl", function() {
       });
 
       it("should have the right url", function() {
-        expect(templatedUrl.url).toEqual("/cheese/4")
-      })
+        expect(templatedUrl.url).toEqual("/cheese/4");
+      });
     });
   });
 
@@ -63,10 +63,10 @@ describe("TemplatedUrl", function() {
 
         pathSet(param, value) {
           if (param === "$.links.self") {
-            this.links.self = value
+            this.links.self = value;
           }
         }
-      }
+      };
       mockOtherResource = {
         links: {
           cheese: "/cheese/4"
@@ -80,10 +80,10 @@ describe("TemplatedUrl", function() {
 
         pathSet(param, value) {
           if (param === "$.links.cheese") {
-            this.links.cheese = value
+            this.links.cheese = value;
           }
         }
-      }
+      };
 
       templatedUrl = new TemplatedUrl("/cheese/{cheese}", {cheese: '4'});
     });
@@ -95,13 +95,13 @@ describe("TemplatedUrl", function() {
     });
 
     it("when I add a data path link it should update previous data path links", function() {
-      templatedUrl.addDataPathLink(mockOtherResource, "$.links.cheese")
+      templatedUrl.addDataPathLink(mockOtherResource, "$.links.cheese");
       templatedUrl.addDataPathLink(mockResource, "$.links.self");
-      expect(mockOtherResource.links.cheese).toEqual("/cheese/5")
+      expect(mockOtherResource.links.cheese).toEqual("/cheese/5");
     });
 
     it("when I add with no overwrite", function() {
-      templatedUrl.addDataPathLink(mockOtherResource, "$.links.cheese")
+      templatedUrl.addDataPathLink(mockOtherResource, "$.links.cheese");
       templatedUrl.addDataPathLink(mockResource, "$.links.self", false);
       expect(mockResource.links.self).toEqual("/cheese/4");
       expect(mockOtherResource.links.cheese).toEqual("/cheese/4");
@@ -124,11 +124,11 @@ describe("TemplatedUrl", function() {
 
           pathSet(param, value) {
             if (param === "$.links.thing") {
-              this.links.thing = value
+              this.links.thing = value;
             }
           }
-        }
-        templatedUrl.addDataPathLink(mockOtherResource, "$.links.cheese")
+        };
+        templatedUrl.addDataPathLink(mockOtherResource, "$.links.cheese");
         templatedUrl.addDataPathLink(mockResource, "$.links.self");
       });
 
@@ -138,7 +138,7 @@ describe("TemplatedUrl", function() {
         templatedUrl.removeDataPathLink(mockOtherResource, "$.links.cheese");
         templatedUrl.addDataPathLink(mockFinalResource, "$.links.thing");
         expect(mockResource.links.self).toEqual("/cheese/6");
-        expect(mockOtherResource.links.cheese).toEqual("/cheese/5")
+        expect(mockOtherResource.links.cheese).toEqual("/cheese/5");
       });
     });
   });

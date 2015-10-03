@@ -1,5 +1,6 @@
 export default class Serializer {
-  constructor(resource) {
+  constructor(services, resource) {
+    this.services = services;
     this.resource = resource;
   }
 

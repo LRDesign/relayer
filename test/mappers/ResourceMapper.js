@@ -66,15 +66,16 @@ describe("ResourceMapper", function() {
 
     mockEndpoint = {};
 
-    resourceBuilderFactory = jasmine.createSpy("resourceBuilderFactory").and.callFake(function(thisResponse, thisMapperFactory, thisSerializerFactory, ThisResourceClass) {
-      return {
-        build(uriTemplate) {
-          var thisResource = new ThisResourceClass(thisResponse);
-          thisResource.uriTemplate = uriTemplate;
-          return thisResource;
-        }
-      };
-    });
+    resourceBuilderFactory = jasmine.createSpy("resourceBuilderFactory").and.callFake(
+      function(thisResponse, thisMapperFactory, thisSerializerFactory, ThisResourceClass) {
+        return {
+          build(uriTemplate) {
+            var thisResource = new ThisResourceClass(thisResponse);
+            thisResource.uriTemplate = uriTemplate;
+            return thisResource;
+          }
+        };
+      });
 
     primaryResourceBuilderFactory = jasmine.createSpy("primaryResourceBuilderFactory").and.callFake(function(thisResponse, ThisResourceClass) {
       return {

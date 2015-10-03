@@ -1,5 +1,6 @@
 import RL from "../../src/relayer.js";
 import {Module, Injector, Config} from "a1atscript";
+import wrapQ from '../../src/relayer/Promise.js';
 
 
 var pageLayouts = {
@@ -90,6 +91,9 @@ class Page extends RL.Resource {
 
 }
 
+class Content extends RL.Resource {
+}
+
 RL.Describe(Page, (desc) => {
   desc.property("layout", "one_column", { afterSet() { this.setupContents(); } });
   desc.property("title", "");
@@ -98,18 +102,12 @@ RL.Describe(Page, (desc) => {
   desc.property("publishStart", "");
   desc.property("publishEnd", "");
   desc.property("urlSlug", "");
-  var contents = desc.hasMap("contents",
-                             Content,
-                             {
-                               styles: { type: "text/css" },
-                               headline: { type: "text/html"}
-                             }
-                            );
-                            contents.async = false;
+  var contents = desc.hasMap("contents", Content, {
+    styles: { type: "text/css" },
+    headline: { type: "text/html"}
+  });
+  contents.async = false;
 });
-
-class Content extends RL.Resource {
-}
 
 RL.Describe(Content, (desc) => {
   desc.property("contentType", "");
@@ -138,7 +136,7 @@ class AppConfig {
 
 var AppModule = new Module("AppModule", [RL, AppConfig.prototype]);
 
-xdescribe("Page test", function() {
+describe("Page test", function() {
 
   var mockHttp, resources, $rootScope;
 
@@ -193,6 +191,8 @@ xdescribe("Page test", function() {
 
     mockHttp = function(Promise, params) {
       if (params.method == "GET" && params.url == "http://www.example.com/resources") {
+        console.log("integration/PageTest.js:194", "Promise", Promise);
+      console.log("integration/PageTest.js:194", "Promise.resolve", Promise.resolve);
         return Promise.resolve({
           status: 200,
           headers() {
@@ -253,8 +253,9 @@ xdescribe("Page test", function() {
     angular.mock.module('AppModule');
     angular.mock.module(function($provide) {
       $provide.factory("$http", function($q) {
+        var Promise = wrapQ((resolver) => $q(resolver));
         return function(params) {
-          return mockHttp($q, params);
+          return mockHttp(Promise, params);
         };
       });
     });
@@ -269,7 +270,6 @@ xdescribe("Page test", function() {
 
     beforeEach(function() {
       page = resources.pages().new();
-
     });
 
     it('should have defined values on all getters', function() {

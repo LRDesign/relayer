@@ -4,6 +4,8 @@ describe("JsonPropertyDecorator", function() {
   var loadedDataEndpointFactory,
     embeddedPropertyTransformerFactory,
     promiseEndpointFactory,
+    description,
+    services,
     name,
     path,
     value,
@@ -40,7 +42,11 @@ describe("JsonPropertyDecorator", function() {
       }
     };
 
+    services = { loadedDataEndpointFactory, embeddedPropertyTransformerFactory, promiseEndpointFactory};
+    description = {};
+
     resource = {
+      services,
       _awesome: "Festering",
       self() {
         return mockEndpoint;
@@ -65,11 +71,13 @@ describe("JsonPropertyDecorator", function() {
     mockEndpoint = {
       load() {
         return Promise.resolve(resource);
-      }
+      },
+      services
     };
 
+
     jsonPropertyDecorator = new JsonPropertyDecorator(
-      { loadedDataEndpointFactory, embeddedPropertyTransformerFactory, promiseEndpointFactory},
+      description,
       name,
       path,
       value,

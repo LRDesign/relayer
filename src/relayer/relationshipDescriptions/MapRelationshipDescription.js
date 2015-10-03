@@ -1,4 +1,19 @@
 import MultipleRelationshipDescription from "./MultipleRelationshipDescription.js";
 
-//XXX Why do we need this subclass, either?
-export default class MapRelationshipDescription extends MultipleRelationshipDescription { }
+export default class MapRelationshipDescription extends MultipleRelationshipDescription {
+  constructor(...args){
+    super(...args);
+  }
+
+  initializerFactory(services){
+    return services.mapRelationshipInitializerFactory;
+  }
+
+  mapperFactory(services) {
+    return services.mapResourceMapperFactory;
+  }
+
+  serializerFactory(services) {
+    return services.mapResourceSerializerFactory;
+  }
+}

@@ -2,7 +2,9 @@ import ListRelationshipDescription from "../../src/relayer/relationshipDescripti
 
 describe("ListRelationshipDescription", function() {
   var services,
+  description,
   relationshipInitializerFactory,
+  listRelationshipInitializerFactory,
   resourceMapperFactory,
   resourceSerializerFactory,
   inflector,
@@ -25,7 +27,7 @@ describe("ListRelationshipDescription", function() {
 
   beforeEach(function() {
 
-    relationshipInitializerFactory = jasmine.createSpy("relationshipInitializerFactory").and.callFake(
+    listRelationshipInitializerFactory = jasmine.createSpy("relationshipInitializerFactory").and.callFake(
       function (thisResourceClass, thisInitialValues) {
       return { thisResourceClass, thisInitialValues };
     });
@@ -106,7 +108,28 @@ describe("ListRelationshipDescription", function() {
       transport: mockTransport
     };
 
+    services = {
+      transport: mockTransport,
+      relationshipInitializerFactory,
+      listRelationshipInitializerFactory,
+      resourceMapperFactory,
+      resourceSerializerFactory,
+      primaryResourceTransformerFactory,
+      embeddedRelationshipTransformerFactory,
+      individualFromListTransformerFactory,
+      createResourceTransformerFactory,
+      resolvedEndpointFactory,
+      loadedDataEndpointFactory,
+      templatedUrlFromUrlFactory,
+      templatedUrlFactory,
+    };
+
+    description = {
+      inflector
+    };
+
     resource = {
+      services,
       self() {
         return mockEndpoint;
       },
@@ -120,24 +143,8 @@ describe("ListRelationshipDescription", function() {
     };
     linkTemplate = "awesome";
 
-    services = {
-      transport: mockTransport,
-      relationshipInitializerFactory,
-      resourceMapperFactory,
-      resourceSerializerFactory,
-      inflector,
-      primaryResourceTransformerFactory,
-      embeddedRelationshipTransformerFactory,
-      individualFromListTransformerFactory,
-      createResourceTransformerFactory,
-      resolvedEndpointFactory,
-      loadedDataEndpointFactory,
-      templatedUrlFromUrlFactory,
-      templatedUrlFactory,
-    };
-
     listRelationshipDescription = new ListRelationshipDescription(
-      services,
+      description,
       name,
       ResourceClass,
       initialValues
@@ -145,31 +152,23 @@ describe("ListRelationshipDescription", function() {
     listRelationshipDescription.linkTemplate = linkTemplate;
   });
 
-  it("should have the right initial values", function() {
-    expect(listRelationshipDescription.initializer).toEqual({
+  it("should initialize a relationship", function(){
+    expect(listRelationshipDescription.initializer(services)).toEqual({
       thisResourceClass: ResourceClass,
-      thisInitialValues: initialValues});
-      expect(listRelationshipDescription.mapperFactory).toEqual(resourceMapperFactory);
-      expect(listRelationshipDescription.serializerFactory).toEqual(resourceSerializerFactory);
-      expect(listRelationshipDescription.inflector).toEqual(inflector);
-      expect(listRelationshipDescription.singleResourceMapperFactory).toEqual(resourceMapperFactory);
-      expect(listRelationshipDescription.singleResourceSerializerFactory).toEqual(resourceSerializerFactory);
-      expect(listRelationshipDescription.primaryResourceTransformerFactory).toEqual(primaryResourceTransformerFactory);
-      expect(listRelationshipDescription.embeddedRelationshipTransformerFactory).toEqual(embeddedRelationshipTransformerFactory);
-      expect(listRelationshipDescription.individualFromListTransformerFactory).toEqual(individualFromListTransformerFactory);
-      expect(listRelationshipDescription.resolvedEndpointFactory).toEqual(resolvedEndpointFactory);
-      expect(listRelationshipDescription.loadedDataEndpointFactory).toEqual(loadedDataEndpointFactory);
-      expect(listRelationshipDescription.templatedUrlFromUrlFactory).toEqual(templatedUrlFromUrlFactory);
-      expect(listRelationshipDescription.templatedUrlFactory).toEqual(templatedUrlFactory);
-      expect(listRelationshipDescription.name).toEqual(name);
-      expect(listRelationshipDescription.ResourceClass).toEqual(ResourceClass);
-      expect(listRelationshipDescription.initialValues).toEqual(initialValues);
-      expect(listRelationshipDescription.async).toBe(true);
-      expect(listRelationshipDescription.canCreate).toBe(false);
-      expect(listRelationshipDescription._linkTemplatePath).toBe("$.links.awesome");
-      expect(listRelationshipDescription.linksPath).toEqual("$.links.awesomes");
-      expect(listRelationshipDescription.dataPath).toEqual("$.data.awesomes");
+      thisInitialValues: initialValues
+    });
+  });
 
+  it("should have the right initial values", function() {
+    expect(listRelationshipDescription.inflector).toEqual(inflector);
+    expect(listRelationshipDescription.name).toEqual(name);
+    expect(listRelationshipDescription.ResourceClass).toEqual(ResourceClass);
+    expect(listRelationshipDescription.initialValues).toEqual(initialValues);
+    expect(listRelationshipDescription.async).toBe(true);
+    expect(listRelationshipDescription.canCreate).toBe(false);
+    expect(listRelationshipDescription._linkTemplatePath).toBe("$.links.awesome");
+    expect(listRelationshipDescription.linksPath).toEqual("$.links.awesomes");
+    expect(listRelationshipDescription.dataPath).toEqual("$.data.awesomes");
   });
 
   describe("embeddedEndpoint", function() {

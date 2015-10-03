@@ -9,7 +9,7 @@ export default class ResourceSerializer extends Serializer {
       var relationship = this.resource.relationships[relationshipName];
       if (!(relationship instanceof TemplatedUrl)) {
         var relationshipDefinition = this.resource.constructor.relationships[relationshipName];
-        var serializer = relationshipDefinition.serializerFactory(relationship);
+        var serializer = relationshipDefinition.serializerFactory(this.services)(relationship);
         this.resource.pathSet(relationshipDefinition.dataPath, serializer.serialize());
       }
     });

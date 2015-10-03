@@ -20,7 +20,7 @@ describe("ResourceBuilder", function() {
   transport;
 
   beforeEach(function() {
-    ResourceClass = function(resource) {
+    ResourceClass = function(services, resource) {
       this.pathGet = function(path) {
         if (path == "$.links.self") {
           return "/cheese/gouda";
@@ -57,7 +57,7 @@ describe("ResourceBuilder", function() {
     throwErrorTransformerFactory = jasmine.createSpy("throwErrorTransformerFactory").and.returnValue(throwErrorTransformer);
 
     resource = {
-      propreties: "dummy"
+      properties: "dummy"
     };
 
     transport = {};

@@ -3,8 +3,14 @@ export default class Locator {
     this.memos = {};
   }
 
-  injectSelf(buildClass, ...args){
-    return new buildClass(this, ...args);
+  buildFn(buildClass){
+    return (...args) => new buildClass(...args);
+  }
+
+  applySelfToBuilder(buildClass){
+    return (...args) => {
+      return this.buildFn(buildClass)(this, ...args);
+    };
   }
 
   memoize(name, builder) {

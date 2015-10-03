@@ -1,9 +1,10 @@
 export default class Mapper {
-  constructor(services, transport, response, ResourceClass) {
-    this.transport = transport;
+  constructor(services, response, ResourceClass) {
+    this.services = services;
     this.response = response;
     this.ResourceClass = ResourceClass;
 
+    this.transport = services.transport;
     this.mapperFactory = services.resourceMapperFactory;
     this.serializerFactory = services.resourceSerializerFactory;
   }

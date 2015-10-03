@@ -35,6 +35,7 @@ export default class RelationshipDescription {
   }
 
   initializer(services) {
+    return this.initializerFactory(services)(this.ResourceClass, this.initialValues);
   }
 
   decorateEndpoint(endpoint, uriParams) {

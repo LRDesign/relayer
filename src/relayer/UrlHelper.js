@@ -1,5 +1,6 @@
 export default class UrlHelper {
   constructor(baseUrl) {
+    this.wellKnownUrl = this.fullUrlRegEx.exec(baseUrl)[3];
     if (this.isFullUrl(baseUrl)) {
       baseUrl = this.fullUrlRegEx.exec(baseUrl)[1];
     }

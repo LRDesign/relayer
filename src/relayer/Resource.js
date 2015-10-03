@@ -9,10 +9,10 @@ var paths = {
 export default class Resource extends DataWrapper {
   constructor(services, responseData) {
     super(responseData);
+    this.services     = services;
     if (!responseData) {
       this.emptyData();
     }
-    this.services     = services;
     this.errorReason  = null;
     this.templatedUrl = null;
     this.resolved     = false;

@@ -6,13 +6,14 @@ class Something extends Resource {
 
 }
 describe("RelationshipUtilities", function() {
-  var relationshipUtilities, resource, target, name;
+  var services, relationshipUtilities, resource, target, name;
 
   beforeEach(function() {
-    resource = new Something({ data: {}, links: { cheese: ""}});
+    services = {};
+    resource = new Something(services, { data: {}, links: { cheese: ""}});
     Something.relationships[name] = {
       linksPath: "$.links.cheese"
-    }
+    };
     target = {};
 
     name = "cheese";
@@ -62,7 +63,7 @@ describe("RelationshipUtilities", function() {
     describe("for template url", function() {
       var initialTemplatedUrl, newTemplatedUrl, otherResource;
       beforeEach(function() {
-        otherResource = new Something({data: {}, links: { cheese: "/cheese/5"}});
+        otherResource = new Something(services, {data: {}, links: { cheese: "/cheese/5"}});
         initialTemplatedUrl = new TemplatedUrlFromUrl("/cheese/{cheese}", "/cheese/4");
         resource.relationships[name] = initialTemplatedUrl;
         initialTemplatedUrl.addDataPathLink(resource, "$.links.cheese", false);
@@ -73,7 +74,7 @@ describe("RelationshipUtilities", function() {
         expect(resource.pathGet('$.links.cheese')).toEqual("/cheese/4");
         target.set(newTemplatedUrl);
         initialTemplatedUrl.addDataPathLink(otherResource, "$.links.cheese");
-        expect(initialTemplatedUrl.url).toEqual("/cheese/5")
+        expect(initialTemplatedUrl.url).toEqual("/cheese/5");
         expect(resource.relationships[name]).toEqual(newTemplatedUrl);
         expect(resource.pathGet('$.links.cheese')).toEqual("/baggins/bilbo");
       });
@@ -81,7 +82,7 @@ describe("RelationshipUtilities", function() {
       it("on reassignment to empty it should set the link blank and disconnect", function() {
         target.set(undefined);
         initialTemplatedUrl.addDataPathLink(otherResource, "$.links.cheese");
-        expect(initialTemplatedUrl.url).toEqual("/cheese/5")
+        expect(initialTemplatedUrl.url).toEqual("/cheese/5");
         expect(Object.keys(resource.relationships)).not.toContain(name);
         expect(resource.pathGet('$.links.cheese')).toEqual("");
       });
@@ -108,9 +109,9 @@ describe("RelationshipUtilities", function() {
 
       it("should simply reassign the relationship", function() {
         target.set("bogus");
-        expect(resource.relationships[name]).toEqual("bogus")
+        expect(resource.relationships[name]).toEqual("bogus");
       });
     });
   });
 
-})
+});

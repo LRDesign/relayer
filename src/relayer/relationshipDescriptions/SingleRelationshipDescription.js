@@ -31,4 +31,15 @@ export default class SingleRelationshipDescription extends RelationshipDescripti
     return resolvedEndpointFactory(templatedUrl, primaryResourceTransformer);
   }
 
+  initializerFactory(services) {
+    return services.singleRelationshipInitializerFactory;
+  }
+
+  mapperFactory(services) {
+    return services.resourceMapperFactory;
+  }
+
+  serializerFactory(services) {
+    return services.resourceSerializerFactory;
+  }
 }

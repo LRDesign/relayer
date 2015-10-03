@@ -2,7 +2,9 @@ import RelatedResourceDecorator from "../../src/relayer/decorators/RelatedResour
 import {TemplatedUrl} from "../../src/relayer/TemplatedUrl.js";
 
 describe("RelatedResourceDecorator", function() {
-  var services,
+  var description,
+  services,
+  endpointPromise,
   promiseEndpointFactory,
   relationshipUtilities,
   name,
@@ -19,11 +21,12 @@ describe("RelatedResourceDecorator", function() {
   result;
 
   beforeEach(function() {
-
     promiseEndpointFactory = jasmine.createSpy("promiseEndpointFactory").and.callFake(
       function(endpointPromise) {
         return { endpointPromise };
       });
+
+    services = { promiseEndpointFactory };
 
     name = "awesome";
 
@@ -34,6 +37,7 @@ describe("RelatedResourceDecorator", function() {
     };
 
     OtherResourceClass = function() {
+      this.services = services;
       this.isPersisted = true;
       this.relationships = {
         "awesome": { value: "isHere" }
@@ -66,7 +70,10 @@ describe("RelatedResourceDecorator", function() {
 
     resource = new OtherResourceClass();
 
+    description = {};
+
     mockEndpoint = {
+      services,
       load() {
         return Promise.resolve(resource);
       }
@@ -78,12 +85,8 @@ describe("RelatedResourceDecorator", function() {
       }
     };
 
-    services = {
-      promiseEndpointFactory
-    };
-
     relatedResourceDecorator = new RelatedResourceDecorator(
-      services,
+      description,
       name,
       relationship,
       relationshipUtilities

@@ -11,13 +11,13 @@ export default class ResourceDescription extends Locator {
     this.parentDescription = null; //automated inheritance?
   }
 
-  get jsonPropertyDecoratorFactory()         { return (...args) => this.injectSelf(Decs.JsonPropertyDecorator, ...args); }
-  get relatedResourceDecoratorFactory()      { return (...args) => this.injectSelf(Decs.RelatedResourceDecorator, ...args); }
+  get jsonPropertyDecoratorFactory()         { return this.applySelfToBuilder(Decs.JsonPropertyDecorator); }
+  get relatedResourceDecoratorFactory()      { return this.applySelfToBuilder(Decs.RelatedResourceDecorator); }
 
-  get singleRelationshipDescriptionFactory() { return (...args) => this.injectSelf(RelDescs.SingleRelationshipDescription, ...args); }
-  get manyRelationshipDescriptionFactory()   { return (...args) => this.injectSelf(RelDescs.ManyRelationshipDescription, ...args); }
-  get listRelationshipDescriptionFactory ()  { return (...args) => this.injectSelf(RelDescs.ListRelationshipDescription, ...args); }
-  get mapRelationshipDescriptionFactory ()   { return (...args) => this.injectSelf(RelDescs.MapRelationshipDescription, ...args); }
+  get singleRelationshipDescriptionFactory() { return this.applySelfToBuilder(RelDescs.SingleRelationshipDescription); }
+  get manyRelationshipDescriptionFactory()   { return this.applySelfToBuilder(RelDescs.ManyRelationshipDescription); }
+  get listRelationshipDescriptionFactory ()  { return this.applySelfToBuilder(RelDescs.ListRelationshipDescription); }
+  get mapRelationshipDescriptionFactory ()   { return this.applySelfToBuilder(RelDescs.MapRelationshipDescription); }
 
   chainFrom(other){
     if(this.parentDescription && this.parentDescription !== other){

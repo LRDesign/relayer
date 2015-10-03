@@ -1,6 +1,6 @@
 import ListResourceMapper from "../../src/relayer/mappers/ListResourceMapper.js";
 
-describe("ListResourceMapper", function() {
+ddescribe("ListResourceMapper", function() {
   var services,
   listResourceFactory,
   manyResourceMapper,

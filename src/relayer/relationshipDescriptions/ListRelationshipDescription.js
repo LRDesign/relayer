@@ -8,6 +8,18 @@ export default class ListRelationshipDescription extends RelationshipDescription
     this._linkTemplatePath = null;
   }
 
+  initializerFactory(services) {
+    return services.listRelationshipInitializerFactory;
+  }
+
+  serializerFactory(services) {
+    return services.listResourceSerializerFactory;
+  }
+
+  mapperFactory(services) {
+    return services.listResourceSerializerFactory;
+  }
+
   get linkTemplate() {
     return this._linkTemplatePath;
   }
@@ -109,10 +121,8 @@ export default class ListRelationshipDescription extends RelationshipDescription
 
     if (!uriParams && this.canCreate) {
       endpoint.new = function() {
-        return new ResourceClass();
+        return new ResourceClass(this.services);
       };
     }
-
   }
-
 }

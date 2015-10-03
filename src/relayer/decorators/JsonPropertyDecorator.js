@@ -1,6 +1,5 @@
 import ResourceDecorator from "./ResourceDecorator.js";
 
-
 export default class JsonPropertyDecorator extends ResourceDecorator {
   constructor( description, name, path, value, options = {} ){
     super(description, name);

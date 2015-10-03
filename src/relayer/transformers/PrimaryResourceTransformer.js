@@ -1,11 +1,11 @@
 import ResourceTransformer from "./ResourceTransformer.js";
 
 export default class PrimaryResourceTransformer extends ResourceTransformer {
-  constructor(services, ResourceClass, primaryResourceMapperFactory, primaryResourceSerializerFactory) {
+  constructor(services, primaryResourceMapperFactory, primaryResourceSerializerFactory, ResourceClass) {
     super(services);
-    this.ResourceClass = ResourceClass;
     this.primaryResourceSerializerFactory = primaryResourceSerializerFactory;
     this.primaryResourceMapperFactory = primaryResourceMapperFactory;
+    this.ResourceClass = ResourceClass;
   }
 
   transformRequest(endpoint, resource) {
@@ -16,20 +16,17 @@ export default class PrimaryResourceTransformer extends ResourceTransformer {
     return response.then(
       (resolvedResponse) => {
         endpoint.templatedUrl.etag = resolvedResponse.etag;
-        return this.primaryResourceMapperFactory(
+        var primResMap = this.primaryResourceMapperFactory(
           resolvedResponse.data,
           this.ResourceClass,
-          this.primaryResourceMapperFactory,
-          this.primaryResourceSerializerFactory,
-          endpoint).map();
+          endpoint);
+          return primResMap.map();
       }
     ).catch(
       (resolvedError) => {
         throw this.primaryResourceMapperFactory(
           resolvedError.data,
           this.ResourceClass.errorClass,
-          this.primaryResourceMapperFactory,
-          this.primaryResourceSerializerFactory,
           endpoint).map();
       }
     );
