@@ -16,7 +16,7 @@ import {SimpleFactory} from "../SimpleFactoryInjector.js";
   'LoadedDataEndpointFactory',
   'TemplatedUrlFromUrlFactory',
   'TemplatedUrlFactory'])
-export default class SingleRelationshipDescription extends RelationshipDescription {
+export default class ListRelationshipDescription extends RelationshipDescription {
   constructor(relationshipInitializerFactory,
     resourceMapperFactory,
     resourceSerializerFactory,
@@ -71,7 +71,11 @@ export default class SingleRelationshipDescription extends RelationshipDescripti
   }
 
   set linkTemplate(linkTemplate) {
-    this._linkTemplatePath = `$.links.${linkTemplate}`;
+    this._linkTemplatePath = `$.links.${this.inflector.underscore(linkTemplate)}`;
+  }
+
+  set linkTemplatePath(linkTemplatePath) {
+    this._linkTemplatePath = linkTemplatePath;
   }
 
   hasParams(uriParams) {

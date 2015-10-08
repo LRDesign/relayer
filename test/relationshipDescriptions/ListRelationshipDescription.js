@@ -38,8 +38,11 @@ describe("ListRelationshipDescription", function() {
     resourceSerializerFactory = jasmine.createSpy("resourceSerializerFactory");
 
     inflector = {
-      underscore: function(name) {
-        return name;
+      underscore: function(key) {
+        // TODO match the latest logic from Active Support
+        return key.replace(/[A-Z]/g, function (match, index) {
+          return index === 0 ? match : '_' + match.toLowerCase();
+        });
       }
     }
 
@@ -116,12 +119,12 @@ describe("ListRelationshipDescription", function() {
       pathGet(path) {
         if (path == "$.links.awesomes") {
           return "/awesomes";
-        } else if (path == "$.links.awesome") {
+        } else if (path == "$.links.awesome_town") {
           return "/awesomes/{id}";
         }
       }
     }
-    linkTemplate = "awesome";
+    linkTemplate = "awesomeTown";
 
     singleRelationshipDescriptionFactory = function(name, ResourceClass) {
       return {
@@ -173,7 +176,7 @@ describe("ListRelationshipDescription", function() {
     expect(listRelationshipDescription.initialValues).toEqual(initialValues);
     expect(listRelationshipDescription.async).toBe(true);
     expect(listRelationshipDescription.canCreate).toBe(false);
-    expect(listRelationshipDescription._linkTemplatePath).toBe("$.links.awesome");
+    expect(listRelationshipDescription._linkTemplatePath).toBe("$.links.awesome_town");
     expect(listRelationshipDescription.linksPath).toEqual("$.links.awesomes");
     expect(listRelationshipDescription.dataPath).toEqual("$.data.awesomes");
 
