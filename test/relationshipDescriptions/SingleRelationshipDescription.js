@@ -9,7 +9,7 @@ describe("SingleRelationshipDescription", function() {
     embeddedRelationshipTransformerFactory,
     resolvedEndpointFactory,
     loadedDataEndpointFactory,
-    templatedUrlFromUrlFactory,
+    templatedUrlFactory,
     name,
     ResourceClass,
     initialValues,
@@ -56,9 +56,9 @@ describe("SingleRelationshipDescription", function() {
         return { endpoint, resource, transformers};
       });
 
-    templatedUrlFromUrlFactory = jasmine.createSpy("templatedUrlFromUrlFactory").and.callFake(
-      function(uriTemplate, url) {
-        return { uriTemplate, url,
+    templatedUrlFactory = jasmine.createSpy("templatedUrlFactory").and.callFake(
+      function(uriTemplate, uriParams) {
+        return { uriTemplate, uriParams,
           addDataPathLink(resource, path) {
             this.dataPath = { resource, path }
           }
@@ -98,7 +98,7 @@ describe("SingleRelationshipDescription", function() {
       embeddedRelationshipTransformerFactory,
       resolvedEndpointFactory,
       loadedDataEndpointFactory,
-      templatedUrlFromUrlFactory,
+      templatedUrlFactory,
       name,
       ResourceClass,
       initialValues);
@@ -115,7 +115,7 @@ describe("SingleRelationshipDescription", function() {
     expect(singleRelationshipDescription.embeddedRelationshipTransformerFactory).toEqual(embeddedRelationshipTransformerFactory);
     expect(singleRelationshipDescription.resolvedEndpointFactory).toEqual(resolvedEndpointFactory);
     expect(singleRelationshipDescription.loadedDataEndpointFactory).toEqual(loadedDataEndpointFactory);
-    expect(singleRelationshipDescription.templatedUrlFromUrlFactory).toEqual(templatedUrlFromUrlFactory);
+    expect(singleRelationshipDescription.templatedUrlFactory).toEqual(templatedUrlFactory);
     expect(singleRelationshipDescription.name).toEqual(name);
     expect(singleRelationshipDescription.ResourceClass).toEqual(ResourceClass);
     expect(singleRelationshipDescription.initialValues).toEqual(initialValues);
@@ -156,7 +156,7 @@ describe("SingleRelationshipDescription", function() {
       expect(linkedEndpoint.transport).toEqual(mockTransport);
       expect(linkedEndpoint.templatedUrl).toEqual({
         uriTemplate: "/awesome",
-        url: "/awesome",
+        uriParams: {},
         addDataPathLink: jasmine.any(Function),
         dataPath: {
           resource: resource,
@@ -170,7 +170,7 @@ describe("SingleRelationshipDescription", function() {
     });
 
     it("should setup the templated url", function() {
-      expect(templatedUrlFromUrlFactory).toHaveBeenCalled();
+      expect(templatedUrlFactory).toHaveBeenCalled();
     })
     it("should setup the right transformer", function() {
       expect(primaryResourceTransformerFactory).toHaveBeenCalled();

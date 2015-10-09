@@ -90,6 +90,14 @@ RL.Describe(Book, (desc) => {
   characters.canCreate = true;
 });
 
+class BookSigning extends RL.Resource {
+
+}
+
+RL.Describe(BookSigning, (desc) => {
+  desc.property("date", "");
+});
+
 class Resources extends RL.Resource {
 }
 
@@ -97,6 +105,7 @@ RL.Describe(Resources, (desc) => {
   var books = desc.hasList("books", Book, [])
   books.linkTemplate = "book";
   books.canCreate = true;
+  desc.hasOne("bookSigning", BookSigning)
 });
 
 // this is horrible -- no easy way to get Babel and Traceur to compile the same config block
@@ -141,7 +150,8 @@ describe("Loading relationships test", function() {
             data: {},
             links: {
               books: "/books",
-              book: "/books/{id}"
+              book: "/books/{id}",
+              book_signing: "/book_signings/{id}"
             }
           }
         });
@@ -411,6 +421,22 @@ describe("Loading relationships test", function() {
             ]
           }
         });
+      } else if (params.url == "http://www.example.com/book_signings/2") {
+        return Promise.resolve({
+          status: 200,
+          headers() {
+            return {
+              ETag: "77777"
+            }
+          },
+          data: {
+            links: {
+            },
+            data: {
+              date: "a day"
+            }
+          }
+        });
       }
     }
     angular.mock.module(function($provide) {
@@ -516,5 +542,21 @@ describe("Loading relationships test", function() {
         expect(sectionGroup[0].title).toEqual("Hey man there's a beverage here")
       })
     })
+  });
+
+  describe("book signing", function() {
+    var bookSigning;
+
+    beforeEach(function(done) {
+      resources.bookSigning({id: 2}).load().then((_bookSigning_) => {
+        bookSigning = _bookSigning_;
+        done();
+      });
+      $rootScope.$apply();
+    });
+
+    it("can load a single relationship from a template url", function() {
+      expect(bookSigning.date).toEqual("a day");
+    });
   });
 });

@@ -10,7 +10,7 @@ import {SimpleFactory} from "../SimpleFactoryInjector.js";
   'EmbeddedRelationshipTransformerFactory',
   'ResolvedEndpointFactory',
   'LoadedDataEndpointFactory',
-  'TemplatedUrlFromUrlFactory'])
+  'TemplatedUrlFactory'])
 export default class SingleRelationshipDescription extends RelationshipDescription {
   constructor(relationshipInitializerFactory,
     resourceMapperFactory,
@@ -20,7 +20,7 @@ export default class SingleRelationshipDescription extends RelationshipDescripti
     embeddedRelationshipTransformerFactory,
     resolvedEndpointFactory,
     loadedDataEndpointFactory,
-    templatedUrlFromUrlFactory,
+    templatedUrlFactory,
     name,
     ResourceClass,
     initialValues) {
@@ -37,7 +37,7 @@ export default class SingleRelationshipDescription extends RelationshipDescripti
     this.embeddedRelationshipTransformerFactory = embeddedRelationshipTransformerFactory;
     this.resolvedEndpointFactory = resolvedEndpointFactory;
     this.loadedDataEndpointFactory = loadedDataEndpointFactory;
-    this.templatedUrlFromUrlFactory = templatedUrlFromUrlFactory;
+    this.templatedUrlFactory = templatedUrlFactory;
   }
 
   embeddedEndpoint(parent, uriParams) {
@@ -49,7 +49,7 @@ export default class SingleRelationshipDescription extends RelationshipDescripti
   linkedEndpoint(parent, uriParams) {
     var transport = parent.self().transport;
     var url = parent.pathGet(this.linksPath);
-    var templatedUrl = this.templatedUrlFromUrlFactory(url, url);
+    var templatedUrl = this.templatedUrlFactory(url, uriParams || {});
     templatedUrl.addDataPathLink(parent, this.linksPath);
     var primaryResourceTransformer = this.primaryResourceTransformerFactory(this);
     return this.resolvedEndpointFactory(transport, templatedUrl, primaryResourceTransformer);
