@@ -38,9 +38,21 @@ export default class SingleRelationshipDescription extends RelationshipDescripti
     this.resolvedEndpointFactory = resolvedEndpointFactory;
     this.loadedDataEndpointFactory = loadedDataEndpointFactory;
     this.templatedUrlFactory = templatedUrlFactory;
+    this._templated = false;
+  }
+
+  set templated(templated) {
+    this._templated = templated;
+  }
+
+  get templated() {
+    return this._templated;
   }
 
   embeddedEndpoint(parent, uriParams) {
+    if (this._templated) {
+      throw "A templated hasOne relationship cannot be embedded";
+    }
     var parentEndpoint = parent.self();
     var embeddedRelationshipTransformer = this.embeddedRelationshipTransformerFactory(this.name);
     return this.loadedDataEndpointFactory(parentEndpoint, parent, embeddedRelationshipTransformer);
@@ -49,8 +61,11 @@ export default class SingleRelationshipDescription extends RelationshipDescripti
   linkedEndpoint(parent, uriParams) {
     var transport = parent.self().transport;
     var url = parent.pathGet(this.linksPath);
-    var templatedUrl = this.templatedUrlFactory(url, uriParams || {});
-    templatedUrl.addDataPathLink(parent, this.linksPath);
+    var params = this._templated ? uriParams : {};
+    var templatedUrl = this.templatedUrlFactory(url, params);
+    if (!this._templated) {
+      templatedUrl.addDataPathLink(parent, this.linksPath);
+    }
     var primaryResourceTransformer = this.primaryResourceTransformerFactory(this);
     return this.resolvedEndpointFactory(transport, templatedUrl, primaryResourceTransformer);
   }

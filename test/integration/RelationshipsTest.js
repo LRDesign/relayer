@@ -105,7 +105,8 @@ RL.Describe(Resources, (desc) => {
   var books = desc.hasList("books", Book, [])
   books.linkTemplate = "book";
   books.canCreate = true;
-  desc.hasOne("bookSigning", BookSigning)
+  var bookSigning = desc.hasOne("bookSigning", BookSigning)
+  bookSigning.templated = true;
 });
 
 // this is horrible -- no easy way to get Babel and Traceur to compile the same config block
