@@ -16,7 +16,10 @@ describe("ResourceBuilder", function() {
     throwErrorTransformer,
     resourceBuilder,
     builtResource,
-    transport;
+    transport,
+    createResourceTransformer,
+    createResourceTransformerFactory,
+    relationshipDescription;
 
   beforeEach(function() {
     ResourceClass = function(resource) {
@@ -53,52 +56,122 @@ describe("ResourceBuilder", function() {
 
     throwErrorTransformerFactory = jasmine.createSpy("throwErrorTransformerFactory").and.returnValue(throwErrorTransformer);
 
+
+    createResourceTransformer = {
+      properties: "dummy"
+    };
+
+    createResourceTransformerFactory = jasmine.createSpy("createResourceTransformerFactory").and.returnValue(createResourceTransformer);
+
     resource = {
       propreties: "dummy"
     };
 
     transport = {};
 
-    resourceBuilder = new ResourceBuilder(templatedUrlFromUrlFactory,
-      resolvedEndpointFactory,
-      throwErrorTransformerFactory,
-      transport,
-      resource,
-      primaryResourceTransformer,
-      ResourceClass);
+    relationshipDescription = {
+      canCreate: false
+    }
   });
 
-  describe("no url template", function() {
+  describe("standard", function() {
     beforeEach(function() {
-      builtResource = resourceBuilder.build();
-    });
 
-    it("should have the right properties", function() {
-      expect(builtResource.templatedUrl).toEqual(templatedUrl);
-      expect(builtResource.response).toEqual(resource);
-      expect(builtResource.self()).toEqual(resolvedEndpoint);
-    });
-
-    it("should setup the templatedUrl properly", function() {
-      expect(templatedUrlFromUrlFactory).toHaveBeenCalledWith("/cheese/gouda", "/cheese/gouda");
-      expect(templatedUrlDataPathSpy).toHaveBeenCalledWith(builtResource, "$.links.self");
-    });
-
-    it("should setup the transformers", function() {
-      expect(throwErrorTransformerFactory).toHaveBeenCalled();
-    });
-
-    it("should setup the endpoint properly", function() {
-      expect(resolvedEndpointFactory).toHaveBeenCalledWith(transport,
-        templatedUrl,
+      resourceBuilder = new ResourceBuilder(templatedUrlFromUrlFactory,
+        resolvedEndpointFactory,
+        throwErrorTransformerFactory,
+        createResourceTransformerFactory,
+        transport,
+        resource,
         primaryResourceTransformer,
-        throwErrorTransformer);
+        ResourceClass,
+        relationshipDescription);
+
     });
-  });
+
+    describe("no url template", function() {
+      beforeEach(function() {
+        builtResource = resourceBuilder.build();
+      });
+
+      it("should have the right properties", function() {
+        expect(builtResource.templatedUrl).toEqual(templatedUrl);
+        expect(builtResource.response).toEqual(resource);
+        expect(builtResource.self()).toEqual(resolvedEndpoint);
+      });
+
+      it("should setup the templatedUrl properly", function() {
+        expect(templatedUrlFromUrlFactory).toHaveBeenCalledWith("/cheese/gouda", "/cheese/gouda");
+        expect(templatedUrlDataPathSpy).toHaveBeenCalledWith(builtResource, "$.links.self");
+      });
+
+      it("should setup the transformers", function() {
+        expect(throwErrorTransformerFactory).toHaveBeenCalled();
+      });
+
+      it("should setup the endpoint properly", function() {
+        expect(resolvedEndpointFactory).toHaveBeenCalledWith(transport,
+          templatedUrl,
+          primaryResourceTransformer,
+          throwErrorTransformer);
+      });
+    });
 
 
-  describe("with url template", function() {
+    describe("with url template", function() {
+      beforeEach(function() {
+        builtResource = resourceBuilder.build("/cheese/{type}");
+      });
+
+      it("should have the right properties", function() {
+        expect(builtResource.templatedUrl).toEqual(templatedUrl);
+        expect(builtResource.response).toEqual(resource);
+        expect(builtResource.self()).toEqual(resolvedEndpoint);
+      });
+
+      it("should setup the templatedUrl properly", function() {
+        expect(templatedUrlFromUrlFactory).toHaveBeenCalledWith("/cheese/{type}", "/cheese/gouda");
+        expect(templatedUrlDataPathSpy).toHaveBeenCalledWith(builtResource, "$.links.self");
+      });
+
+      it("should setup the transformers", function() {
+        expect(throwErrorTransformerFactory).toHaveBeenCalled();
+      });
+
+      it("should setup the endpoint properly", function() {
+        expect(resolvedEndpointFactory).toHaveBeenCalledWith(
+          transport,
+          templatedUrl,
+          primaryResourceTransformer,
+          throwErrorTransformer);
+      });
+    });
+  })
+
+  describe("with resource that can create", function() {
+    var createRelationshipDescription;
+
     beforeEach(function() {
+
+      createRelationshipDescription = {
+        awesome: true
+      }
+
+      relationshipDescription = {
+        canCreate: true,
+        createRelationshipDescription: createRelationshipDescription
+      }
+
+      resourceBuilder = new ResourceBuilder(templatedUrlFromUrlFactory,
+        resolvedEndpointFactory,
+        throwErrorTransformerFactory,
+        createResourceTransformerFactory,
+        transport,
+        resource,
+        primaryResourceTransformer,
+        ResourceClass,
+        relationshipDescription);
+
       builtResource = resourceBuilder.build("/cheese/{type}");
     });
 
@@ -114,7 +187,7 @@ describe("ResourceBuilder", function() {
     });
 
     it("should setup the transformers", function() {
-      expect(throwErrorTransformerFactory).toHaveBeenCalled();
+      expect(createResourceTransformerFactory).toHaveBeenCalledWith(createRelationshipDescription);
     });
 
     it("should setup the endpoint properly", function() {
@@ -122,7 +195,7 @@ describe("ResourceBuilder", function() {
         transport,
         templatedUrl,
         primaryResourceTransformer,
-        throwErrorTransformer);
+        createResourceTransformer);
     });
   });
 });
