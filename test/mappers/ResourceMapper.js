@@ -144,7 +144,8 @@ describe("ResourceMapper", function() {
       expect(resourceBuilderFactory).toHaveBeenCalledWith(transport,
         resource,
         primaryResourceTransformer,
-        ResourceClass);
+        ResourceClass,
+        relationship);
     });
   });
 
@@ -174,7 +175,8 @@ describe("ResourceMapper", function() {
       expect(resourceBuilderFactory).toHaveBeenCalledWith(transport,
         resource,
         primaryResourceTransformer,
-        ResourceClass);
+        ResourceClass,
+        relationship);
     })
   });
 

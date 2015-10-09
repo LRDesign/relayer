@@ -138,7 +138,8 @@ describe("ListResourceMapper", function() {
       ListResourceClass: ListResource,
       ResourceClass: ItemResourceClass,
       mapperFactory: listResourceMapperFactory,
-      serializerFactory: listResourceSerializerFactory
+      serializerFactory: listResourceSerializerFactory,
+      canCreate: true
     }
     listResourceMapper = new ListResourceMapper(
       templatedUrlFromUrlFactory,
@@ -209,7 +210,8 @@ describe("ListResourceMapper", function() {
         transport,
         data,
         primaryResourceTransformer,
-        ListResource);
+        ListResource,
+        relationship);
     });
 
     describe("create", function() {
