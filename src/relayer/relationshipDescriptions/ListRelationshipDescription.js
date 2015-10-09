@@ -109,6 +109,10 @@ export default class ListRelationshipDescription extends RelationshipDescription
     return this.primaryResourceTransformerFactory(this.singleRelationshipDescriptionFactory("", this.ResourceClass));
   }
 
+  get createRelationshipDescription() {
+    return this.singleRelationshipDescriptionFactory("", this.ResourceClass);
+  }
+
   linkedEndpoint(parent, uriParams) {
 
     var transport = parent.self().transport;
@@ -128,8 +132,7 @@ export default class ListRelationshipDescription extends RelationshipDescription
       templatedUrl.addDataPathLink(parent, this.linksPath);
       primaryResourceTransformer = this.listResourceTransformer();
       if (this.canCreate) {
-        createTransformer = this.createResourceTransformerFactory(this.singleRelationshipDescriptionFactory("", this.ResourceClass)
-          );
+        createTransformer = this.createResourceTransformerFactory(this.createRelationshipDescription);
       }
     }
 
