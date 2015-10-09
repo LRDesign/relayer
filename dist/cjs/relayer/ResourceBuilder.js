@@ -11,14 +11,17 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var _SimpleFactoryInjectorJs = require("./SimpleFactoryInjector.js");
 
 var ResourceBuilder = (function () {
-  function ResourceBuilder(templatedUrlFromUrlFactory, resolvedEndpointFactory, throwErrorTransformerFactory, transport, response, primaryResourceTransformer, ResourceClass) {
+  function ResourceBuilder(templatedUrlFromUrlFactory, resolvedEndpointFactory, throwErrorTransformerFactory, createResourceTransformerFactory, transport, response, primaryResourceTransformer, ResourceClass, relationshipDescription) {
     _classCallCheck(this, _ResourceBuilder);
 
     this.transport = transport;
     this.ResourceClass = ResourceClass;
+    this.relationshipDescription = relationshipDescription;
+
     this.templatedUrlFromUrlFactory = templatedUrlFromUrlFactory;
     this.resolvedEndpointFactory = resolvedEndpointFactory;
     this.throwErrorTransformerFactory = throwErrorTransformerFactory;
+    this.createResourceTransformerFactory = createResourceTransformerFactory;
     this.response = response;
     this.primaryResourceTransformer = primaryResourceTransformer;
   }
@@ -38,7 +41,11 @@ var ResourceBuilder = (function () {
           resource.templatedUrl = this.templatedUrlFromUrlFactory(resource.pathGet("$.links.self"), resource.pathGet("$.links.self"));
         }
         resource.templatedUrl.addDataPathLink(resource, "$.links.self");
-        var createResourceTransformer = this.throwErrorTransformerFactory();
+        if (this.relationshipDescription.canCreate) {
+          var createResourceTransformer = this.createResourceTransformerFactory(this.relationshipDescription.createRelationshipDescription);
+        } else {
+          var createResourceTransformer = this.throwErrorTransformerFactory();
+        }
         var endpoint = this.resolvedEndpointFactory(this.transport, resource.templatedUrl, this.primaryResourceTransformer, createResourceTransformer);
         resource.self = function () {
           return endpoint;
@@ -48,7 +55,7 @@ var ResourceBuilder = (function () {
     }
   }]);
 
-  ResourceBuilder = (0, _SimpleFactoryInjectorJs.SimpleFactory)("ResourceBuilderFactory", ["TemplatedUrlFromUrlFactory", "ResolvedEndpointFactory", "ThrowErrorTransformerFactory"])(ResourceBuilder) || ResourceBuilder;
+  ResourceBuilder = (0, _SimpleFactoryInjectorJs.SimpleFactory)("ResourceBuilderFactory", ["TemplatedUrlFromUrlFactory", "ResolvedEndpointFactory", "ThrowErrorTransformerFactory", "CreateResourceTransformerFactory"])(ResourceBuilder) || ResourceBuilder;
   return ResourceBuilder;
 })();
 
