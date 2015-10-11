@@ -131,7 +131,7 @@ export default class Resource extends DataWrapper {
         var relationship = relationshipDescription.initializer(this.services).initialize();
         this.relationships[relationshipName] = relationship;
       }
-    });
+    }, this);
   }
 
   get relationships() {

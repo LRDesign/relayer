@@ -1,7 +1,9 @@
 import EmbeddedPropertyTransformer from "../../src/relayer/transformers/EmbeddedPropertyTransformer.js";
 
 describe("EmbeddedPropertyTransformer", function() {
-  var mockDataWrapperFactory, mockData, mockRequest, mockResponse, mockError, mockEndpoint, embeddedPropertyTransformer, resolvedResponse, resolvedError, transformedRequest;
+  var mockDataWrapperFactory, mockData, mockRequest, mockResponse, mockError,
+  mockEndpoint, embeddedPropertyTransformer, resolvedResponse, resolvedError,
+  transformedRequest, services;
 
   beforeEach(function() {
 
@@ -47,7 +49,9 @@ describe("EmbeddedPropertyTransformer", function() {
 
     mockRequest = "swiss";
 
-    embeddedPropertyTransformer = new EmbeddedPropertyTransformer("$.data.cheese");
+    services = {};
+
+    embeddedPropertyTransformer = new EmbeddedPropertyTransformer(services, "$.data.cheese");
   });
 
   describe("transform request", function() {

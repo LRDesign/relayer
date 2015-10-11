@@ -1,6 +1,6 @@
 import ListResourceMapper from "../../src/relayer/mappers/ListResourceMapper.js";
 
-ddescribe("ListResourceMapper", function() {
+describe("ListResourceMapper", function() {
   var services,
   listResourceFactory,
   manyResourceMapper,
@@ -34,7 +34,7 @@ ddescribe("ListResourceMapper", function() {
     manyResourceMapSpy = spyOn(manyResourceMapper, "map").and.callThrough();
 
     manyResourceMapperFactory = jasmine.createSpy("manyResourceMapperFactory ").and.callFake(
-      function(thisTransport, thisData, ThisItemResourceClass) {
+      function(thisData, ThisItemResourceClass) {
         manyResourceMapper.data = thisData;
         return manyResourceMapper;
       });
@@ -86,7 +86,7 @@ ddescribe("ListResourceMapper", function() {
 
     templatedUrlFromUrlFactory = jasmine.createSpy("templatedUrlFromUrlFactory").and.returnValue(templatedUrl);
 
-    resourceBuilderFactory = jasmine.createSpy("resourceBuilderFactory").and.callFake(function(thisResponse, mapperFactory, serializerFactory, ThisResourceClass) {
+    resourceBuilderFactory = jasmine.createSpy("resourceBuilderFactory").and.callFake(function(thisResponse, ThisResourceClass) {
       return {
         build() {
           var thisResource = new ThisResourceClass(thisResponse);
@@ -133,7 +133,7 @@ ddescribe("ListResourceMapper", function() {
     });
 
     it("should setup the many mapper with the ItemResourceClass", function() {
-      expect(manyResourceMapperFactory).toHaveBeenCalledWith(transport, data, ItemResourceClass);
+      expect(manyResourceMapperFactory).toHaveBeenCalledWith(data, ItemResourceClass);
     });
 
     it("should build the list with the resource builder", function() {
@@ -174,8 +174,6 @@ ddescribe("ListResourceMapper", function() {
     it("should build the resource with the regular resource builder", function() {
       expect(resourceBuilderFactory).toHaveBeenCalledWith(
         data,
-        manyResourceMapperFactory,
-        manyResourceSerializerFactory,
         ListResource);
     });
 

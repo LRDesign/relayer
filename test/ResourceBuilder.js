@@ -11,8 +11,8 @@ describe("ResourceBuilder", function() {
   throwErrorTransformerFactory,
   templatedUrl,
   templatedUrlDataPathSpy,
-  mapperFactory,
-  serializerFactory,
+  resourceMapperFactory,
+  resourceSerializerFactory,
   primaryResourceTransformer,
   throwErrorTransformer,
   resourceBuilder,
@@ -62,11 +62,11 @@ describe("ResourceBuilder", function() {
 
     transport = {};
 
-    mapperFactory = function() {
+    resourceMapperFactory = function() {
       return "hello";
     };
 
-    serializerFactory = function() {
+    resourceSerializerFactory = function() {
       return "goodbye";
     };
 
@@ -75,8 +75,8 @@ describe("ResourceBuilder", function() {
       templatedUrlFromUrlFactory,
       resolvedEndpointFactory,
       primaryResourceTransformerFactory,
-      mapperFactory,
-      serializerFactory,
+      resourceMapperFactory,
+      resourceSerializerFactory,
       throwErrorTransformerFactory
     };
 
@@ -104,8 +104,8 @@ describe("ResourceBuilder", function() {
     });
 
     it("should setup the transformers", function() {
-      expect(primaryResourceTransformerFactory).toHaveBeenCalledWith(mapperFactory,
-                                                                     serializerFactory,
+      expect(primaryResourceTransformerFactory).toHaveBeenCalledWith(resourceMapperFactory,
+                                                                     resourceSerializerFactory,
                                                                      ResourceClass);
                                                                      expect(throwErrorTransformerFactory).toHaveBeenCalled();
     });
@@ -136,8 +136,8 @@ describe("ResourceBuilder", function() {
 
     it("should setup the transformers", function() {
       expect(primaryResourceTransformerFactory).toHaveBeenCalledWith(
-        mapperFactory,
-        serializerFactory,
+        resourceMapperFactory,
+        resourceSerializerFactory,
         ResourceClass);
         expect(throwErrorTransformerFactory).toHaveBeenCalled();
     });

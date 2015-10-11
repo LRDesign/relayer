@@ -34,11 +34,13 @@ describe("MapResourceMapper", function() {
 
     ResourceClass.relationships = {
       "cheese": {
-        mapperFactory: function(response, ResourceClass) {
-          return {
-            map() {
-              return "cheese";
-            }
+        mapperFactory() {
+          return function(response, ResourceClass) {
+            return {
+              map() {
+                return "cheese";
+              }
+            };
           };
         },
         ResourceClass: {},
@@ -72,7 +74,7 @@ describe("MapResourceMapper", function() {
       }
     };
 
-    resourceBuilderFactory = jasmine.createSpy("resourceBuilderFactory").and.callFake(function(thisResponse, thisMapperFactory, thisSerializerFactory, ThisResourceClass) {
+    resourceBuilderFactory = jasmine.createSpy("resourceBuilderFactory").and.callFake(function(thisResponse, ThisResourceClass) {
       return {
         build(uriTemplate) {
           var resource = new ThisResourceClass(thisResponse);

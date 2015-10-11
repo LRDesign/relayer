@@ -31,6 +31,8 @@ export default class ServiceLocator extends Locator {
   get Promise()   { return this.memoize("promise",   () => { return wrapPromise(this.buildThenable); }); }
   get urlHelper() { return this.memoize("urlHelper", () => { return new UrlHelper(this.baseUrl); }); }
 
+  get ListResource() { return ListResource; }
+
   get ListResourceFactory()                    { return this.applySelfToBuilder(ListResource); }
 
   get templatedUrlFactory()                    { return this.buildFn(TemplatedUrl); }

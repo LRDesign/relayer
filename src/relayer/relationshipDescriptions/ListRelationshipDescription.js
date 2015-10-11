@@ -17,7 +17,7 @@ export default class ListRelationshipDescription extends RelationshipDescription
   }
 
   mapperFactory(services) {
-    return services.listResourceSerializerFactory;
+    return services.listResourceMapperFactory;
   }
 
   get linkTemplate() {

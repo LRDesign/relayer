@@ -70,9 +70,9 @@ describe("PrimaryResourceTransformer", function() {
     };
 
     primaryResourceTransformer = new PrimaryResourceTransformer(mockServices,
-                                                                ResourceClass,
                                                                 primaryResourceMapperFactory,
-                                                                primaryResourceSerializerFactory
+                                                                primaryResourceSerializerFactory,
+                                                                ResourceClass
                                                                );
 
   });
@@ -98,8 +98,6 @@ describe("PrimaryResourceTransformer", function() {
         expect(primaryResourceMapperFactory).toHaveBeenCalledWith(
           mockResponse.data,
           ResourceClass,
-          primaryResourceMapperFactory,
-          primaryResourceSerializerFactory,
           mockEndpoint);
       });
 
@@ -130,8 +128,6 @@ describe("PrimaryResourceTransformer", function() {
         expect(primaryResourceMapperFactory).toHaveBeenCalledWith(
           mockResponse.data,
           ResourceClass.errorClass,
-          primaryResourceMapperFactory,
-          primaryResourceSerializerFactory,
           mockEndpoint);
       });
     });

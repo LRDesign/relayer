@@ -28,6 +28,20 @@ export default class ResourceDescription extends Locator {
     }
   }
 
+  requiredFields(contextName, object){
+    var missing = [];
+    for(let name in object){
+      if(!object[name]){
+        missing.push(name);
+      }
+    }
+
+    if(missing.length > 0){
+      var message = `${contextName}(${JSON.stringify(object)}) requires a value for each of: ${missing.join(", ")}`;
+      throw new Error(message);
+    }
+  }
+
   recordDecorator(name, decoratorDescription) {
     this.decorators[name] = this.decorators[name] || [];
     this.decorators[name].push(decoratorDescription);
@@ -69,26 +83,32 @@ export default class ResourceDescription extends Locator {
   }
 
   property(property, initial){
+    this.requiredFields("property", {property});
     this.jsonProperty(property, `$.data.${this.inflector.underscore(property)}`, initial);
   }
 
   jsonProperty(name, path, value, options) {
+    this.requiredFields("jsonProperty", {name, path});
     return this.recordDecorator(name, this.jsonPropertyDecoratorFactory(name, path, value, options));
   }
 
   hasOne(property, rezClass, initialValues){
+    this.requiredFields("hasOne", {property, rezClass});
     return this.relatedResource(property, rezClass, initialValues, this.singleRelationshipDescriptionFactory);
   }
 
   hasMany(property, rezClass, initialValues) {
+    this.requiredFields("hasMany", {property, rezClass});
     return this.relatedResource(property, rezClass, initialValues, this.manyRelationshipDescriptionFactory);
   }
 
   hasList(property, rezClass, initialValues) {
+    this.requiredFields("hasList", {property, rezClass});
     return this.relatedResource(property, rezClass, initialValues, this.listRelationshipDescriptionFactory);
   }
 
   hasMap(property, rezClass, initialValue){
+    this.requiredFields("hasMap", {property, rezClass});
     return this.relatedResource(property, rezClass, initialValue, this.mapRelationshipDescriptionFactory);
   }
 

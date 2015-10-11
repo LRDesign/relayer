@@ -1,28 +1,34 @@
 export default function wrapThenable(buildThenable) {
-  return class RelayerPromise {
-    static resolve(value) {
-      return new RelayerPromise((res, rej) => res(value));
-    }
-
-    static reject(value) {
-      return new RelayerPromise((res, rej) => rej(value));
-    }
-
-    constructor(resolver) {
+  class RelayerPromise {
+    constructor(wrappedPromise) {
       //this.internalPromise = RelayerPromiseFactory.$q(resolver);
-      this.internalPromise = buildThenable(resolver);
+      this.internalPromise = wrappedPromise;
     }
 
     then(onFulfilled, onRejected, progressBack) {
-      return this.internalPromise.then(onFulfilled, onRejected, progressBack);
+      return new RelayerPromise(this.internalPromise.then(onFulfilled, onRejected, progressBack));
     }
 
     catch(callback) {
-      return this.internalPromise.catch(callback);
+      return new RelayerPromise(this.internalPromise.catch(callback));
     }
 
     finally(callback, progressBack) {
-      return this.internalPromise.finally(callback, progressBack);
+      return new RelayerPromise(this.internalPromise.finally(callback, progressBack));
     }
+  }
+
+  function PromiseApi(resolver) {
+    return new RelayerPromise(buildThenable(resolver));
+  }
+
+  PromiseApi.resolve = function(value) {
+    return new RelayerPromise(buildThenable((res, rej) => res(value)));
   };
+
+  PromiseApi.reject = function(value) {
+    return new RelayerPromise(buildThenable((res, rej) => rej(value)));
+  };
+
+  return PromiseApi;
 }

@@ -129,7 +129,6 @@ RL.Describe(Resources, (desc) => {
 class AppConfig {
   @Config("relayerProvider")
   setupResources(relayerProvider) {
-    console.log("integration/PageTest.js:134", "Resources.resourceDescription", Resources.resourceDescription);
     relayerProvider.createApi("resources", Resources, "http://www.example.com/resources");
   }
 }
@@ -191,8 +190,6 @@ describe("Page test", function() {
 
     mockHttp = function(Promise, params) {
       if (params.method == "GET" && params.url == "http://www.example.com/resources") {
-        console.log("integration/PageTest.js:194", "Promise", Promise);
-      console.log("integration/PageTest.js:194", "Promise.resolve", Promise.resolve);
         return Promise.resolve({
           status: 200,
           headers() {

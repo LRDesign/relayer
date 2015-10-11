@@ -1,0 +1,10 @@
+If we convert to using SystemJS, we could replace the entire Locator framework with:
+
+* Classes at use site.
+* Mock injection per https://github.com/systemjs/systemjs/issues/798 or
+  https://github.com/systemjs/systemjs/issues/736#issuecomment-137699003
+
+Among other things, this would simplify much of the architecture from the
+perspective of determining when different components were used (i.e. the
+distinction between describe-time and use-time -- I now discover that there's
+also a difference between local and over-wire uses.)

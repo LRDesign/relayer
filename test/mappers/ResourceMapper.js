@@ -34,11 +34,13 @@ describe("ResourceMapper", function() {
 
     ResourceClass.relationships = {
       "cheese": {
-        mapperFactory: function(response, ResourceClass) {
-          return {
-            map() {
-              return "cheese";
-            }
+        mapperFactory(services){
+          return function(response, ResourceClass) {
+            return {
+              map() {
+                return "cheese";
+              }
+            };
           };
         },
         ResourceClass: {},
@@ -67,7 +69,7 @@ describe("ResourceMapper", function() {
     mockEndpoint = {};
 
     resourceBuilderFactory = jasmine.createSpy("resourceBuilderFactory").and.callFake(
-      function(thisResponse, thisMapperFactory, thisSerializerFactory, ThisResourceClass) {
+      function(thisResponse, ThisResourceClass) {
         return {
           build(uriTemplate) {
             var thisResource = new ThisResourceClass(thisResponse);
@@ -130,10 +132,7 @@ describe("ResourceMapper", function() {
     });
 
     it("should build the resource with the regular resource builder", function() {
-      expect(resourceBuilderFactory).toHaveBeenCalledWith(resource,
-                                                          resourceMapperFactory,
-                                                          resourceSerializerFactory,
-                                                          ResourceClass);
+      expect(resourceBuilderFactory).toHaveBeenCalledWith(resource, ResourceClass);
     });
   });
 
@@ -156,10 +155,7 @@ describe("ResourceMapper", function() {
     });
 
     it("should build the resource with the regular resource builder", function() {
-      expect(resourceBuilderFactory).toHaveBeenCalledWith( resource,
-                                                          resourceMapperFactory,
-                                                          resourceSerializerFactory,
-                                                          ResourceClass);
+      expect(resourceBuilderFactory).toHaveBeenCalledWith( resource, ResourceClass);
     });
   });
 

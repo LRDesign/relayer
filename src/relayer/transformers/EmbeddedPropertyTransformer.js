@@ -1,8 +1,8 @@
 import ResourceTransformer from "./ResourceTransformer.js";
 
 export default class EmbeddedPropertyTransformer extends ResourceTransformer {
-  constructor(path) {
-    super();
+  constructor(services, path) {
+    super(services);
     this.path = path;
   }
 

@@ -1,28 +1,32 @@
 import RL from "../../src/relayer.js";
 import {Module, Injector, Config} from "a1atscript";
 import {TemplatedUrl} from "../../src/relayer/TemplatedUrl.js";
+import wrapQ from '../../src/relayer/Promise.js';
 
-/*
-xdescribe("Relationships integration", function() {
+describe("Relationships integration", function() {
+  class Chapter extends RL.Resource { }
 
-  class Chapter extends RL.Resource {
-  }
+  class Act extends RL.Resource { }
+
+  class Section extends RL.Resource { }
+
+  class Paragraph extends RL.Resource { }
+
+  class Character extends RL.Resource { }
+
+  class Book extends RL.Resource { }
+
+  class Resources extends RL.Resource { }
 
   RL.Describe(Chapter, (desc) => {
     desc.hasOne("section", Section);
     desc.hasOne("act", Act);
   });
 
-  class Act extends RL.Resource {
-  }
-
   RL.Describe(Act, (desc) => {
     desc.hasOne("book", Book, {});
     desc.hasList("chapters", Chapter, []);
   });
-
-  class Section extends RL.Resource {
-  }
 
   RL.Describe(Section, (desc) => {
     desc.property("title", "");
@@ -36,10 +40,6 @@ xdescribe("Relationships integration", function() {
     paragraphs.initializeOnCreate = false;
   });
 
-  class Paragraph extends RL.Resource {
-
-  }
-
   RL.Describe(Paragraph, (desc) => {
     desc.property("kind", "");
     desc.property("body", "");
@@ -48,17 +48,10 @@ xdescribe("Relationships integration", function() {
     desc.hasList("characters", Character);
   });
 
-  class Character extends RL.Resource {
-
-  }
-
   RL.Describe(Character, (desc) => {
     desc.property("name", "");
     desc.hasOne("book", Book);
   });
-
-  class Book extends RL.Resource {
-  }
 
   RL.Describe(Book, (desc) => {
     desc.property("title", "");
@@ -68,9 +61,6 @@ xdescribe("Relationships integration", function() {
     var characters = desc.hasList("characters", Character, []);
     characters.canCreate = true;
   });
-
-  class Resources extends RL.Resource {
-  }
 
   RL.Describe(Resources, (desc) => {
     var books = desc.hasList("books", Book, []);
@@ -88,18 +78,7 @@ xdescribe("Relationships integration", function() {
 
   var AppModule = new Module("AppModule", [RL, AppConfig.prototype]);
 
-  xdescribe("initialization", function() {
-    var section;
-    beforeEach(function() {
-      section = new Section();
-    });
-
-    it("should not initialize relationships when initializeOnCreate is false", function() {
-      expect(section.relationships).toEqual({book: jasmine.any(Book)});
-    });
-  });
-
-  xdescribe("Loading relationships test", function() {
+  describe("Loading relationships test", function() {
     var resources, book, act, chapter, chapters, section, paragraph, character, $httpBackend, $rootScope;
 
     beforeEach(function () {
@@ -302,28 +281,45 @@ xdescribe("Relationships integration", function() {
           });
         }
       };
+
       angular.mock.module(function($provide) {
-        $provide.factory("$http", function(RelayerPromise) {
+        $provide.factory("$http", function($q) {
+          var Promise = wrapQ((resolver) => $q(resolver));
           return function(params) {
-            return mockHttp(RelayerPromise, params);
+            return mockHttp(Promise, params);
           };
         });
       });
+
       inject(function($injector, _resources_, _$rootScope_) {
         resources = _resources_;
         $rootScope = _$rootScope_;
       });
     });
 
+    describe("initialization", function() {
+      var section;
+      beforeEach(function() {
+        section = new Section(resources.services);
+      });
+
+      it("should not initialize relationships when initializeOnCreate is false", function() {
+        expect(section.relationships).toEqual({book: jasmine.any(Book)});
+      });
+    });
+
     describe("book", function() {
-      var promise;
 
       beforeEach(function(done) {
-        promise = resources.books({id: 1}).load();
-        promise.then((_book_) => {
-          book = _book_;
-          done();
-        });
+        var promise = resources.books({id: 1}).load();
+        promise.then(
+          (_book_) => {
+            book = _book_;
+            done();
+            return book;
+          },
+          (err) => { expect(err).toBe(NaN); done(); }
+        );
         $rootScope.$apply();
       });
 
@@ -333,28 +329,44 @@ xdescribe("Relationships integration", function() {
 
       describe("update", function() {
         beforeEach(function(done) {
-          promise = book.acts({id: 2}).chapters().load().then((currentChapters) => {
+          var endpoint = book.acts({id: 2});
+          endpoint = endpoint.chapters();
+          var promise = endpoint.load();
+          promise.then(
+            (currentChapters) => {
             chapter = currentChapters.new();
             currentChapters.push(chapter);
-            currentChapters.update().then((newChapters) => {
+            return currentChapters.update().then(
+              (newChapters) => {
               chapters = newChapters;
               done();
+              return chapters;
+            },
+            (err) => {
+              expect(err).toBe(NaN);
+              done();
             });
+          },
+          (err) => {
+            expect(err).toBe(NaN);
+            done();
           });
+          $rootScope.$apply();
         });
 
-        it("should add the new chapter on update", function() {
+        iit("should add the new chapter on update", function() {
           expect(chapters.length).toEqual(4);
         });
       });
 
       describe("section", function() {
         beforeEach(function(done) {
-          promise = book.acts({id: 2}).chapters({id: 2}).section().load();
+          var promise = book.acts({id: 2}).chapters({id: 2}).section().load();
           promise.then((_section_) => {
             section = _section_;
             done();
           });
+          $rootScope.$apply();
         });
 
         it("should verify relationships present and accessible", function() {
@@ -373,14 +385,15 @@ xdescribe("Relationships integration", function() {
 
         describe("character", function() {
           beforeEach(function(done) {
-            promise = section.paragraphs({id: 3}).characters({id: 1}).load();
+            var promise = section.paragraphs({id: 3}).characters({id: 1}).load();
             promise.then((_character_) => {
               character = _character_;
               done();
             });
+            $rootScope.$apply();
           });
 
-          iit("should resolve the section", function() {
+          it("should resolve the section", function() {
             expect(character.name).toEqual("Hamlet");
           });
         });
@@ -388,4 +401,3 @@ xdescribe("Relationships integration", function() {
     });
   });
 });
-*/

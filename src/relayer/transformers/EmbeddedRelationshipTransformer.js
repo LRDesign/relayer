@@ -1,8 +1,8 @@
 import ResourceTransformer from "./ResourceTransformer.js";
 
 export default class EmbeddedRelationshipTransformer extends ResourceTransformer {
-  constructor(relationshipName) {
-    super();
+  constructor(services, relationshipName) {
+    super(services);
     this.relationshipName = relationshipName;
   }
 
@@ -13,11 +13,12 @@ export default class EmbeddedRelationshipTransformer extends ResourceTransformer
   }
 
   transformResponse(endpoint, response) {
+    var self = this; // XXX shouldn't be necessary
     return response.then((resource) => {
       endpoint.resource = resource;
-      return resource.relationships[this.relationshipName];
+      return resource.relationships[self.relationshipName];
     }).catch((error) => {
-      throw error.relationships[this.relationshipName];
+      throw error.relationships[self.relationshipName];
     });
   }
 }

@@ -43,15 +43,16 @@ export default class ResolvedEndpoint extends Endpoint {
   }
 
   _transformResponse(transformers, response) {
+    var self = this; // XXX es6, tho?
     return transformers.reduce((interimResponse, transformer) => {
-      return transformer.transformResponse(this, interimResponse);
+      return transformer.transformResponse(self, interimResponse);
     }, response);
   }
 
   _transformRequest(transformers, request) {
+    var self = this;
     return transformers.slice(0).reverse().reduce((interimRequest, transformer) => {
-
-      return transformer.transformRequest(this, interimRequest);
+      return transformer.transformRequest(self, interimRequest);
     }, request);
   }
 

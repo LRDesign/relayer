@@ -11,8 +11,8 @@ export default class ResourceBuilder {
 
     this.response = response;
 
-    this.mapperFactory = services.mapperFactory;
-    this.serializerFactory = services.serializerFactory;
+    this.mapperFactory = services.resourceMapperFactory;
+    this.serializerFactory = services.resourceSerializerFactory;
   }
 
   build(uriTemplate = null) {

@@ -34,11 +34,13 @@ describe("ManyResourceMapper", function() {
 
     ResourceClass.relationships = {
       "cheese": {
-        mapperFactory: function(response, ResourceClass) {
-          return {
-            map() {
-              return "cheese";
-            }
+        mapperFactory(services) {
+          return function(response, ResourceClass) {
+            return {
+              map() {
+                return "cheese";
+              }
+            };
           };
         },
         ResourceClass: {},
@@ -60,7 +62,7 @@ describe("ManyResourceMapper", function() {
 
     templatedUrlFromUrlFactory = jasmine.createSpy("templatedUrlFromUrlFactory").and.returnValue(templatedUrl);
 
-    resourceBuilderFactory = jasmine.createSpy("resourceBuilderFactory").and.callFake(function(thisResponse, thisMapperFactory, thisSerializerFactory, ThisResourceClass) {
+    resourceBuilderFactory = jasmine.createSpy("resourceBuilderFactory").and.callFake(function(thisResponse, ThisResourceClass) {
       return {
         build(uriTemplate) {
           var resource = new ThisResourceClass(thisResponse);

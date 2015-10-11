@@ -21,9 +21,9 @@ describe("CreateResourceTransformer", function() {
     resource = new mocks.ResourceClass(mockResponse);
 
     createResourceTransformer = new CreateResourceTransformer(mocks.services,
-                                                              mocks.ResourceClass,
                                                               mocks.primaryResourceMapperFactory,
-                                                              mocks.primaryResourceSerializerFactory
+                                                              mocks.primaryResourceSerializerFactory,
+                                                              mocks.ResourceClass
                                                              );
 
   });

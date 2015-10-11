@@ -1,10 +1,14 @@
 export default class UrlHelper {
   constructor(baseUrl) {
-    this.wellKnownUrl = this.fullUrlRegEx.exec(baseUrl)[3];
+    this.rawUrl = baseUrl;
     if (this.isFullUrl(baseUrl)) {
       baseUrl = this.fullUrlRegEx.exec(baseUrl)[1];
     }
     this.baseUrl = this.withoutTrailingSlash(baseUrl);
+  }
+
+  get wellKnownUrl() {
+    return this.fullUrlRegEx.exec(this.rawUrl)[3];
   }
 
   mangleUrl(url){

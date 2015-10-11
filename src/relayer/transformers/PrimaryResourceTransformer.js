@@ -27,7 +27,8 @@ export default class PrimaryResourceTransformer extends ResourceTransformer {
         throw this.primaryResourceMapperFactory(
           resolvedError.data,
           this.ResourceClass.errorClass,
-          endpoint).map();
+          endpoint
+        ).map();
       }
     );
   }

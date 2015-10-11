@@ -36,7 +36,6 @@ export default class ListResourceMapper extends ResourceMapper {
   mapNestedRelationships() {
     this.resource = this.mapped;
     var manyResourceMapper = this.mapperFactory(
-      this.transport,
       this.resource.pathGet("$.data"),
       this.ItemResourceClass
     );
@@ -44,9 +43,10 @@ export default class ListResourceMapper extends ResourceMapper {
     this.mapped = manyResourceMapper.map();
     this.mapped.resource = this.resource;
 
-    this.mapped.url         = this.mappedDelegationFn("url");
-    this.mapped.uriTemplate = this.mappedDelegationFn("uriTemplate");
-    this.mapped.uriParams   = this.mappedDelegationFn("uriParams");
+    this.mapped.url           = this.mappedDelegationFn("url");
+    this.mapped.uriTemplate   = this.mappedDelegationFn("uriTemplate");
+    this.mapped.uriParams     = this.mappedDelegationFn("uriParams");
+    this.mapped.relationships = this.mappedDelegationFn("relationships");
 
     this.mapped.remove = this.mappedRetreiveFn("remove");
     this.mapped.update = this.mappedRetreiveFn("update");

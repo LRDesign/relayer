@@ -23,5 +23,12 @@ module.exports = function(config) {
 
     browsers: ['Chrome'],
 
+    customLaunchers: {
+      ChromeWithLocalConfig: {
+        base: 'Chrome',
+        flags: ['--user-data-dir=./.chrome_dev_user']
+      }
+    }
+
   });
 };
