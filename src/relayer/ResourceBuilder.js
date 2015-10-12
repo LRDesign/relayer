@@ -1,6 +1,5 @@
 export default class ResourceBuilder {
-  constructor( services, response, ResourceClass) {
-    this.transport     = services.transport;
+  constructor( services, response, ResourceClass, mapperFactory, serializerFactory) {
     this.services      = services;
     this.ResourceClass = ResourceClass;
 
@@ -11,8 +10,8 @@ export default class ResourceBuilder {
 
     this.response = response;
 
-    this.mapperFactory = services.resourceMapperFactory;
-    this.serializerFactory = services.resourceSerializerFactory;
+    this.mapperFactory = mapperFactory;
+    this.serializerFactory = serializerFactory;
   }
 
   build(uriTemplate = null) {

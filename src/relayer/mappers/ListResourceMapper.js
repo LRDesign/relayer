@@ -1,22 +1,13 @@
 import ResourceMapper from "./ResourceMapper.js";
 
 export default class ListResourceMapper extends ResourceMapper {
-  constructor(
-    services,
-    response,
-    ItemResourceClass,
-    endpoint = null
-  ) {
-
-    super(
-      services,
-      response,
-      services.ListResource // simply import?
-    );
+  constructor( services, response, ItemResourceClass, endpoint = null) {
+    super( services, response, services.ListResource );
 
     this.ItemResourceClass = ItemResourceClass;
-    this.mapperFactory = services.manyResourceMapperFactory;
-    this.serializerFactory = services.manyResourceSerializerFactory;
+    this.mapperFactory = services.listResourceMapperFactory;
+    this.serializerFactory = services.listResourceSerializerFactory;
+    this.manyResourceMapperFactory = services.manyResourceMapperFactory;
     this.endpoint = endpoint;
   }
 
@@ -34,8 +25,9 @@ export default class ListResourceMapper extends ResourceMapper {
   }
 
   mapNestedRelationships() {
+    super.mapNestedRelationships();
     this.resource = this.mapped;
-    var manyResourceMapper = this.mapperFactory(
+    var manyResourceMapper = this.manyResourceMapperFactory(
       this.resource.pathGet("$.data"),
       this.ItemResourceClass
     );
@@ -46,7 +38,9 @@ export default class ListResourceMapper extends ResourceMapper {
     this.mapped.url           = this.mappedDelegationFn("url");
     this.mapped.uriTemplate   = this.mappedDelegationFn("uriTemplate");
     this.mapped.uriParams     = this.mappedDelegationFn("uriParams");
-    this.mapped.relationships = this.mappedDelegationFn("relationships");
+    Object.keys(this.resource.relationships).forEach((key) => {
+      this.mapped[key] = this.mappedDelegationFn(key);
+    });
 
     this.mapped.remove = this.mappedRetreiveFn("remove");
     this.mapped.update = this.mappedRetreiveFn("update");

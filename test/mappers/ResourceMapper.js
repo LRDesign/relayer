@@ -132,7 +132,7 @@ describe("ResourceMapper", function() {
     });
 
     it("should build the resource with the regular resource builder", function() {
-      expect(resourceBuilderFactory).toHaveBeenCalledWith(resource, ResourceClass);
+      expect(resourceBuilderFactory).toHaveBeenCalledWith(resource, ResourceClass, resourceMapperFactory, resourceSerializerFactory);
     });
   });
 
@@ -155,7 +155,7 @@ describe("ResourceMapper", function() {
     });
 
     it("should build the resource with the regular resource builder", function() {
-      expect(resourceBuilderFactory).toHaveBeenCalledWith( resource, ResourceClass);
+      expect(resourceBuilderFactory).toHaveBeenCalledWith( resource, ResourceClass, resourceMapperFactory, resourceSerializerFactory);
     });
   });
 

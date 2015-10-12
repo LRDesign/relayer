@@ -4,13 +4,34 @@ export default class Locator {
   }
 
   buildFn(buildClass){
-    return (...args) => new buildClass(...args);
+    var builder = function(...args) {
+      return new buildClass(...args);
+    };
+    // I got tired of these being "anonymous function" in debug
+    Object.defineProperty(builder, "name", {
+                            configurable: true,
+                            writable: false,
+                            enumerable: false,
+                            value: `build${buildClass.name}`
+                          });
+
+    return builder;
   }
 
   applySelfToBuilder(buildClass){
-    return (...args) => {
-      return this.buildFn(buildClass)(this, ...args);
+    var {buildFn} = this;
+    var locator = this;
+    var applied = function(...args) {
+      return buildFn(buildClass)(locator, ...args);
     };
+    Object.defineProperty(applied, "name", {
+                            configurable: true,
+                            writable: false,
+                            enumerable: false,
+                            value: `serviceInjected${buildClass.name}`
+                          });
+
+    return applied;
   }
 
   memoize(name, builder) {

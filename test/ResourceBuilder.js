@@ -83,7 +83,9 @@ describe("ResourceBuilder", function() {
     resourceBuilder = new ResourceBuilder(
       services,
       resource,
-      ResourceClass
+      ResourceClass,
+      resourceMapperFactory,
+      resourceSerializerFactory
     );
   });
 

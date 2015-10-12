@@ -1,25 +1,33 @@
 import Mapper from "./Mapper.js";
 
 export default class ResourceMapper extends Mapper {
-  constructor(
-    services,
-    response,
-    ResourceClass,
-    endpoint = null
-  ) {
+  constructor( services, response, ResourceClass, endpoint = null) {
     super(services, response, ResourceClass);
 
-    this.templatedUrlFromUrlFactory = services.templatedUrlFromUrlFactory;
-    this.resourceBuilderFactory = services.resourceBuilderFactory;
+    this.services                      = services;
+    this.templatedUrlFromUrlFactory    = services.templatedUrlFromUrlFactory;
     this.primaryResourceBuilderFactory = services.primaryResourceBuilderFactory;
-    this.endpoint = endpoint;
+    this.resourceBuilderFactory        = services.resourceBuilderFactory;
+    this.mapperFactory         = services.resourceMapperFactory;
+    this.serializerFactory     = services.resourceSerializerFactory;
+    this.endpoint                      = endpoint;
+  }
+
+  initializePrimaryResource() {
+    this.mapped = this.primaryResourceBuilderFactory(this.response, this.ResourceClass).build(this.endpoint);
+  }
+
+  initializeEmbeddedResource() {
+    this.mapped = this.resourceBuilderFactory(
+      this.response, this.ResourceClass, this.mapperFactory, this.serializerFactory
+    ).build(this.uriTemplate);
   }
 
   initializeModel() {
     if (this.endpoint) {
-      this.mapped = this.primaryResourceBuilderFactory(this.response, this.ResourceClass).build(this.endpoint);
+      this.initializePrimaryResource();
     } else {
-      this.mapped = this.resourceBuilderFactory( this.response, this.ResourceClass).build(this.uriTemplate);
+      this.initializeEmbeddedResource();
     }
   }
 

@@ -6,6 +6,7 @@ export default class ListResourceSerializer extends Serializer {
     this.manyResourceSerializerFactory = services.manyResourceSerializerFactory;
   }
 
+  // XXX subclass?
   serialize() {
     var data = this.manyResourceSerializerFactory(this.resource).serialize();
     this.resource.resource.pathSet("$.data", data);

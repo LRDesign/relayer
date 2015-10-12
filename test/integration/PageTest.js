@@ -245,6 +245,7 @@ describe("Page test", function() {
         return Promise.resolve({});
       }
     };
+
     var injector = new Injector();
     injector.instantiate(AppModule);
     angular.mock.module('AppModule');
@@ -256,7 +257,7 @@ describe("Page test", function() {
         };
       });
     });
-    inject(function(_resources_, _$rootScope_) {
+    inject(function($injector, _resources_, _$rootScope_) {
       resources = _resources_;
       $rootScope = _$rootScope_;
     });

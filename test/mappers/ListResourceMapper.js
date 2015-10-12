@@ -18,7 +18,9 @@ describe("ListResourceMapper", function() {
   results,
   transport,
   manyResourceMapperFactory,
-  manyResourceSerializerFactory;
+  manyResourceSerializerFactory,
+  listResourceMapperFactory,
+  listResourceSerializerFactory;
 
   beforeEach(function() {
     manyResourceMapper = {
@@ -38,6 +40,9 @@ describe("ListResourceMapper", function() {
         manyResourceMapper.data = thisData;
         return manyResourceMapper;
       });
+
+    listResourceMapperFactory = jasmine.createSpy("listResourceMapperFactory");
+    listResourceSerializerFactory = jasmine.createSpy("listResourceSerializerFactory");
 
     data = new Array(10);
     data.fill({
@@ -117,7 +122,9 @@ describe("ListResourceMapper", function() {
       primaryResourceBuilderFactory,
       ListResource,
       manyResourceMapperFactory,
-      manyResourceSerializerFactory
+      manyResourceSerializerFactory,
+      listResourceMapperFactory,
+      listResourceSerializerFactory
     };
 
     listResourceMapper = new ListResourceMapper(
@@ -174,7 +181,10 @@ describe("ListResourceMapper", function() {
     it("should build the resource with the regular resource builder", function() {
       expect(resourceBuilderFactory).toHaveBeenCalledWith(
         data,
-        ListResource);
+        ListResource,
+        listResourceMapperFactory,
+        listResourceSerializerFactory
+      );
     });
 
     describe("create", function() {
