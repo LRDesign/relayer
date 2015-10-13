@@ -1,5 +1,5 @@
 define('relayer/jsonpath',[], function() {
-  
+
   if (!Array.isArray) {
     Array.isArray = function(vArg) {
       return Object.prototype.toString.call(vArg) === "[object Array]";
@@ -213,7 +213,7 @@ define('relayer/jsonpath',[], function() {
 });
 
 define('a1atscript/ToAnnotation',[], function() {
-  
+
   function defineAnnotation(target, AnnotationClass, callParams) {
     var oldAnnotation = Object.getOwnPropertyDescriptor(target, 'annotations');
     if (oldAnnotation) {
@@ -281,7 +281,7 @@ define('a1atscript/ToAnnotation',[], function() {
 });
 
 define('a1atscript/annotations',["./ToAnnotation"], function($__0) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   var ToAnnotation = $__0.ToAnnotation;
@@ -457,7 +457,7 @@ define('a1atscript/annotations',["./ToAnnotation"], function($__0) {
 });
 
 define('a1atscript/AnnotationFinder',[], function() {
-  
+
   var AnnotationFinder = function AnnotationFinder(AnnotatedClass) {
     this.AnnotatedClass = AnnotatedClass;
   };
@@ -492,7 +492,7 @@ define('a1atscript/AnnotationFinder',[], function() {
 });
 
 define('a1atscript/ng2Directives/Ng2Directive',[], function() {
-  
+
   var Ng2Directive = function Ng2Directive(descriptor) {
     this.selector = descriptor.selector;
     this.properties = descriptor.properties || descriptor.bind;
@@ -512,7 +512,7 @@ define('a1atscript/ng2Directives/Ng2Directive',[], function() {
 });
 
 define('a1atscript/ng2Directives/Component',["./Ng2Directive", "../ToAnnotation"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -569,7 +569,7 @@ define('a1atscript/ng2Directives/Component',["./Ng2Directive", "../ToAnnotation"
 });
 
 define('a1atscript/ng2Directives/SelectorMatcher',[], function() {
-  
+
   var SPECIAL_CHARS_REGEXP = /([\:\-\_]+(.))/g;
   var MOZ_HACK_REGEXP = /^moz([A-Z])/;
   var SelectorMatcher = function SelectorMatcher(selector) {
@@ -620,7 +620,7 @@ define('a1atscript/ng2Directives/SelectorMatcher',[], function() {
 });
 
 define('a1atscript/router/ComponentMapper',["../annotations", "../ng2Directives/Component", "../AnnotationFinder", "../ng2Directives/SelectorMatcher"], function($__0,$__2,$__4,$__6) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -800,7 +800,7 @@ define('a1atscript/router/ComponentMapper',["../annotations", "../ng2Directives/
 });
 
 define('a1atscript/router/RouteConfig',["../ToAnnotation"], function($__0) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   var ToAnnotation = $__0.ToAnnotation;
@@ -820,7 +820,7 @@ define('a1atscript/router/RouteConfig',["../ToAnnotation"], function($__0) {
 });
 
 define('a1atscript/router/RouteReader',["./RouteConfig", "../AnnotationFinder"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -873,7 +873,7 @@ define('a1atscript/router/RouteReader',["./RouteConfig", "../AnnotationFinder"],
 });
 
 define('a1atscript/router/RouteInitializer',[], function() {
-  
+
   var RouteInitializer = function RouteInitializer(componentMapper) {
     this.componentMapper = componentMapper;
   };
@@ -948,7 +948,7 @@ define('a1atscript/router/RouteInitializer',[], function() {
 });
 
 define('a1atscript/Router',["./router/ComponentMapper", "./router/RouteReader", "./router/RouteInitializer", "./router/RouteConfig"], function($__0,$__2,$__4,$__6) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -981,7 +981,7 @@ define('a1atscript/Router',["./router/ComponentMapper", "./router/RouteReader", 
 });
 
 define('a1atscript/injectorTypes',["./annotations", "./Router"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -1205,7 +1205,7 @@ define('a1atscript/injectorTypes',["./annotations", "./Router"], function($__0,$
 });
 
 define('a1atscript/Injector',["./annotations", "./AnnotationFinder", "./injectorTypes"], function($__0,$__2,$__4) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -1402,7 +1402,7 @@ define('a1atscript/Injector',["./annotations", "./AnnotationFinder", "./injector
 });
 
 define('a1atscript/DirectiveObject',["./injectorTypes", "./Injector", "./ToAnnotation"], function($__0,$__2,$__4) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -1481,7 +1481,7 @@ define('a1atscript/DirectiveObject',["./injectorTypes", "./Injector", "./ToAnnot
 });
 
 define('a1atscript/ng2Directives/Ng2DirectiveDefinitionObject',["./SelectorMatcher"], function($__0) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   var SelectorMatcher = $__0.default;
@@ -1563,7 +1563,7 @@ define('a1atscript/ng2Directives/Ng2DirectiveDefinitionObject',["./SelectorMatch
 });
 
 define('a1atscript/ng2Directives/BindBuilder',[], function() {
-  
+
   var BindBuilder = function BindBuilder(bindObj, component) {
     this._bindObj = bindObj;
     this._component = component;
@@ -1586,7 +1586,7 @@ define('a1atscript/ng2Directives/BindBuilder',[], function() {
 });
 
 define('a1atscript/ng2Directives/PropertiesBuilder',["./BindBuilder"], function($__0) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   var BindBuilder = $__0.default;
@@ -1644,7 +1644,7 @@ define('a1atscript/ng2Directives/PropertiesBuilder',["./BindBuilder"], function(
 });
 
 define('a1atscript/ng2Directives/EventsBuilder',["./BindBuilder"], function($__0) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   var BindBuilder = $__0.default;
@@ -1667,7 +1667,7 @@ define('a1atscript/ng2Directives/EventsBuilder',["./BindBuilder"], function($__0
 });
 
 define('a1atscript/ng2Directives/ComponentInjector',["../Injector", "./Component", "../injectorTypes", "./Ng2DirectiveDefinitionObject", "./PropertiesBuilder", "./EventsBuilder", "../Router"], function($__0,$__2,$__4,$__6,$__8,$__10,$__12) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -1744,7 +1744,7 @@ define('a1atscript/ng2Directives/ComponentInjector',["../Injector", "./Component
 });
 
 define('a1atscript/bootstrap',["./Injector", "./Router"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -1766,7 +1766,7 @@ define('a1atscript/bootstrap',["./Injector", "./Router"], function($__0,$__2) {
 });
 
 define('a1atscript',["./a1atscript/Injector", "./a1atscript/annotations", "./a1atscript/DirectiveObject", "./a1atscript/ng2Directives/ComponentInjector", "./a1atscript/ng2Directives/Component", "./a1atscript/ToAnnotation", "./a1atscript/bootstrap", "./a1atscript/Router"], function($__0,$__1,$__2,$__3,$__4,$__5,$__6,$__7) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__1 || !$__1.__esModule)
@@ -1869,7 +1869,7 @@ define('a1atscript',["./a1atscript/Injector", "./a1atscript/annotations", "./a1a
 });
 
 define('relayer/SimpleFactoryInjector',["a1atscript"], function($__0) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   var $__1 = $__0,
@@ -1929,7 +1929,7 @@ define('relayer/SimpleFactoryInjector',["a1atscript"], function($__0) {
 });
 
 define('relayer/DataWrapper',["./jsonpath", "./SimpleFactoryInjector"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -2068,7 +2068,7 @@ define('relayer/DataWrapper',["./jsonpath", "./SimpleFactoryInjector"], function
 });
 
 define('relayer/APIError',["./DataWrapper"], function($__0) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   var DataWrapper = $__0.default;
@@ -2104,7 +2104,7 @@ define('relayer/APIError',["./DataWrapper"], function($__0) {
 });
 
 define('relayer/ResourceDescription',["./APIError", "a1atscript", "./SimpleFactoryInjector"], function($__0,$__2,$__4) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -2244,7 +2244,7 @@ define('relayer/ResourceDescription',["./APIError", "a1atscript", "./SimpleFacto
 });
 
 define('relayer/Resource',["./DataWrapper"], function($__0) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   var DataWrapper = $__0.default;
@@ -2394,7 +2394,7 @@ define('relayer/Resource',["./DataWrapper"], function($__0) {
 });
 
 define('relayer/endpoints/Endpoint',[], function() {
-  
+
   var Endpoint = function Endpoint() {};
   ($traceurRuntime.createClass)(Endpoint, {
     create: function(resource, res, rej) {
@@ -2453,7 +2453,7 @@ define('relayer/endpoints/Endpoint',[], function() {
 });
 
 define('relayer/endpoints/PromiseEndpoint',["./Endpoint", "../SimpleFactoryInjector"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -2479,7 +2479,7 @@ define('relayer/endpoints/PromiseEndpoint',["./Endpoint", "../SimpleFactoryInjec
 });
 
 define('relayer/endpoints/ResolvedEndpoint',["./Endpoint", "../SimpleFactoryInjector"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -2552,7 +2552,7 @@ define('relayer/endpoints/ResolvedEndpoint',["./Endpoint", "../SimpleFactoryInje
 });
 
 define('relayer/endpoints/LoadedDataEndpoint',["./ResolvedEndpoint", "../SimpleFactoryInjector"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -2599,7 +2599,7 @@ define('relayer/endpoints/LoadedDataEndpoint',["./ResolvedEndpoint", "../SimpleF
 });
 
 define('relayer/endpoints',["./endpoints/PromiseEndpoint", "./endpoints/ResolvedEndpoint", "./endpoints/LoadedDataEndpoint"], function($__0,$__1,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__1 || !$__1.__esModule)
@@ -2624,7 +2624,7 @@ define('relayer/endpoints',["./endpoints/PromiseEndpoint", "./endpoints/Resolved
 });
 
 define('relayer/serializers/Serializer',[], function() {
-  
+
   var Serializer = function Serializer(resource) {
     this.resource = resource;
   };
@@ -2639,7 +2639,7 @@ define('relayer/serializers/Serializer',[], function() {
 });
 
 define('relayer/TemplatedUrl',["./SimpleFactoryInjector"], function($__0) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   var SimpleFactory = $__0.SimpleFactory;
@@ -2713,7 +2713,7 @@ define('relayer/TemplatedUrl',["./SimpleFactoryInjector"], function($__0) {
 });
 
 define('relayer/serializers/ResourceSerializer',["./Serializer", "../SimpleFactoryInjector", "../TemplatedUrl"], function($__0,$__2,$__4) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -2754,7 +2754,7 @@ define('relayer/serializers/ResourceSerializer',["./Serializer", "../SimpleFacto
 });
 
 define('relayer/serializers/ManyResourceSerializer',["./Serializer", "../SimpleFactoryInjector"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -2785,7 +2785,7 @@ define('relayer/serializers/ManyResourceSerializer',["./Serializer", "../SimpleF
 });
 
 define('relayer/serializers/ListResourceSerializer',["../SimpleFactoryInjector", "./Serializer"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -2815,7 +2815,7 @@ define('relayer/serializers/ListResourceSerializer',["../SimpleFactoryInjector",
 });
 
 define('relayer/serializers/MapResourceSerializer',["./Serializer", "../SimpleFactoryInjector"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -2847,7 +2847,7 @@ define('relayer/serializers/MapResourceSerializer',["./Serializer", "../SimpleFa
 });
 
 define('relayer/serializers',["./serializers/ResourceSerializer", "./serializers/ManyResourceSerializer", "./serializers/ListResourceSerializer", "./serializers/MapResourceSerializer"], function($__0,$__1,$__2,$__3) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__1 || !$__1.__esModule)
@@ -2878,7 +2878,7 @@ define('relayer/serializers',["./serializers/ResourceSerializer", "./serializers
 });
 
 define('relayer/mappers/Mapper',[], function() {
-  
+
   var Mapper = function Mapper(transport, response, relationshipDescription) {
     var useErrors = arguments[3] !== (void 0) ? arguments[3] : false;
     this.transport = transport;
@@ -2916,7 +2916,7 @@ define('relayer/mappers/Mapper',[], function() {
 });
 
 define('relayer/mappers/ResourceMapper',["./Mapper", "../SimpleFactoryInjector"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -2977,7 +2977,7 @@ define('relayer/mappers/ResourceMapper',["./Mapper", "../SimpleFactoryInjector"]
 });
 
 define('relayer/mappers/ManyResourceMapper',["../SimpleFactoryInjector", "./Mapper"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -3016,7 +3016,7 @@ define('relayer/mappers/ManyResourceMapper',["../SimpleFactoryInjector", "./Mapp
 });
 
 define('relayer/mappers/ListResourceMapper',["../SimpleFactoryInjector", "./ResourceMapper"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -3102,7 +3102,7 @@ define('relayer/mappers/ListResourceMapper',["../SimpleFactoryInjector", "./Reso
 });
 
 define('relayer/mappers/MapResourceMapper',["../SimpleFactoryInjector", "./Mapper"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -3141,7 +3141,7 @@ define('relayer/mappers/MapResourceMapper',["../SimpleFactoryInjector", "./Mappe
 });
 
 define('relayer/mappers',["./mappers/ResourceMapper", "./mappers/ManyResourceMapper", "./mappers/ListResourceMapper", "./mappers/MapResourceMapper"], function($__0,$__1,$__2,$__3) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__1 || !$__1.__esModule)
@@ -3172,7 +3172,7 @@ define('relayer/mappers',["./mappers/ResourceMapper", "./mappers/ManyResourceMap
 });
 
 define('relayer/transformers/ResourceTransformer',[], function() {
-  
+
   var ResourceTransformer = function ResourceTransformer() {
     ;
   };
@@ -3194,7 +3194,7 @@ define('relayer/transformers/ResourceTransformer',[], function() {
 });
 
 define('relayer/transformers/PrimaryResourceTransformer',["./ResourceTransformer", "../SimpleFactoryInjector"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -3239,7 +3239,7 @@ define('relayer/transformers/PrimaryResourceTransformer',["./ResourceTransformer
 });
 
 define('relayer/transformers/CreateResourceTransformer',["./PrimaryResourceTransformer", "../SimpleFactoryInjector"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -3274,7 +3274,7 @@ define('relayer/transformers/CreateResourceTransformer',["./PrimaryResourceTrans
 });
 
 define('relayer/transformers/EmbeddedPropertyTransformer',["./ResourceTransformer", "../SimpleFactoryInjector"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -3315,7 +3315,7 @@ define('relayer/transformers/EmbeddedPropertyTransformer',["./ResourceTransforme
 });
 
 define('relayer/transformers/EmbeddedRelationshipTransformer',["./ResourceTransformer", "../SimpleFactoryInjector"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -3356,7 +3356,7 @@ define('relayer/transformers/EmbeddedRelationshipTransformer',["./ResourceTransf
 });
 
 define('relayer/transformers/SingleFromManyTransformer',["./ResourceTransformer", "../SimpleFactoryInjector"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -3398,7 +3398,7 @@ define('relayer/transformers/SingleFromManyTransformer',["./ResourceTransformer"
 });
 
 define('relayer/transformers/IndividualFromListTransformer',["./ResourceTransformer", "../SimpleFactoryInjector"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -3458,7 +3458,7 @@ define('relayer/transformers/IndividualFromListTransformer',["./ResourceTransfor
 });
 
 define('relayer/transformers/ThrowErrorTransformer',["./ResourceTransformer", "../SimpleFactoryInjector"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -3491,7 +3491,7 @@ define('relayer/transformers/ThrowErrorTransformer',["./ResourceTransformer", ".
 });
 
 define('relayer/transformers',["./transformers/PrimaryResourceTransformer", "./transformers/CreateResourceTransformer", "./transformers/EmbeddedPropertyTransformer", "./transformers/EmbeddedRelationshipTransformer", "./transformers/SingleFromManyTransformer", "./transformers/IndividualFromListTransformer", "./transformers/ThrowErrorTransformer"], function($__0,$__1,$__2,$__3,$__4,$__5,$__6) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__1 || !$__1.__esModule)
@@ -3540,7 +3540,7 @@ define('relayer/transformers',["./transformers/PrimaryResourceTransformer", "./t
 });
 
 define('relayer/initializers/RelationshipInitializer',[], function() {
-  
+
   var RelationshipInitializer = function RelationshipInitializer(ResourceClass, initialValues) {
     this.ResourceClass = ResourceClass;
     this.initialValues = initialValues;
@@ -3556,7 +3556,7 @@ define('relayer/initializers/RelationshipInitializer',[], function() {
 });
 
 define('relayer/initializers/SingleRelationshipInitializer',["./RelationshipInitializer", "../SimpleFactoryInjector"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -3591,7 +3591,7 @@ define('relayer/initializers/SingleRelationshipInitializer',["./RelationshipInit
 });
 
 define('relayer/initializers/ManyRelationshipInitializer',["./RelationshipInitializer", "../SimpleFactoryInjector"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -3630,7 +3630,7 @@ define('relayer/initializers/ManyRelationshipInitializer',["./RelationshipInitia
 });
 
 define('relayer/initializers/ListRelationshipInitializer',["./RelationshipInitializer", "../SimpleFactoryInjector"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -3674,7 +3674,7 @@ define('relayer/initializers/ListRelationshipInitializer',["./RelationshipInitia
 });
 
 define('relayer/initializers/MapRelationshipInitializer',["./RelationshipInitializer", "../SimpleFactoryInjector"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -3713,7 +3713,7 @@ define('relayer/initializers/MapRelationshipInitializer',["./RelationshipInitial
 });
 
 define('relayer/initializers',["./initializers/SingleRelationshipInitializer", "./initializers/ManyRelationshipInitializer", "./initializers/ListRelationshipInitializer", "./initializers/MapRelationshipInitializer"], function($__0,$__1,$__2,$__3) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__1 || !$__1.__esModule)
@@ -3744,7 +3744,7 @@ define('relayer/initializers',["./initializers/SingleRelationshipInitializer", "
 });
 
 define('relayer/decorators/ResourceDecorator',[], function() {
-  
+
   var ResourceDecorator = function ResourceDecorator(name) {
     this.name = name;
   };
@@ -3768,7 +3768,7 @@ define('relayer/decorators/ResourceDecorator',[], function() {
 });
 
 define('relayer/decorators/JsonPropertyDecorator',["./ResourceDecorator", "../SimpleFactoryInjector"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -3853,7 +3853,7 @@ define('relayer/decorators/JsonPropertyDecorator',["./ResourceDecorator", "../Si
 });
 
 define('relayer/decorators/RelatedResourceDecorator',["./ResourceDecorator", "../TemplatedUrl", "../SimpleFactoryInjector"], function($__0,$__2,$__4) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -3987,7 +3987,7 @@ define('relayer/decorators/RelatedResourceDecorator',["./ResourceDecorator", "..
 });
 
 define('relayer/decorators',["./decorators/JsonPropertyDecorator", "./decorators/RelatedResourceDecorator"], function($__0,$__1) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__1 || !$__1.__esModule)
@@ -4006,7 +4006,7 @@ define('relayer/decorators',["./decorators/JsonPropertyDecorator", "./decorators
 });
 
 define('relayer/relationshipDescriptions/RelationshipDescription',[], function() {
-  
+
   var RelationshipDescription = function RelationshipDescription(relationshipInitializerFactory, resourceMapperFactory, resourceSerializerFactory, inflector, name, ResourceClass, initialValues) {
     this.initializer = relationshipInitializerFactory(ResourceClass, initialValues);
     this.mapperFactory = resourceMapperFactory;
@@ -4051,7 +4051,7 @@ define('relayer/relationshipDescriptions/RelationshipDescription',[], function()
 });
 
 define('relayer/relationshipDescriptions/SingleRelationshipDescription',["./RelationshipDescription", "../SimpleFactoryInjector"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -4095,7 +4095,7 @@ define('relayer/relationshipDescriptions/SingleRelationshipDescription',["./Rela
 });
 
 define('relayer/relationshipDescriptions/MultipleRelationshipDescription',["./RelationshipDescription"], function($__0) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   var RelationshipDescription = $__0.default;
@@ -4131,7 +4131,7 @@ define('relayer/relationshipDescriptions/MultipleRelationshipDescription',["./Re
 });
 
 define('relayer/relationshipDescriptions/ManyRelationshipDescription',["./MultipleRelationshipDescription", "../SimpleFactoryInjector"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -4157,7 +4157,7 @@ define('relayer/relationshipDescriptions/ManyRelationshipDescription',["./Multip
 });
 
 define('relayer/relationshipDescriptions/ListRelationshipDescription',["./RelationshipDescription", "../SimpleFactoryInjector"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -4273,7 +4273,7 @@ define('relayer/relationshipDescriptions/ListRelationshipDescription',["./Relati
 });
 
 define('relayer/relationshipDescriptions/MapRelationshipDescription',["./MultipleRelationshipDescription", "../SimpleFactoryInjector"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -4299,7 +4299,7 @@ define('relayer/relationshipDescriptions/MapRelationshipDescription',["./Multipl
 });
 
 define('relayer/relationshipDescriptions',["./relationshipDescriptions/SingleRelationshipDescription", "./relationshipDescriptions/ManyRelationshipDescription", "./relationshipDescriptions/ListRelationshipDescription", "./relationshipDescriptions/MapRelationshipDescription"], function($__0,$__1,$__2,$__3) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__1 || !$__1.__esModule)
@@ -4330,7 +4330,7 @@ define('relayer/relationshipDescriptions',["./relationshipDescriptions/SingleRel
 });
 
 define('relayer/ListResource',["./Resource", "a1atscript"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -4356,7 +4356,7 @@ define('relayer/ListResource',["./Resource", "a1atscript"], function($__0,$__2) 
 });
 
 define('relayer/PrimaryResourceBuilder',["./SimpleFactoryInjector"], function($__0) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   var SimpleFactory = $__0.SimpleFactory;
@@ -4386,7 +4386,7 @@ define('relayer/PrimaryResourceBuilder',["./SimpleFactoryInjector"], function($_
 });
 
 define('relayer/ResourceBuilder',["./SimpleFactoryInjector"], function($__0) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   var SimpleFactory = $__0.SimpleFactory;
@@ -4430,7 +4430,7 @@ define('relayer/ResourceBuilder',["./SimpleFactoryInjector"], function($__0) {
 });
 
 define('relayer/Transport',["./SimpleFactoryInjector"], function($__0) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   var SimpleFactory = $__0.SimpleFactory;
@@ -4510,7 +4510,7 @@ define('relayer/Transport',["./SimpleFactoryInjector"], function($__0) {
 });
 
 define('relayer/UrlHelper',["./SimpleFactoryInjector"], function($__0) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   var SimpleFactory = $__0.SimpleFactory;
@@ -4565,7 +4565,7 @@ define('relayer/UrlHelper',["./SimpleFactoryInjector"], function($__0) {
 });
 
 define('relayer/Promise',["a1atscript"], function($__0) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   var Factory = $__0.Factory;
@@ -4616,7 +4616,7 @@ define('relayer/Promise',["a1atscript"], function($__0) {
 });
 
 define('relayer/RelationshipUtilities',["a1atscript", "./TemplatedUrl"], function($__0,$__2) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -4663,7 +4663,7 @@ define('relayer/RelationshipUtilities',["a1atscript", "./TemplatedUrl"], functio
 });
 
 define('xing-inflector',["a1atscript"], function($__0) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   var $__1 = $__0,
@@ -4722,7 +4722,7 @@ define('xing-inflector',["a1atscript"], function($__0) {
 });
 
 define('relayer',["./relayer/ResourceDescription", "./relayer/Resource", "./relayer/endpoints", "./relayer/serializers", "./relayer/mappers", "./relayer/transformers", "./relayer/initializers", "./relayer/decorators", "./relayer/relationshipDescriptions", "./relayer/ListResource", "./relayer/PrimaryResourceBuilder", "./relayer/ResourceBuilder", "./relayer/Transport", "./relayer/UrlHelper", "./relayer/TemplatedUrl", "./relayer/Promise", "./relayer/RelationshipUtilities", "a1atscript", "xing-inflector"], function($__0,$__2,$__4,$__5,$__6,$__7,$__8,$__9,$__10,$__11,$__13,$__15,$__17,$__19,$__21,$__22,$__24,$__26,$__28) {
-  
+
   if (!$__0 || !$__0.__esModule)
     $__0 = {default: $__0};
   if (!$__2 || !$__2.__esModule)
@@ -4834,4 +4834,3 @@ define('relayer',["./relayer/ResourceDescription", "./relayer/Resource", "./rela
     __esModule: true
   };
 });
-
