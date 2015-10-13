@@ -18,6 +18,7 @@ import RelationshipUtilities from "./relayer/RelationshipUtilities.js";
 import {AsModule, Provider} from "a1atscript";
 import Inflector from "xing-inflector";
 
+
 @AsModule('relayer', [
   Endpoints,
   Serializers,

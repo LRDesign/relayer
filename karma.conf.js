@@ -12,7 +12,7 @@ module.exports = function(config) {
       'node_modules/angular/angular.js',
       'node_modules/uri-templates/uri-templates.js',
       'node_modules/angular-mocks/angular-mocks.js',
-      'node_modules/xing-traceur/node_modules/traceur/bin/traceur-runtime.js',
+      //'node_modules/xing-traceur/node_modules/traceur/bin/traceur-runtime.js',
       'build/test-main.js',
       {pattern: 'build/test-main.js.map', included: false}
     ],
