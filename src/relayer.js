@@ -13,7 +13,7 @@ import ResourceBuilder from "./relayer/ResourceBuilder.js";
 import Transport from "./relayer/Transport.js";
 import UrlHelper from "./relayer/UrlHelper.js";
 import * as TemplatedUrls from "./relayer/TemplatedUrl.js";
-import RelayerPromiseFactory from "./relayer/Promise.js";
+import XingPromise from "xing-promise";
 import RelationshipUtilities from "./relayer/RelationshipUtilities.js";
 import {AsModule, Provider} from "a1atscript";
 import Inflector from "xing-inflector";
@@ -37,7 +37,7 @@ import Inflector from "xing-inflector";
   ResourceBuilder,
   PrimaryResourceBuilder,
   Inflector,
-  RelayerPromiseFactory,
+  XingPromise,
   RelationshipUtilities
 ])
 @Provider('relayer', ['$provide'])

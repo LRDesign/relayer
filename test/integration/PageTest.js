@@ -247,9 +247,9 @@ describe("Page test", function() {
     injector.instantiate(AppModule);
     angular.mock.module('AppModule');
     angular.mock.module(function($provide) {
-      $provide.factory("$http", function(RelayerPromise) {
+      $provide.factory("$http", function(XingPromise) {
         return function(params) {
-          return mockHttp(RelayerPromise, params);
+          return mockHttp(XingPromise, params);
         };
       });
     });

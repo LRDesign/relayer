@@ -84,9 +84,9 @@ describe("Delete test", function() {
         }
       });
     angular.mock.module(function($provide) {
-      $provide.factory("$http", function(RelayerPromise) {
+      $provide.factory("$http", function(XingPromise) {
         return function(params) {
-          return mockHttp(RelayerPromise, params);
+          return mockHttp(XingPromise, params);
         };
       });
     });
