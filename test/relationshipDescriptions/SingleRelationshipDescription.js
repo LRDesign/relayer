@@ -9,7 +9,7 @@ describe("SingleRelationshipDescription", function() {
     embeddedRelationshipTransformerFactory,
     resolvedEndpointFactory,
     loadedDataEndpointFactory,
-    templatedUrlFromUrlFactory,
+    templatedUrlFactory,
     name,
     ResourceClass,
     initialValues,
@@ -56,9 +56,9 @@ describe("SingleRelationshipDescription", function() {
         return { endpoint, resource, transformers};
       });
 
-    templatedUrlFromUrlFactory = jasmine.createSpy("templatedUrlFromUrlFactory").and.callFake(
-      function(uriTemplate, url) {
-        return { uriTemplate, url,
+    templatedUrlFactory = jasmine.createSpy("templatedUrlFactory").and.callFake(
+      function(uriTemplate, uriParams) {
+        return { uriTemplate, uriParams,
           addDataPathLink(resource, path) {
             this.dataPath = { resource, path }
           }
@@ -98,7 +98,7 @@ describe("SingleRelationshipDescription", function() {
       embeddedRelationshipTransformerFactory,
       resolvedEndpointFactory,
       loadedDataEndpointFactory,
-      templatedUrlFromUrlFactory,
+      templatedUrlFactory,
       name,
       ResourceClass,
       initialValues);
@@ -115,7 +115,7 @@ describe("SingleRelationshipDescription", function() {
     expect(singleRelationshipDescription.embeddedRelationshipTransformerFactory).toEqual(embeddedRelationshipTransformerFactory);
     expect(singleRelationshipDescription.resolvedEndpointFactory).toEqual(resolvedEndpointFactory);
     expect(singleRelationshipDescription.loadedDataEndpointFactory).toEqual(loadedDataEndpointFactory);
-    expect(singleRelationshipDescription.templatedUrlFromUrlFactory).toEqual(templatedUrlFromUrlFactory);
+    expect(singleRelationshipDescription.templatedUrlFactory).toEqual(templatedUrlFactory);
     expect(singleRelationshipDescription.name).toEqual(name);
     expect(singleRelationshipDescription.ResourceClass).toEqual(ResourceClass);
     expect(singleRelationshipDescription.initialValues).toEqual(initialValues);
@@ -125,59 +125,112 @@ describe("SingleRelationshipDescription", function() {
   });
 
   describe("embeddedEndpoint", function() {
-    var embeddedEndpoint;
+    describe("standard", function() {
+      var embeddedEndpoint;
 
-    beforeEach(function() {
-      embeddedEndpoint = singleRelationshipDescription.embeddedEndpoint(resource)
-    });
+      beforeEach(function() {
+        embeddedEndpoint = singleRelationshipDescription.embeddedEndpoint(resource)
+      });
 
-    it("should have the right values", function() {
-      expect(embeddedEndpoint.endpoint).toEqual(mockEndpoint);
-      expect(embeddedEndpoint.resource).toEqual(resource);
-      expect(embeddedEndpoint.transformers).toEqual({name: "awesome"});
-    });
+      it("should have the right values", function() {
+        expect(embeddedEndpoint.endpoint).toEqual(mockEndpoint);
+        expect(embeddedEndpoint.resource).toEqual(resource);
+        expect(embeddedEndpoint.transformers).toEqual({name: "awesome"});
+      });
 
-    it("should setup the right transformer", function() {
-      expect(embeddedRelationshipTransformerFactory).toHaveBeenCalled();
-    });
+      it("should setup the right transformer", function() {
+        expect(embeddedRelationshipTransformerFactory).toHaveBeenCalled();
+      });
 
-    it("should setup the right endpoint", function() {
-      expect(loadedDataEndpointFactory).toHaveBeenCalled();
-    });
+      it("should setup the right endpoint", function() {
+        expect(loadedDataEndpointFactory).toHaveBeenCalled();
+      });
+    })
+
+    describe("templated", function() {
+      var error;
+      beforeEach(function() {
+        singleRelationshipDescription.templated = true;
+        try {
+          singleRelationshipDescription.embeddedEndpoint(resource)
+        } catch(err) {
+          error = err;
+        }
+      });
+
+      it("should error because a templated relationship cannot be embedded", function() {
+        expect(error).toEqual("A templated hasOne relationship cannot be embedded")
+      })
+    })
   });
 
   describe("linkedEndpoint", function() {
-    var linkedEndpoint;
-    beforeEach(function() {
-      linkedEndpoint = singleRelationshipDescription.linkedEndpoint(resource)
-    });
-
-    it("should have the right values", function() {
-      expect(linkedEndpoint.transport).toEqual(mockTransport);
-      expect(linkedEndpoint.templatedUrl).toEqual({
-        uriTemplate: "/awesome",
-        url: "/awesome",
-        addDataPathLink: jasmine.any(Function),
-        dataPath: {
-          resource: resource,
-          path: "$.links.awesome"
-        }
+    describe("standard", function() {
+      var linkedEndpoint;
+      beforeEach(function() {
+        linkedEndpoint = singleRelationshipDescription.linkedEndpoint(resource)
       });
-      expect(linkedEndpoint.transformers).toEqual(
-        {
-          relationship: singleRelationshipDescription
+
+      it("should have the right values", function() {
+        expect(linkedEndpoint.transport).toEqual(mockTransport);
+        expect(linkedEndpoint.templatedUrl).toEqual({
+          uriTemplate: "/awesome",
+          uriParams: {},
+          addDataPathLink: jasmine.any(Function),
+          dataPath: {
+            resource: resource,
+            path: "$.links.awesome"
+          }
         });
+        expect(linkedEndpoint.transformers).toEqual(
+          {
+            relationship: singleRelationshipDescription
+          });
+      });
+
+      it("should setup the templated url", function() {
+        expect(templatedUrlFactory).toHaveBeenCalled();
+      })
+      it("should setup the right transformer", function() {
+        expect(primaryResourceTransformerFactory).toHaveBeenCalled();
+      });
+
+      it("should setup the right endpoint", function() {
+        expect(resolvedEndpointFactory).toHaveBeenCalled();
+      });
     });
 
-    it("should setup the templated url", function() {
-      expect(templatedUrlFromUrlFactory).toHaveBeenCalled();
-    })
-    it("should setup the right transformer", function() {
-      expect(primaryResourceTransformerFactory).toHaveBeenCalled();
-    });
+    describe("templated", function() {
+      var linkedEndpoint;
+      beforeEach(function() {
+        singleRelationshipDescription.templated = true
+        linkedEndpoint = singleRelationshipDescription.linkedEndpoint(resource, {id: 4})
+      });
 
-    it("should setup the right endpoint", function() {
-      expect(resolvedEndpointFactory).toHaveBeenCalled();
+      it("should have the right values", function() {
+        expect(linkedEndpoint.transport).toEqual(mockTransport);
+        expect(linkedEndpoint.templatedUrl).toEqual({
+          uriTemplate: "/awesome",
+          uriParams: {id: 4},
+          addDataPathLink: jasmine.any(Function),
+        });
+        expect(linkedEndpoint.transformers).toEqual(
+          {
+            relationship: singleRelationshipDescription
+          });
+      });
+
+      it("should setup the templated url", function() {
+        expect(templatedUrlFactory).toHaveBeenCalledWith("/awesome", {id: 4});
+      })
+
+      it("should setup the right transformer", function() {
+        expect(primaryResourceTransformerFactory).toHaveBeenCalled();
+      });
+
+      it("should setup the right endpoint", function() {
+        expect(resolvedEndpointFactory).toHaveBeenCalled();
+      });
     });
   });
 });
