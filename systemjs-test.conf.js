@@ -1,4 +1,5 @@
 System.config({
+  transpiler: "babel",
   traceurOptions: {
     modules: "register",
     script: false,
